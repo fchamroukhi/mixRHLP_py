@@ -6,8 +6,38 @@ Created on Sat Oct 27 10:29:21 2018
 @author: bartcus
 """
 import numpy as np
+import os
 from sklearn.preprocessing import normalize
 
+
+fileGlobalTrace=None
+
+def globalTrace(message):
+    """
+    aim: prints a message in a file
+    input: 
+        message
+    """
+    if not fileGlobalTrace is None:
+        fileGlobalTrace.write(message)
+        fileGlobalTrace.flush()
+        
+def detect_path(pathname):
+    """
+    requires: 
+        a path name
+    ensures:
+        creqtes the path if it does not exist
+    """
+    if not os.path.exists(pathname):
+        os.makedirs(pathname, exist_ok=True)
+        
+
+"""
+    ########################################
+    start code for normalization of the data
+    ########################################
+"""
 def normalize_matrix(matrix):
     """
         Scikit-learn normalize function that lets you apply various normalizations. 
@@ -18,7 +48,7 @@ def normalize_matrix(matrix):
     return normed_matrix
 
 
-def test_main():
+def test_norm():
     matrix = np.arange(0,27,3).reshape(3,3).astype(np.float64)
     #array([[  0.,   3.,   6.],
     #   [  9.,  12.,  15.],
@@ -28,7 +58,5 @@ def test_main():
     #[ 0.25        0.33333333  0.41666667]
     #[ 0.28571429  0.33333333  0.38095238]]
     
+#test_norm()
     
-    
-    
-#test_main()
