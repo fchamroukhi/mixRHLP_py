@@ -9,8 +9,11 @@ import numpy as np
 from sklearn.preprocessing import normalize
 
 def normalize_matrix(matrix):
-    #Scikit-learn normalize function that lets you apply various normalizations. 
-    #The "make it sum to 1" is the L1 norm
+    """
+        Scikit-learn normalize function that lets you apply various normalizations. 
+        The "make it sum to 1" is the L1 norm
+        http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.normalize.html
+    """
     normed_matrix = normalize(matrix, axis=1, norm='l1')  
     return normed_matrix
 
