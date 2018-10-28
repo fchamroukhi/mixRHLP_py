@@ -22,8 +22,10 @@ The following python codes contain:
 
 ### To obtain a detailed information on each of theese source code:
 
-**import file_name.py as f
-help(f)**
+```
+import file_name.py as f
+help(f)
+```
 
 these gives information on the selected source code with information on classes and functions
 each function and class has it's comments that will be given by "help(f)"
