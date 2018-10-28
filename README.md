@@ -1,10 +1,8 @@
-#######################################################
-Introduction to source code for Python codes for functional data clustering and segmentation with mixture of regressions with hidden logistic processes (MixRHLP): 
+#Introduction to source code for Python codes for functional data clustering and segmentation with mixture of regressions with hidden logistic processes (MixRHLP): 
 
-Faĩcel Chamrouckhi & Bartcus Marius
+**Faĩcel Chamrouckhi & Bartcus Marius**
 
 firstname.lastname@unicaen.fr
-#######################################################
 
 
 
@@ -21,37 +19,20 @@ The following python codes contain:
 4) utils.py
 5) MixFRHLP_EM.py
 
-#######################################################
-to obtain a detailed information on each of theese source code:
 
-import file_name.py as f
-help(f)
+###To obtain a detailed information on each of theese source code:
+
+**import file_name.py as f
+help(f)**
 
 these gives information on the selected source code with information on classes and functions
 each function and class has it's comments that will be given by "help(f)"
-#######################################################
 
 
 
-THE SHORT DESCRIPTION OF EACH PYTHON FILE
-#######################################################
-1) constants.py									
-													  
-settings to run the algorithm                         
-#######################################################
-2) datasets.py
-
-The data sets setting names
-#######################################################
-4) data_utils.py
-
-Generate artificial data sets	
-#######################################################
-5) utils.py
-
-routines python: file reading, writing files, matrix normalizations, etc
-#######################################################
-6) MixFRHLP_EM.py
-
-The main MixFRHLP EM algorithm implementation
-#######################################################
+#THE SHORT DESCRIPTION OF EACH PYTHON FILE
+1) constants.py	_settings to run the algorithm_                        
+2) datasets.py _The data sets setting names_
+4) data_utils.py _Generate artificial data sets_
+5) utils.py _routines python: file reading, writing files, matrix normalizations, etc_
+6) MixFRHLP_EM.py _The main MixFRHLP EM algorithm implementation_
