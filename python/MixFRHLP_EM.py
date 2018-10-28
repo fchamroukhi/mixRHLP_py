@@ -19,7 +19,25 @@ class MixParam():
               3. sigma_g = (sigma_g1,...,sigma_gK) : the variances for the K regmies. vector of dimension [Kx1]
               4. pi_jgk :logistic proportions for cluster g
         """
-        self.Wg, self.beta_g, self.sigma_g, self.pi_jgk = pi_jgk = initialize_MixFRHLP_EM(phiBeta, phiW, try_EM);
+        self.Wg = np.NaN * np.empty([const.G, const.q+1, const.K-1])
+        self.beta_g = np.NaN * np.empty([const.G, const.p +1, const.K])
+        self.sigma_g = np.NaN * np.empty([const.G, const.K])
+        self.pi_jgk = np.NaN * np.empty([const.m, const.K, const.G])
+        self.alpha_g = np.NaN * np.empty(const.G)
+        
+    def initialize_MixFRHLP_EM(self, phiBeta, phiW, try_EM):
+        # 1. Initialization of cluster weights
+        self.alpha_g=1/const.G*np.ones(const.G)
+        # 2. Initialization of the model parameters for each cluster: W (pi_jgk), betak and sigmak    
+        self.W, self.pi_jgk = self.__initHlp(phiW, try_EM)
+        
+    def __initHlp(self, phiW, try_EM):
+        """
+            Initialize the Hidden Logistic Process
+        """
+        # 1. Initialisation de W (pi_jgk)
+        nm, q1 = phiW.shape;
+
         
         
 class MixFRHLP():
@@ -51,16 +69,77 @@ class MixFRHLP():
     """
 
     def __init__(self):
-        self.param = None
-        self.Psi = None
-        self.h_ig = np.empty([const.n, const.G])
-        self.c_ig = None
-        self.klas = np.empty([const.n, 1])
-        #todo: verify the size of tau_ijgk
-        self.tau_ijgk = None
-        self.Ex_g = np.empty([const.m, const.G])
-        self.comp_loglik = None
-        self.stored_com_loglik = np.empty([1, const.total_EM_tries])
+        self.param = np.NaN
+        self.Psi = np.NaN
+        self.h_ig = np.NaN*np.empty([const.n, const.G])
+        self.c_ig = np.NaN
+        self.klas = np.NaN*np.empty([const.n, 1])
+        self.tau_ijgk = np.NaN*np.empty([const.G, const.n * const.m, const.K])
+        self.Ex_g = np.NaN*np.empty([const.m, const.G])
+        self.comp_loglik = np.NaN
+        self.stored_com_loglik = np.NaN*np.empty([1, const.total_EM_tries])
+        
+    def fit_EM(self, trace=True):
+        """
+            main algorithm
+        """
+        if trace:
+            utl.detect_path(const.TraceDir)
+            utl.fileGlobalTrace=open(const.TraceDir + "FitEM_Trace{0}.txt".format(const.dataName), "w")
+        utl.globalTrace("Start EM\n")
+        
+        # 1. Construction des matrices de regression
+        x = np.linspace(0,1,const.m) # ou rentrer le vecteur de covariables des courbes
+        # 2. pour 1 courbe
+        phiBeta, phiW = self.__designmatrix_FRHLP(x);
+        #pour les n courbes (regularly sampled)
+        phiBeta = np.matlib.repmat(phiBeta, const.n, 1);
+        phiW = np.matlib.repmat(phiW, const.n, 1);
+        
+        X = np.reshape(const.data.T,(const.n*const.m, 1))
+        
+        top=0
+        try_EM = 0
+        best_loglik = -np.Inf
+        cputime_total = []
+        
+        while try_EM < const.total_EM_tries:
+            try_EM+=1
+            utl.globalTrace("EM try: {0}\n".format(try_EM))
+            start_time = time.time()
+            
+            #initialization param
+            self.param = MixParam()
+            self.param.initialize_MixFRHLP_EM(phiBeta, phiW, try_EM)
+            
+            iteration = 0; 
+            converge = False;
+            prev_loglik = -np.Inf;
+            
+            #EM
+            self.tau_ijgk = np.zeros(G, const.n*const.m, K); # segments post prob  
+            log_tau_ijgk = np.zeros(G, const.n*const.m, K);
+            
+            log_fg_xij = np.zeros(n,G); 
+            log_alphag_fg_xij = np.zeros(n,G); 
+            
+            
+            while converge and (iteration<= max_iter_EM):
+                
+            
+            
+            
+            cpu_time = time.time()-start_time
+            cputime_total.append(cpu_time)
+            
+            
+        utl.globalTrace("End EM\n")
+        if trace:
+            utl.fileGlobalTrace.close()
+            utl.fileGlobalTrace = None 
+            
+    def __designmatrix_FRHLP(self, x):
+        
         
         
 #solution =  MixFRHLP_EM(data); 
