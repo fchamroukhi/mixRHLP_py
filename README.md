@@ -1,4 +1,4 @@
-#Introduction to source code for Python codes for functional data clustering and segmentation with mixture of regressions with hidden logistic processes (MixRHLP): 
+# Introduction to source code for Python codes for functional data clustering and segmentation with mixture of regressions with hidden logistic processes (MixRHLP): 
 
 **Faĩcel Chamrouckhi & Bartcus Marius**
 
@@ -9,7 +9,7 @@ firstname.lastname@unicaen.fr
 For using this code you need to install python.
 Also we recomand to install anaconda from: [https://www.anaconda.com/download/] that contains a set of usefull data science python packages.
 One of the important packages that we use in our code are:
-*NumPy [http://www.numpy.org/]
+1) NumPy [http://www.numpy.org/]
 
 
 The following python codes contain:
@@ -20,7 +20,7 @@ The following python codes contain:
 5) MixFRHLP_EM.py
 
 
-###To obtain a detailed information on each of theese source code:
+### To obtain a detailed information on each of theese source code:
 
 **import file_name.py as f
 help(f)**
@@ -30,7 +30,7 @@ each function and class has it's comments that will be given by "help(f)"
 
 
 
-#THE SHORT DESCRIPTION OF EACH PYTHON FILE
+### THE SHORT DESCRIPTION OF EACH PYTHON FILE
 1) constants.py	_settings to run the algorithm_                        
 2) datasets.py _The data sets setting names_
 4) data_utils.py _Generate artificial data sets_
