@@ -91,7 +91,7 @@ class MixFRHLP():
         # 1. Construction des matrices de regression
         x = np.linspace(0,1,const.m) # ou rentrer le vecteur de covariables des courbes
         # 2. pour 1 courbe
-        phiBeta, phiW = self.__designmatrix_FRHLP(x);
+        phiBeta, phiW = utl.designmatrix_FRHLP(x, const.p, const.q);
         #pour les n courbes (regularly sampled)
         phiBeta = np.matlib.repmat(phiBeta, const.n, 1);
         phiW = np.matlib.repmat(phiW, const.n, 1);
@@ -128,7 +128,6 @@ class MixFRHLP():
                 
             
             
-            
             cpu_time = time.time()-start_time
             cputime_total.append(cpu_time)
             
@@ -138,8 +137,5 @@ class MixFRHLP():
             utl.fileGlobalTrace.close()
             utl.fileGlobalTrace = None 
             
-    def __designmatrix_FRHLP(self, x):
-        
-        
-        
+    
 #solution =  MixFRHLP_EM(data); 

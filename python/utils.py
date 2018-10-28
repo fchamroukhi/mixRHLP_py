@@ -34,7 +34,28 @@ def detect_path(pathname):
         
 
     
+def designmatrix_FRHLP(x,p,q=None):
+    if x.shape[0] == 1:
+        x=x.T; # en vecteur
+    
+    order_max = p    
+    if q!=None:
+        order_max = max(p,q)
+        
+            
+    phi=np.NaN * np.empty([len(x), order_max+1])
+    for ordr in range(order_max+1):
+        phi[:,ordr] = x**ordr # phi2w = [1 t t.^2 t.^3 t.^p;......;...]
+            
+    phiBeta = phi[:,0:p+1]; # Matrice de regresseurs pour Beta
 
+    phiW =[];
+    if q!=None:
+        phiW = phi[:,0:q+1]; # matrice de regresseurs pour w
+    
+    return phiBeta, phiW
+            
+            
 """
     ########################################
     start code for normalization of the data
