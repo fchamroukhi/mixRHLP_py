@@ -9,7 +9,8 @@ Each user is responsible to set these constants according to it's needs
 @author: bartcus
 """
 import os
-
+import numpy as np
+import datasets
 """
     Options of MixFRHLP_EM:
           1. q:  order of the logistic regression (by default 1 for convex segmentation)
@@ -62,7 +63,7 @@ if TraceDir == None:
 """
 dataExetension = ".txt"
 
-isGenerateData = True
+isGenerateData = False
 
 if isGenerateData:
     dataName = 'mean_1_flou'
@@ -70,8 +71,11 @@ if isGenerateData:
     outputGeneratedDataFileName = DataSetDir + generatedDataName + dataExetension
 else:
     #Give the name of the data that needs to be loaded
-    dataName=''
+    dataName=datasets.dataFileNames[0]
 
 datafile = DataSetDir + dataName + dataExetension
+
+data = np.loadtxt(datafile)
+n, m= data.shape
 
 

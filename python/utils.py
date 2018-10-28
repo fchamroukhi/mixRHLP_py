@@ -33,6 +33,8 @@ def detect_path(pathname):
         os.makedirs(pathname, exist_ok=True)
         
 
+    
+
 """
     ########################################
     start code for normalization of the data
