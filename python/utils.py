@@ -33,8 +33,17 @@ def detect_path(pathname):
         os.makedirs(pathname, exist_ok=True)
         
 
+
     
 def designmatrix_FRHLP(x,p,q=None):
+    """
+    requires:
+        x - data
+        p - dimension de beta (ordre de reg polynomiale)
+        q (Optional) - dimension de w (ordre de reg logistique)
+    ensures:
+        creates the parameters phiBeta and phiW
+    """
     if x.shape[0] == 1:
         x=x.T; # en vecteur
     
@@ -42,11 +51,10 @@ def designmatrix_FRHLP(x,p,q=None):
     if q!=None:
         order_max = max(p,q)
         
-            
     phi=np.NaN * np.empty([len(x), order_max+1])
     for ordr in range(order_max+1):
         phi[:,ordr] = x**ordr # phi2w = [1 t t.^2 t.^3 t.^p;......;...]
-            
+    #todo: verify        
     phiBeta = phi[:,0:p+1]; # Matrice de regresseurs pour Beta
 
     phiW =[];

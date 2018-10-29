@@ -5,8 +5,10 @@ Created on Sat Oct 27 14:00:40 2018
 
 @author: bartcus
 """
+from sklearn.cluster import KMeans
 import numpy as np
 import constants as const
+import utils as utl
 
 class MixParam():
     def __init__(self):
@@ -28,9 +30,92 @@ class MixParam():
     def initialize_MixFRHLP_EM(self, phiBeta, phiW, try_EM):
         # 1. Initialization of cluster weights
         self.alpha_g=1/const.G*np.ones(const.G)
-        # 2. Initialization of the model parameters for each cluster: W (pi_jgk), betak and sigmak    
-        self.W, self.pi_jgk = self.__initHlp(phiW, try_EM)
+        # 2. betagk and sigmagk
+        if const.init_kmeans:
+            kmeans = KMeans(n_clusters = const.G, init = 'k-means++', max_iter = 400, n_init = 2, random_state = 0)
+            klas = kmeans.fit_predict(const.data)
+            for g in range(0,const.G):
+                
         
+            
+        # 3. Initialization of the model parameters for each cluster: W (pi_jgk), betak and sigmak    
+        self.Wg, self.pi_jgk = self.__initHlp(phiW, try_EM)
+        
+        
+    def __initRegressionParam(data, K, phiBeta, variance_type, try_EM):
+    """
+    aim: initialize the Regresssion model with Hidden Logistic Process
+    requires:
+        data - the data set
+        K - the number of regimes
+        phi
+        variance_type - variance type
+        try_EM - em try
+    ensures:
+        
+    """
+        if try_EM == 1:
+            # Decoupage de l'echantillon (signal) en K segments
+            zi = round(const.m/const.K) - 1
+            #todo ameliorate code for initialization of sigma and betak
+            sigma=[]
+            betak_list = []
+            for k in range(1, const.K+1):
+                i = (k-1)*zi;
+                j = k*zi;
+                Xij = const.data[:,i:j];
+                Xij = np.reshape(Xij.T,(np.prod(Xij.shape), 1))
+                phi_ij = phiBeta[i:j,:];
+                Phi_ij = np.matlib.repmat(phi_ij, const.n, 1);
+                bk = np.linalg.inv(Phi_ij.T@Phi_ij)@Phi_ij.T@Xij;
+                #para.betak(:,k) = bk;
+                betak_list.append(bk)
+                if variance_type.lower() == 'common':
+                    sigma = np.var(Xij)
+                else:
+                    mk = j-i
+                    z = Xij-Phi_ij@bk;
+                    #todo: verify if sk is always one value and not a matrix
+                    sk = z.T@z/(n*mk); 
+                    sigma.append(sk[0][0])
+            #remake betak
+            betak = np.hstack(betak_list)
+        else:
+            #random initialization
+            Lmin= round(const.m/(const.K+1));#nbr pts min dans un segments
+            tk_init = [0] * (const.K+1)
+            K_1=const.K;
+            #todo: verify indexes ???
+            for k in range(0,const.K-1):
+                K_1 = K_1-1;
+                temp = np.arange(tk_init[k]+Lmin,const.m-K_1*Lmin+1)
+                ind = np.random.permutation(len(temp))
+                tk_init[k+1]= temp[ind[0]];
+                
+            tk_init[const.K] = const.m; 
+            
+            betak_list = []
+            for k in range(0, const.K-1):
+                i = tk_init[k];
+                j = tk_init[k+1];
+                Xij = const.data[:,i:j];
+                Xij = np.reshape(Xij.T,(np.prod(Xij.shape), 1))
+                phi_ij = phiBeta[i:j,:];
+                Phi_ij = np.matlib.repmat(phi_ij, const.n, 1);
+                bk = np.linalg.inv(Phi_ij.T@Phi_ij)@Phi_ij.T@Xij;
+                betak_list.append(bk)
+                if variance_type.lower() == 'common':
+                    sigma = np.var(Xij)
+                else:
+                    mk = j-i
+                    z = Xij-Phi_ij@bk;
+                    #todo: verify if sk is always one value and not a matrix
+                    sk = z.T@z/(n*mk); 
+                    sigma.append(sk[0][0])
+                    
+            #remake betak
+            betak = np.hstack(betak_list)
+                
     def __initHlp(self, phiW, try_EM):
         """
             Initialize the Hidden Logistic Process
@@ -113,19 +198,25 @@ class MixFRHLP():
             self.param.initialize_MixFRHLP_EM(phiBeta, phiW, try_EM)
             
             iteration = 0; 
-            converge = False;
-            prev_loglik = -np.Inf;
+            converge = False
+            prev_loglik = -np.Inf
             
             #EM
-            self.tau_ijgk = np.zeros(G, const.n*const.m, K); # segments post prob  
-            log_tau_ijgk = np.zeros(G, const.n*const.m, K);
+            self.tau_ijgk = np.zeros(G, const.n*const.m, K) # segments post prob  
+            log_tau_ijgk = np.zeros(G, const.n*const.m, K)
             
             log_fg_xij = np.zeros(n,G); 
             log_alphag_fg_xij = np.zeros(n,G); 
             
             
-            while converge and (iteration<= max_iter_EM):
+            while not(converge) and (iteration<= max_iter_EM):
+                """
+                E-Step
+                """
                 
+                """
+                M-Step
+                """
             
             
             cpu_time = time.time()-start_time

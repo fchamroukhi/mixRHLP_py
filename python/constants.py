@@ -26,19 +26,22 @@ import datasets
              optimized by IRLS at each IRLS iteration. (IRLS is used at
              each M step of the EM algorithm). (By defalut: verbose_IRLS = 0)
     """
+varianceTypes=['free', 'common']
+
 q=1 # dimension de w (ordre de reg logistique)
-variance_type='free' #type_variance = 'common';
+p = 1 # dimension de beta (ordre de reg polynomiale)
+variance_type = varianceTypes[0]
 total_EM_tries=10
-init_kmeans=1
+init_kmeans=True
 max_iter_EM=1000
 threshold=1e-5
 verbose=0
 verbose_IRLS=0
 
-n_tries = 2;
-G = 3;# nombre de clusters
-K = 3;# nombre de regimes
-p = 1;# dimension de beta (ordre de reg polynomiale)
+n_tries = 2
+G = 3 # nombre de clusters
+K = 3 # nombre de regimes
+
 
 
 """
