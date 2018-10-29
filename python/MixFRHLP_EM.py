@@ -23,7 +23,12 @@ class MixParam():
         """
         self.Wg = np.NaN * np.empty([const.G, const.q+1, const.K-1])
         self.beta_g = np.NaN * np.empty([const.G, const.p +1, const.K])
-        self.sigma_g = np.NaN * np.empty([const.G, const.K])
+        
+        if const.variance_type.lower() == 'common':
+            self.sigma_g = np.NaN * np.empty([const.G])
+        else:
+            self.sigma_g = np.NaN * np.empty([const.G, const.K])
+            
         self.pi_jgk = np.NaN * np.empty([const.m, const.K, const.G])
         self.alpha_g = np.NaN * np.empty(const.G)
         
@@ -35,14 +40,20 @@ class MixParam():
             kmeans = KMeans(n_clusters = const.G, init = 'k-means++', max_iter = 400, n_init = 2, random_state = 0)
             klas = kmeans.fit_predict(const.data)
             for g in range(0,const.G):
+                Xg = const.data[klas==g ,:]; #if kmeans  
+                betak, sigma = self.__initRegressionParam(phiBeta, try_EM)
                 
-        
-            
+                self.beta_g[g,:,:] = betak;
+                if const.variance_type.lower() == 'common':
+                    self.sigma_g[g] = sigma;
+                else:
+                    self.sigma_g[g,:] = sigma;
+                    
         # 3. Initialization of the model parameters for each cluster: W (pi_jgk), betak and sigmak    
         self.Wg, self.pi_jgk = self.__initHlp(phiW, try_EM)
         
         
-    def __initRegressionParam(data, K, phiBeta, variance_type, try_EM):
+    def __initRegressionParam(self, phiBeta, try_EM):
     """
     aim: initialize the Regresssion model with Hidden Logistic Process
     requires:
@@ -70,12 +81,12 @@ class MixParam():
                 bk = np.linalg.inv(Phi_ij.T@Phi_ij)@Phi_ij.T@Xij;
                 #para.betak(:,k) = bk;
                 betak_list.append(bk)
-                if variance_type.lower() == 'common':
+                if const.variance_type.lower() == 'common':
                     sigma = np.var(Xij)
                 else:
                     mk = j-i
                     z = Xij-Phi_ij@bk;
-                    #todo: verify if sk is always one value and not a matrix
+                    
                     sk = z.T@z/(n*mk); 
                     sigma.append(sk[0][0])
             #remake betak
@@ -94,6 +105,7 @@ class MixParam():
                 
             tk_init[const.K] = const.m; 
             
+            sigma=[]
             betak_list = []
             for k in range(0, const.K-1):
                 i = tk_init[k];
@@ -104,7 +116,7 @@ class MixParam():
                 Phi_ij = np.matlib.repmat(phi_ij, const.n, 1);
                 bk = np.linalg.inv(Phi_ij.T@Phi_ij)@Phi_ij.T@Xij;
                 betak_list.append(bk)
-                if variance_type.lower() == 'common':
+                if const.variance_type.lower() == 'common':
                     sigma = np.var(Xij)
                 else:
                     mk = j-i
@@ -115,6 +127,8 @@ class MixParam():
                     
             #remake betak
             betak = np.hstack(betak_list)
+            
+        return betak, sigma
                 
     def __initHlp(self, phiW, try_EM):
         """
