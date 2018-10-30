@@ -21,7 +21,7 @@ class MixParam():
               3. sigma_g = (sigma_g1,...,sigma_gK) : the variances for the K regmies. vector of dimension [Kx1]
               4. pi_jgk :logistic proportions for cluster g
         """
-        self.Wg = np.NaN * np.empty([const.G, const.q+1, const.K-1])
+        self.Wg = np.zeros([const.G, const.q+1, const.K-1])
         self.beta_g = np.NaN * np.empty([const.G, const.p +1, const.K])
         
         if const.variance_type.lower() == 'common':
@@ -29,15 +29,19 @@ class MixParam():
         else:
             self.sigma_g = np.NaN * np.empty([const.G, const.K])
             
-        self.pi_jgk = np.NaN * np.empty([const.m, const.K, const.G])
+        self.pi_jgk = np.NaN * np.empty([const.m*const.n, const.K, const.G])
         self.alpha_g = np.NaN * np.empty(const.G)
         
     def initialize_MixFRHLP_EM(self, phiBeta, phiW, try_EM):
         # 1. Initialization of cluster weights
         self.alpha_g=1/const.G*np.ones(const.G)
-        # 2. betagk and sigmagk
+        
+        # 2. Initialization of the model parameters for each cluster: W (pi_jgk), betak and sigmak    
+        self.Wg, self.pi_jgk = self.__initHlp(phiW, try_EM)
+        
+        # 3. Initialization of betagk and sigmagk
         if const.init_kmeans:
-            kmeans = KMeans(n_clusters = const.G, init = 'k-means++', max_iter = 400, n_init = 2, random_state = 0)
+            kmeans = KMeans(n_clusters = const.G, init = 'k-means++', max_iter = 400, n_init = 20, random_state = 0)
             klas = kmeans.fit_predict(const.data)
             for g in range(0,const.G):
                 Xg = const.data[klas==g ,:]; #if kmeans  
@@ -48,9 +52,9 @@ class MixParam():
                     self.sigma_g[g] = sigma;
                 else:
                     self.sigma_g[g,:] = sigma;
-                    
-        # 3. Initialization of the model parameters for each cluster: W (pi_jgk), betak and sigmak    
-        self.Wg, self.pi_jgk = self.__initHlp(phiW, try_EM)
+        else:
+            print('todo: line 41 matlab initialize_MixFRHLP_EM')
+        
         
         
     def __initRegressionParam(self, phiBeta, try_EM):
@@ -63,6 +67,8 @@ class MixParam():
         variance_type - variance type
         try_EM - em try
     ensures:
+        sigma
+        betak
         
     """
         if try_EM == 1:
@@ -130,14 +136,20 @@ class MixParam():
             
         return betak, sigma
                 
-    def __initHlp(self, phiW, try_EM):
+    def __initHlp(self, klas, phiW, try_EM):
         """
             Initialize the Hidden Logistic Process
         """
         # 1. Initialisation de W (pi_jgk)
         nm, q1 = phiW.shape;
 
-        
+        if  try_EM ==1
+            for g=1:G
+                self.pi_jgk[g,:,:] = utl.modele_logit(self.Wg[g,:,:],phiW);
+        else
+            for g=1:G
+                self.Wg[g,:,:] = np.random.rand(q+1,K-1); #initialisation aléatoire du vercteur param�tre du IRLS
+                self.pi_jgk[g,:,:] = utl.modele_logit(self.Wg[g,:,:],phiW);
         
 class MixFRHLP():
     """
