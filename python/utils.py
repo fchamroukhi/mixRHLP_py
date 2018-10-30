@@ -102,8 +102,34 @@ def modele_logit(W,M,Y=None):
         
         
     MW = M@W; # multiplication matricielle
+    maxm = MW.max(1).reshape((len(MW.max(1)), 1))
     
+    MW = MW - maxm @ np.ones((1,K)); #normalisation
+    expMW = np.exp(MW)
     
+    probas = expMW/(expMW[:,1:K].sum(axis = 1)@np.ones(1,K));
+    
+    if Y != None:
+        temp=Y*np.log(expMW.sum(axis=1)*np.ones((1,K)))
+        temp=(Y*MW) - temp
+        loglik = sum(temp.sum(axis=1));
+        if np.isnan(loglik):
+            MW=M@W;
+            minm = -745.1;
+            MW = np.maximum(MW, minm);
+            maxm = 709.78;
+            MW= np.minimum(MW,maxm);
+            expMW = np.exp(MW);
+            
+            eps = np.spacing(1)
+            temp=Y*np.log(expMW.sum(axis=1)*np.ones((1,K))+eps)
+            temp=(Y*MW) - temp
+            loglik = sum(temp.sum(axis=1))
+        if np.isnan(loglik):
+            raise ValueError('Probleme loglik IRLS NaN (!!!)')
+    else:
+        loglik = []
+            
     return probas, loglik
     
 def designmatrix_FRHLP(x,p,q=None):
