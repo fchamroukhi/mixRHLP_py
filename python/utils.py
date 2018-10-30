@@ -96,18 +96,36 @@ def modele_logit(W,M,Y=None):
         else:
             raise ValueError(' W et Y doivent avoir le meme nombre de ligne')
     else:
-        wK=np.zeros(q,1);
+        wK=np.zeros((q,1));
         W = np.concatenate((W, wK), axis=1) # ajout du veteur nul pour le calcul des probas
         q,K = W.shape;
         
-        
+    """
+    size MW: 10500 x 3
+    size MW: 10500 x 1
+    size MW normalized: 10500 x 3
+    size expMW: 10500 x 3
+    size piik: 10500 x 3
+    
+    
+    size MW: (10500, 3)
+    size maxm: (10500, 1)
+    size MW ormalized: (10500, 3)
+    size expMW: (10500, 3)
+    size piik: (10500, 3)
+    """
     MW = M@W; # multiplication matricielle
     maxm = MW.max(1).reshape((len(MW.max(1)), 1))
-    
+    print(maxm)
     MW = MW - maxm @ np.ones((1,K)); #normalisation
+    
     expMW = np.exp(MW)
     
-    probas = expMW/(expMW[:,1:K].sum(axis = 1)@np.ones(1,K));
+    frc = expMW[:,0:K].sum(axis = 1)
+    frc = np.reshape(frc, (frc.size,1))
+    frc = frc@np.ones((1,K))
+    
+    probas = expMW/frc;
     
     if Y != None:
         temp=Y*np.log(expMW.sum(axis=1)*np.ones((1,K)))
