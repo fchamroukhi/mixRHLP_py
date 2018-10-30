@@ -33,7 +33,78 @@ def detect_path(pathname):
         os.makedirs(pathname, exist_ok=True)
         
 
-
+def modele_logit(W,M,Y=None):
+    """
+     [probas, loglik] = modele_logit(W,X,Y)
+    
+     calcule les pobabilites selon un le modele logistique suivant :
+    
+     probas(i,k) = p(zi=k;W)= \pi_{ik}(W) 
+                            =          exp(wk'vi)
+                              ----------------------------
+                             1 + sum_{l=1}^{K-1} exp(wl'vi)
+     for all i=1,...,n et k=1...K (dans un contexte temporel on parle d'un
+     processus logistique)
+    
+     Entrees :
+    
+             1. W : parametre du modele logistique ,Matrice de dimensions
+             [(q+1)x(K-1)]des vecteurs parametre wk. W = [w1 .. wk..w(K-1)] 
+             avec les wk sont des vecteurs colonnes de dim [(q+1)x1], le dernier 
+             est suppose nul (sum_{k=1}^K \pi_{ik} = 1 -> \pi{iK} =
+             1-sum_{l=1}^{K-1} \pi{il}. vi : vecteur colonne de dimension [(q+1)x1] 
+             qui est la variable explicative (ici le temps): vi = [1;ti;ti^2;...;ti^q];
+             2. M : Matrice de dimensions [nx(q+1)] des variables explicatives. 
+                M = transpose([v1... vi ....vn]) 
+                  = [1 t1 t1^2 ... t1^q
+                     1 t2 t2^2 ... t2^q
+                           ..
+                     1 ti ti^2 ... ti^q
+                           ..
+                     1 tn tn^2 ... tn^q]
+               q : ordre de regression logistique
+               n : nombre d'observations
+            3. Y Matrice de la partition floue (les probas a posteriori tik)
+               tik = p(zi=k|xi;theta^m); Y de dimensions [nxK] avec K le nombre de classes
+     Sorties : 
+    
+            1. probas : Matrice de dim [nxK] des probabilites p(zi=k;W) de la vaiable zi
+              (i=1,...,n)
+            2. loglik : logvraisemblance du parametre W du modele logistique
+               loglik = Q1(W) = Esperance(l(W;Z)|X;theta^m) = E(p(Z;W)|X;theta^m) 
+                      = logsum_{i=1}^{n} sum_{k=1}^{K} tik log p(zi=k;W)
+       
+     Cette fonction peut egalement �tre utilis�e pour calculer seulement les 
+     probas de la fa�oc suivante : probas = modele_logit(W,M)
+    """
+    #todo: verify this code when Y != none
+    if Y != None:
+        n1, K = Y.shape
+        n2, q = M.shape # ici q c'est q+1
+        if n1==n2:
+            n=n1;
+        else:
+            raise ValueError(' W et Y doivent avoir le meme nombre de ligne')
+    else:
+        n,q=M.shape
+        
+    if Y != None:
+        #todo: finish this code
+        if np.size(W,1) == (K-1): # pas de vecteur nul dans W donc l'ajouter
+            wK=np.zeros((q,1));
+            W = np.concatenate((W, wK), axis=1) # ajout du veteur nul pour le calcul des probas
+        else:
+            raise ValueError(' W et Y doivent avoir le meme nombre de ligne')
+    else:
+        wK=np.zeros(q,1);
+        W = np.concatenate((W, wK), axis=1) # ajout du veteur nul pour le calcul des probas
+        q,K = W.shape;
+        
+        
+    MW = M@W; # multiplication matricielle
+    
+    
+    return probas, loglik
     
 def designmatrix_FRHLP(x,p,q=None):
     """
