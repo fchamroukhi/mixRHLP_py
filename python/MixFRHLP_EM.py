@@ -45,7 +45,7 @@ class MixParam():
             klas = kmeans.fit_predict(const.data)
             for g in range(0,const.G):
                 Xg = const.data[klas==g ,:]; #if kmeans  
-                betak, sigma = self.__initRegressionParam(phiBeta, try_EM)
+                betak, sigma = self.__initRegressionParam(Xg, phiBeta, try_EM)
                 
                 self.beta_g[g,:,:] = betak;
                 if const.variance_type.lower() == 'common':
@@ -57,33 +57,33 @@ class MixParam():
         
         
         
-    def __initRegressionParam(self, phiBeta, try_EM):
-    """
-    aim: initialize the Regresssion model with Hidden Logistic Process
-    requires:
-        data - the data set
-        K - the number of regimes
-        phi
-        variance_type - variance type
-        try_EM - em try
-    ensures:
-        sigma
-        betak
-        
-    """
+    def __initRegressionParam(self, Xg, phiBeta, try_EM):
+        """
+        aim: initialize the Regresssion model with Hidden Logistic Process
+        requires:
+            data - the data set
+            K - the number of regimes
+            phi
+            variance_type - variance type
+            try_EM - em try
+        ensures:
+            sigma
+            betak
+        """
+        n, m = Xg.shape
         if try_EM == 1:
             # Decoupage de l'echantillon (signal) en K segments
-            zi = round(const.m/const.K) - 1
+            zi = round(m/const.K) - 1
             #todo ameliorate code for initialization of sigma and betak
             sigma=[]
             betak_list = []
             for k in range(1, const.K+1):
                 i = (k-1)*zi;
                 j = k*zi;
-                Xij = const.data[:,i:j];
+                Xij = Xg[:,i:j];
                 Xij = np.reshape(Xij.T,(np.prod(Xij.shape), 1))
                 phi_ij = phiBeta[i:j,:];
-                Phi_ij = np.matlib.repmat(phi_ij, const.n, 1);
+                Phi_ij = np.matlib.repmat(phi_ij, n, 1);
                 bk = np.linalg.inv(Phi_ij.T@Phi_ij)@Phi_ij.T@Xij;
                 #para.betak(:,k) = bk;
                 betak_list.append(bk)
@@ -99,27 +99,27 @@ class MixParam():
             betak = np.hstack(betak_list)
         else:
             #random initialization
-            Lmin= round(const.m/(const.K+1));#nbr pts min dans un segments
+            Lmin= round(m/(const.K+1)) #nbr pts min dans un segments
             tk_init = [0] * (const.K+1)
             K_1=const.K;
             #todo: verify indexes ???
             for k in range(0,const.K-1):
                 K_1 = K_1-1;
-                temp = np.arange(tk_init[k]+Lmin,const.m-K_1*Lmin+1)
+                temp = np.arange(tk_init[k]+Lmin,m-K_1*Lmin+1)
                 ind = np.random.permutation(len(temp))
                 tk_init[k+1]= temp[ind[0]];
                 
-            tk_init[const.K] = const.m; 
+            tk_init[const.K] = m; 
             
             sigma=[]
             betak_list = []
             for k in range(0, const.K-1):
                 i = tk_init[k];
                 j = tk_init[k+1];
-                Xij = const.data[:,i:j];
+                Xij = Xg[:,i:j];
                 Xij = np.reshape(Xij.T,(np.prod(Xij.shape), 1))
                 phi_ij = phiBeta[i:j,:];
-                Phi_ij = np.matlib.repmat(phi_ij, const.n, 1);
+                Phi_ij = np.matlib.repmat(phi_ij, n, 1);
                 bk = np.linalg.inv(Phi_ij.T@Phi_ij)@Phi_ij.T@Xij;
                 betak_list.append(bk)
                 if const.variance_type.lower() == 'common':
@@ -143,12 +143,12 @@ class MixParam():
         # 1. Initialisation de W (pi_jgk)
         nm, q1 = phiW.shape;
 
-        if  try_EM ==1
-            for g=1:G
+        if  try_EM ==1:
+            for g in range(0,const.G):
                 self.pi_jgk[g,:,:] = utl.modele_logit(self.Wg[g,:,:],phiW);
-        else
-            for g=1:G
-                self.Wg[g,:,:] = np.random.rand(q+1,K-1); #initialisation aléatoire du vercteur param�tre du IRLS
+        else:
+            for g in range(0,const.G):
+                self.Wg[g,:,:] = np.random.rand(const.q+1,const.K-1); #initialisation aléatoire du vercteur param�tre du IRLS
                 self.pi_jgk[g,:,:] = utl.modele_logit(self.Wg[g,:,:],phiW);
         
 class MixFRHLP():
