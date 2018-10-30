@@ -9,6 +9,7 @@ import time
 import numpy as np
 import utils as utl
 import constants as const
+import MixFRHLP_Parameters as mixParam
         
 class MixFRHLP():
     """
@@ -79,7 +80,7 @@ class MixFRHLP():
             start_time = time.time()
             
             #initialization param
-            self.param = MixParam()
+            self.param = mixParam.MixParam()
             self.param.initialize_MixFRHLP_EM(phiBeta, phiW, try_EM)
             
             iteration = 0; 

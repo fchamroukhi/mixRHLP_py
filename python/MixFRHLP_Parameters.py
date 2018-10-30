@@ -167,6 +167,6 @@ def main_initialize():
     param.initialize_MixFRHLP_EM(phiBeta, phiW, try_EM)
     return param
     
-param = main_initialize()
+#param = main_initialize()
     
     

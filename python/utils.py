@@ -99,21 +99,8 @@ def modele_logit(W,M,Y=None):
         wK=np.zeros((q,1));
         W = np.concatenate((W, wK), axis=1) # ajout du veteur nul pour le calcul des probas
         q,K = W.shape;
-        
-    """
-    size MW: 10500 x 3
-    size MW: 10500 x 1
-    size MW normalized: 10500 x 3
-    size expMW: 10500 x 3
-    size piik: 10500 x 3
     
     
-    size MW: (10500, 3)
-    size maxm: (10500, 1)
-    size MW ormalized: (10500, 3)
-    size expMW: (10500, 3)
-    size piik: (10500, 3)
-    """
     MW = M@W; # multiplication matricielle
     maxm = MW.max(1).reshape((len(MW.max(1)), 1))
     print(maxm)
