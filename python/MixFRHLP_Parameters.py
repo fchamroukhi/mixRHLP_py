@@ -57,7 +57,7 @@ class MixParam():
                     self.sigma_g[g,:] = sigma;
         else:
             print('todo: line 41 matlab initialize_MixFRHLP_EM')
-        
+            raise RuntimeError('todo: line 41 matlab initialize_MixFRHLP_EM')
         
         
     def __initRegressionParam(self, Xg, phiBeta, try_EM):

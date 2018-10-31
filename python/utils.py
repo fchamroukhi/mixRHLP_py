@@ -171,6 +171,17 @@ def designmatrix_FRHLP(x,p,q=None):
     start code for normalization of the data
     ########################################
 """
+def log_normalize(matrix):
+    # compute x - repmat(log(sum(exp(x),2)),1,size(x,2)) in a robust way
+    n, d = matrix.shape
+    a = np.array([matrix.max(axis = 1)])
+    a=a.T
+    temp = np.matlib.repmat(a,1,d)
+    temp = np.exp( matrix - temp )
+    temp = np.array([temp.sum(axis = 1)])
+    temp=temp.T
+    return matrix - np.matlib.repmat(a + np.log( temp ) ,1,d)
+
 def normalize_matrix(matrix):
     """
         Scikit-learn normalize function that lets you apply various normalizations. 

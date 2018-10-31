@@ -6,6 +6,7 @@ Created on Sat Oct 27 14:00:40 2018
 @author: bartcus
 """
 import time
+import sys
 import numpy as np
 import utils as utl
 import constants as const
@@ -88,22 +89,22 @@ class MixFRHLP():
             prev_loglik = -np.Inf
             
             #EM
-            self.tau_ijgk = np.zeros(G, const.n*const.m, const.K) # segments post prob  
-            log_tau_ijgk = np.zeros(G, const.n*const.m, const.K)
+            self.tau_ijgk = np.zeros((const.G, const.n*const.m, const.K)) # segments post prob  
+            log_tau_ijgk = np.zeros((const.G, const.n*const.m, const.K))
             
-            log_fg_xij = np.zeros(n,G); 
-            log_alphag_fg_xij = np.zeros(n,G); 
+            log_fg_xij = np.zeros((const.n,const.G))
+            log_alphag_fg_xij = np.zeros((const.n,const.G))
             
             
-            while not(converge) and (iteration<= max_iter_EM):
+            while not(converge) and (iteration<= const.max_iter_EM):
                 """
                 E-Step
                 """
-                
+                self.__EStep(X, phiBeta, log_tau_ijgk, log_fg_xij, log_alphag_fg_xij)
                 """
                 M-Step
                 """
-            
+                self.__MStep()
             
             cpu_time = time.time()-start_time
             cputime_total.append(cpu_time)
@@ -112,7 +113,56 @@ class MixFRHLP():
         utl.globalTrace("End EM\n")
         if trace:
             utl.fileGlobalTrace.close()
-            utl.fileGlobalTrace = None 
+            utl.fileGlobalTrace = None
             
-    
+        
+    def __EStep(self, X, phiBeta, log_tau_ijgk, log_fg_xij, log_alphag_fg_xij):
+        for g in range(0,const.G):
+            alpha_g = self.param.alpha_g
+            beta_g = self.param.beta_g[g,:,:]
+            Wg = self.param.Wg[g,:,:]
+            pi_jgk = self.param.pi_jgk[g,:,:]
+            
+            log_pijgk_fgk_xij = np.zeros((const.n*const.m,const.K))
+            for k in range(0,const.K):
+                beta_gk = beta_g[:,k]
+                if const.variance_type.lower() == 'common':
+                    sgk = self.param.sigma_g(g)
+                else:
+                    sgk = self.param.sigma_g[k,g]
+                
+                temp = phiBeta@beta_gk
+                temp = temp.reshape((len(temp), 1))
+                z=((X-temp)**2)/sgk;
+                
+                temp = np.array([np.log(pi_jgk[:,k]) - 0.5*(np.log(2*np.pi) + np.log(sgk))]).T - 0.5*z
+                log_pijgk_fgk_xij[:,k] = temp[0]; #pdf cond à c_i = g et z_i = k de xij
+                
+                
+            log_pijgk_fgk_xij = np.minimum(log_pijgk_fgk_xij,np.log(sys.float_info.max))
+            log_pijgk_fgk_xij = np.maximum(log_pijgk_fgk_xij,np.log(sys.float_info.min))
+            
+            pijgk_fgk_xij = np.exp(log_pijgk_fgk_xij);
+            sumk_pijgk_fgk_xij = np.array([pijgk_fgk_xij.sum(axis = 1)]) # sum over k
+            sumk_pijgk_fgk_xij = sumk_pijgk_fgk_xij.T 
+            log_sumk_pijgk_fgk_xij  = np.log(sumk_pijgk_fgk_xij) #[nxm x 1]
+            
+            log_tau_ijgk[g,:,:] = log_pijgk_fgk_xij - log_sumk_pijgk_fgk_xij * np.ones((1,const.K));
+            self.tau_ijgk[g,:,:] = np.exp(utl.log_normalize(log_tau_ijgk[g,:,:])); 
+            
+            temp = log_sumk_pijgk_fgk_xij.reshape(const.m,const.n).T
+            log_fg_xij[:,g] = temp.sum(axis = 1); #[n x 1]:  sum over j=1,...,m: fg_xij = prod_j sum_k pi_{jgk} N(x_{ij},mu_{gk},s_{gk))
+            log_alphag_fg_xij[:,g] = np.log(alpha_g[g]) + log_fg_xij[:,g]; # [nxg] 
+            
+        log_alphag_fg_xij = np.minimum(log_alphag_fg_xij,np.log(sys.float_info.max));
+        log_alphag_fg_xij = np.maximum(log_alphag_fg_xij,np.log(sys.float_info.min));
+
+        # cluster posterior probabilities p(c_i=g|X)
+        h_ig = np.exp(utl.log_normalize(log_alphag_fg_xij)); 
+        
+        # log-likelihood
+        temp = np.exp(log_alphag_fg_xij)
+        loglik = sum(np.log(temp.sum(axis = 1)));
+        
+        return loglik, h_ig
 #solution =  MixFRHLP_EM(data); 
