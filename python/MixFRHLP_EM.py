@@ -8,8 +8,10 @@ Created on Sat Oct 27 14:00:40 2018
 import time
 import sys
 import numpy as np
+import math
 import utils as utl
 import constants as const
+import default_constants as defConst
 import MixFRHLP_Parameters as mixParam
         
 class MixFRHLP():
@@ -132,7 +134,8 @@ class MixFRHLP():
                 if const.variance_type.lower() == 'common':
                     sgk = self.param.sigma_g(g)
                 else:
-                    sgk = self.param.sigma_g[k,g]
+                    #todo: verify
+                    sgk = self.param.sigma_g[g,k]
                 
                 temp = phiBeta@beta_gk
                 temp = temp.reshape((len(temp), 1))
@@ -170,16 +173,51 @@ class MixFRHLP():
         return loglik, h_ig
     
     
-    def __MStep(self, h_ig):
+    def __MStep(self, X, phiBeta, h_ig):
         """
         M-step
         """
         # Maximization w.r.t alpha_g
-        self.param.alpha_g = h_ig.sum(axis=1).T/const.n
+        self.param.alpha_g = np.array([h_ig.sum(axis=0)]).T/const.n
         
         # Maximization w.r.t betagk et sigmagk
         for g in range(0,const.G):
-            temp =  np.matlib.repmat(h_ig[:,g],1,const.m)# [m x n]
-        
-        
+            temp =  np.matlib.repmat(h_ig[:,g],const.m,1) # [m x n]
+            cluster_weights = temp.T.reshape(temp.size,1)
+            tauijk = self.tau_ijgk[g,:,:] #[(nxm) x K]
+            if const.variance_type.lower() == 'common':  
+                s = 0 
+            else:
+                sigma_gk = np.zeros((const.K,1))
+            
+            beta_gk = np.NaN * np.empty([const.p +1, const.K])
+            for k in range(0,const.K):
+                segment_weights = np.array([tauijk[:,k]]).T #poids du kieme segment   pour le cluster g  
+                # poids pour avoir K segments floues du gieme cluster flou 
+                phigk = (np.sqrt(cluster_weights*segment_weights)*np.ones((1,const.p+1)))*phiBeta #[(n*m)*(p+1)]
+                Xgk = np.sqrt(cluster_weights*segment_weights)*X
+                
+                # maximization w.r.t beta_gk: Weighted least squares
+                temp = np.linalg.inv(phigk.T@phigk + defConst.eps*np.eye(const.p+1))@phigk.T@Xgk
+                beta_gk[:,k] = temp.ravel() # Maximization w.r.t betagk
+                
+                # Maximization w.r.t au sigma_gk :   
+                if const.variance_type.lower() == 'common':
+                    sk = sum((Xgk-phigk@beta_gk[:,k])**2)
+                    s = s+sk;
+                    sigma_gk = s/sum(sum((cluster_weights@np.ones((1,const.K)))*tauijk))
+                else:
+                    temp = phigk@np.array([beta_gk[:,k]]).T
+                    sigma_gk[k]= sum((Xgk-temp)**2)/(sum(cluster_weights*segment_weights))
+                    
+            self.param.beta_g[g,:,:] = beta_gk;
+            self.param.sigma_g[g,:] = sigma_gk;
+            
+            """
+            Maximization w.r.t W 
+            IRLS : Regression logistique multinomiale pondérée par cluster
+            """
+            Wg_init = self.param.Wg[g,:,:]
+            irls = IRLS(cluster_weights, tauijk, phiW, Wg_init)
+                
 #solution =  MixFRHLP_EM(data); 
