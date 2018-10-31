@@ -88,8 +88,8 @@ class MixFRHLP():
             prev_loglik = -np.Inf
             
             #EM
-            self.tau_ijgk = np.zeros(G, const.n*const.m, K) # segments post prob  
-            log_tau_ijgk = np.zeros(G, const.n*const.m, K)
+            self.tau_ijgk = np.zeros(G, const.n*const.m, const.K) # segments post prob  
+            log_tau_ijgk = np.zeros(G, const.n*const.m, const.K)
             
             log_fg_xij = np.zeros(n,G); 
             log_alphag_fg_xij = np.zeros(n,G); 
