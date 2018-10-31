@@ -9,7 +9,8 @@ Each user is responsible to set these constants according to it's needs
 @author: bartcus
 """
 import os
-
+import numpy as np
+import datasets
 """
     Options of MixFRHLP_EM:
           1. q:  order of the logistic regression (by default 1 for convex segmentation)
@@ -25,19 +26,22 @@ import os
              optimized by IRLS at each IRLS iteration. (IRLS is used at
              each M step of the EM algorithm). (By defalut: verbose_IRLS = 0)
     """
+varianceTypes=['free', 'common']
+
 q=1 # dimension de w (ordre de reg logistique)
-variance_type='free' #type_variance = 'common';
+p = 1 # dimension de beta (ordre de reg polynomiale)
+variance_type = varianceTypes[0]
 total_EM_tries=10
-init_kmeans=1
+init_kmeans=True
 max_iter_EM=1000
 threshold=1e-5
 verbose=0
 verbose_IRLS=0
 
-n_tries = 2;
-G = 3;# nombre de clusters
-K = 3;# nombre de regimes
-p = 1;# dimension de beta (ordre de reg polynomiale)
+n_tries = 2
+G = 3 # nombre de clusters
+K = 3 # nombre de regimes
+
 
 
 """
@@ -62,7 +66,7 @@ if TraceDir == None:
 """
 dataExetension = ".txt"
 
-isGenerateData = True
+isGenerateData = False
 
 if isGenerateData:
     dataName = 'mean_1_flou'
@@ -70,8 +74,11 @@ if isGenerateData:
     outputGeneratedDataFileName = DataSetDir + generatedDataName + dataExetension
 else:
     #Give the name of the data that needs to be loaded
-    dataName=''
+    dataName=datasets.dataFileNames[0]
 
 datafile = DataSetDir + dataName + dataExetension
+
+data = np.loadtxt(datafile)
+n, m= data.shape
 
 

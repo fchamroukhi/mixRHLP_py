@@ -10,7 +10,7 @@ For using this code you need to install python.
 Also we recomand to install anaconda from: [https://www.anaconda.com/download/] that contains a set of usefull data science python packages.
 One of the important packages that we use in our code are:
 1) NumPy [http://www.numpy.org/]
-
+2) Scikit-Learn [http://scikit-learn.org/stable/]
 
 The following python codes contain:
 1) constants.py
