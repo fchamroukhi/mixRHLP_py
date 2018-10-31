@@ -117,6 +117,9 @@ class MixFRHLP():
             
         
     def __EStep(self, X, phiBeta, log_tau_ijgk, log_fg_xij, log_alphag_fg_xij):
+        """
+        E-step
+        """
         for g in range(0,const.G):
             alpha_g = self.param.alpha_g
             beta_g = self.param.beta_g[g,:,:]
@@ -147,22 +150,36 @@ class MixFRHLP():
             sumk_pijgk_fgk_xij = sumk_pijgk_fgk_xij.T 
             log_sumk_pijgk_fgk_xij  = np.log(sumk_pijgk_fgk_xij) #[nxm x 1]
             
-            log_tau_ijgk[g,:,:] = log_pijgk_fgk_xij - log_sumk_pijgk_fgk_xij * np.ones((1,const.K));
-            self.tau_ijgk[g,:,:] = np.exp(utl.log_normalize(log_tau_ijgk[g,:,:])); 
+            log_tau_ijgk[g,:,:] = log_pijgk_fgk_xij - log_sumk_pijgk_fgk_xij * np.ones((1,const.K))
+            self.tau_ijgk[g,:,:] = np.exp(utl.log_normalize(log_tau_ijgk[g,:,:]))
             
             temp = log_sumk_pijgk_fgk_xij.reshape(const.m,const.n).T
-            log_fg_xij[:,g] = temp.sum(axis = 1); #[n x 1]:  sum over j=1,...,m: fg_xij = prod_j sum_k pi_{jgk} N(x_{ij},mu_{gk},s_{gk))
-            log_alphag_fg_xij[:,g] = np.log(alpha_g[g]) + log_fg_xij[:,g]; # [nxg] 
+            log_fg_xij[:,g] = temp.sum(axis = 1) #[n x 1]:  sum over j=1,...,m: fg_xij = prod_j sum_k pi_{jgk} N(x_{ij},mu_{gk},s_{gk))
+            log_alphag_fg_xij[:,g] = np.log(alpha_g[g]) + log_fg_xij[:,g] # [nxg] 
             
-        log_alphag_fg_xij = np.minimum(log_alphag_fg_xij,np.log(sys.float_info.max));
-        log_alphag_fg_xij = np.maximum(log_alphag_fg_xij,np.log(sys.float_info.min));
+        log_alphag_fg_xij = np.minimum(log_alphag_fg_xij,np.log(sys.float_info.max))
+        log_alphag_fg_xij = np.maximum(log_alphag_fg_xij,np.log(sys.float_info.min))
 
         # cluster posterior probabilities p(c_i=g|X)
-        h_ig = np.exp(utl.log_normalize(log_alphag_fg_xij)); 
+        h_ig = np.exp(utl.log_normalize(log_alphag_fg_xij))
         
         # log-likelihood
         temp = np.exp(log_alphag_fg_xij)
-        loglik = sum(np.log(temp.sum(axis = 1)));
+        loglik = sum(np.log(temp.sum(axis = 1)))
         
         return loglik, h_ig
+    
+    
+    def __MStep(self, h_ig):
+        """
+        M-step
+        """
+        # Maximization w.r.t alpha_g
+        self.param.alpha_g = h_ig.sum(axis=1).T/const.n
+        
+        # Maximization w.r.t betagk et sigmagk
+        for g in range(0,const.G):
+            temp =  np.matlib.repmat(h_ig[:,g],1,const.m)# [m x n]
+        
+        
 #solution =  MixFRHLP_EM(data); 
