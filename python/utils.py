@@ -8,7 +8,7 @@ Created on Sat Oct 27 10:29:21 2018
 import numpy as np
 import os
 from sklearn.preprocessing import normalize
-
+import default_constants as defConst
 
 fileGlobalTrace=None
 
@@ -126,8 +126,8 @@ def modele_logit(W,M,Y=None):
             MW= np.minimum(MW,maxm);
             expMW = np.exp(MW);
             
-            eps = np.spacing(1)
-            temp=Y*np.log(expMW.sum(axis=1)*np.ones((1,K))+eps)
+            
+            temp=Y*np.log(expMW.sum(axis=1)*np.ones((1,K))+defConst.eps)
             temp=(Y*MW) - temp
             loglik = sum(temp.sum(axis=1))
         if np.isnan(loglik):
