@@ -83,10 +83,8 @@ class IRLS():
         
         #n,K = Tau.shape
         n,q = M.shape; #q ici c'est (q+1)
-        if Winit == None:
+        if Winit is None:
             Winit = np.zeros((q,const.K-1))
-        else:
-            Winit = Winit
         
         I = np.eye(q*(const.K-1));
         
@@ -105,8 +103,66 @@ class IRLS():
         
         while not converge and  (iteration<max_iter):
             # Hw_old matrice carree de dimensions hx x hx
+            hx = q*(const.K-1)
+            Hw_old = np.zeros((hx,hx))
+            gw_old = np.zeros((q,const.K-1))# todo: verify with matlab this line?
+            
+            # Gradient :
+            for k in range(0,const.K-1):
+                gwk = Gamma*np.array([(Tau[:,k] - piik_old[:,k])]).T
+                for qq in range(0,q):
+                    vq = M[:,qq]
+                    gw_old[qq,k] = gwk.T@vq
+                    
+            gw_old = np.array([np.reshape(gw_old,q*(const.K-1),1)]).T;
+            
+            # Hessienne
+            for k in range(0,const.K-1):
+                for ell in range(0, const.K-1):
+                    delta_kl=int(k==ell) # kronecker delta 
+                    gwk = Gamma*(np.array([piik_old[:,k]]).T*(np.ones((n,1))*delta_kl - np.array([piik_old[:,ell]]).T))
+                    Hkl = np.zeros((q,q))
+                    for qqa in range(0,q):
+                        vqa=np.array([M[:,qqa]]).T
+                        for qqb in range(0,q):
+                            vqb=np.array([M[:,qqb]]).T  
+                            hwk = vqb.T@(gwk*vqa)
+                            Hkl[qqa,qqb] = hwk[0,0]
+                            
+                    #####
+                    #
+                    # todo: see how better write: Hw_old[k*q : (k+1)*q, ell*q : ell*q+2] = -Hkl
+                    #
+                    #####
+                    for kk in range(k*q, (k+1)*q):
+                        for eell in range(ell*q, ell*q+2):
+                            print('kk={0},eell={1}'.format(kk,eell))
+                            Hw_old[kk, eell] = -Hkl[kk, eell]
+                    
+            
+        # si a priori gaussien sur W (lambda ~ 1e-9)
+        Hw_old = Hw_old + lmda*I;
+        gw_old = gw_old - np.array([lmda*W_old.T.ravel()]).T
+        # Newton Raphson : W(c+1) = W(c) - H(W(c))^(-1)g(W(c))  
+        w = np.array([W_old.T.ravel()]).T - np.linalg.inv(Hw_old)@gw_old ; #[(q+1)x(K-1),1]
+        
+        
+        W = reshape(w,q,const.K-1); #[(q+1)*(K-1)] 
         
         if lmda!=0: #pour l'injection de l'a priori dans le calcul de la  loglik de l'EM dans le cas du MAP
             self.reg_irls = - pow(lmda*(np.linalg.norm(W[:],2)),2)
         else:
             self.reg_irls = 0
+            
+def testIRLS():
+    import scipy.io
+    mat = scipy.io.loadmat('data/IRLStest.mat')
+
+    Winit = np.zeros((2,2))
+    Gamma = mat['cluster_weights']
+    M = mat['phiW']
+    Tau = mat['tauijk']
+    del mat
+    
+    
+    
