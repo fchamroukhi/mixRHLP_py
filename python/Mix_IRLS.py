@@ -65,7 +65,7 @@ class IRLS():
 
  Faicel 31 octobre 2008 (mise � jour)
     """
-    def __init__(self, ):
+    def __init__(self):
         self.wk = None
         self.LL= None
         self.loglik = None
@@ -74,7 +74,7 @@ class IRLS():
         
         
         
-    def runIRLS(self, Gamma,Tau,M, Winit = None, trace=False):
+    def runIRLS(self, Gamma, Tau, M, Winit = None, trace=False):
         if trace:
             utl.detect_path(const.TraceDir)
             utl.fileGlobalTrace=open(const.TraceDir + "IRLS_Trace{0}.txt".format(const.dataName), "w")
@@ -129,28 +129,63 @@ class IRLS():
                             hwk = vqb.T@(gwk*vqa)
                             Hkl[qqa,qqb] = hwk[0,0]
                             
-                    #####
-                    #
-                    # todo: see how better write: Hw_old[k*q : (k+1)*q, ell*q : ell*q+2] = -Hkl
-                    #
-                    #####
-                    for kk in range(k*q, (k+1)*q):
-                        for eell in range(ell*q, ell*q+2):
-                            print('kk={0},eell={1}'.format(kk,eell))
-                            Hw_old[kk, eell] = -Hkl[kk, eell]
+                    
+                    Hw_old[k*q : (k+1)*q, ell*q : ell*q+2] = -Hkl
+                    
                     
             
-        # si a priori gaussien sur W (lambda ~ 1e-9)
-        Hw_old = Hw_old + lmda*I;
-        gw_old = gw_old - np.array([lmda*W_old.T.ravel()]).T
-        # Newton Raphson : W(c+1) = W(c) - H(W(c))^(-1)g(W(c))  
-        w = np.array([W_old.T.ravel()]).T - np.linalg.inv(Hw_old)@gw_old ; #[(q+1)x(K-1),1]
+            # si a priori gaussien sur W (lambda ~ 1e-9)
+            Hw_old = Hw_old + lmda*I;
+            gw_old = gw_old - np.array([lmda*W_old.T.ravel()]).T
+            # Newton Raphson : W(c+1) = W(c) - H(W(c))^(-1)g(W(c))  
+            w = np.array([W_old.T.ravel()]).T - np.linalg.inv(Hw_old)@gw_old ; #[(q+1)x(K-1),1]
+            W = np.reshape(w,(q,const.K-1)).T #[(q+1)*(K-1)] 
+            
+            # mise a jour des probas et de la loglik
+            piik, loglik = utl.modele_logit(W, M, Tau ,Gamma)
+            loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
+            
+            """
+            Verifier si Qw1(w^(c+1),w^(c))> Qw1(w^(c),w^(c)) 
+            (adaptation) de Newton Raphson : W(c+1) = W(c) - pas*H(W)^(-1)*g(W)
+            """
+            pas = 1; # initialisation pas d'adaptation de l'algo Newton raphson
+            alpha = 2;
+            while (loglik < loglik_old):
+                pas = pas/alpha; # pas d'adaptation de l'algo Newton raphson
+                #recalcul du parametre W et de la loglik
+                w = np.array([W_old.T.ravel()]).T - pas@np.linalg.inv(Hw_old)@gw_old ;
+                W = np.reshape(w,(q,const.K-1)).T
+                # mise a jour des probas et de la loglik
+                piik, loglik = utl.modele_logit(W, M, Tau ,Gamma)
+                loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
+                
+            converge1 = abs((loglik-loglik_old)/loglik_old) <= 1e-7
+            converge2 = abs(loglik-loglik_old) <= 1e-6
+            
+            converge = converge1 | converge2
+            
+            piik_old = piik;
+            W_old = W;
+            iteration += 1;
+            LL.append(loglik_old)
+            loglik_old = loglik
+            
+            utl.globalTrace('IRLS : Iteration {0} Log-vraisemblance {1} \n'.format(iteration, loglik_old))
+        utl.globalTrace('Fin IRLS \n')
         
-        
-        W = reshape(w,q,const.K-1); #[(q+1)*(K-1)] 
-        
+        if converge:
+            utl.globalTrace('\n IRLS : convergence  OK ; nbre d''iterations : {0}\n'.format(iteration))
+        else:
+            utl.globalTrace('\n IRLS : pas de convergence (augmenter le nombre d''iterations > {0}) \n'.format(iteration))
+            
+            
+        self.wk = W;
+        self.LL= LL;
+        self.loglik = loglik;
+        self.piik = piik;    
         if lmda!=0: #pour l'injection de l'a priori dans le calcul de la  loglik de l'EM dans le cas du MAP
-            self.reg_irls = - pow(lmda*(np.linalg.norm(W[:],2)),2)
+            self.reg_irls = - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
         else:
             self.reg_irls = 0
             
@@ -162,7 +197,10 @@ def testIRLS():
     Gamma = mat['cluster_weights']
     M = mat['phiW']
     Tau = mat['tauijk']
+    irls = IRLS()
+    irls.runIRLS(Gamma, Tau, M, Winit)
     del mat
+    return irls
     
-    
+irls = testIRLS()   
     
