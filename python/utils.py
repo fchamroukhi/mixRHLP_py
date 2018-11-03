@@ -33,7 +33,7 @@ def detect_path(pathname):
         os.makedirs(pathname, exist_ok=True)
         
 
-def modele_logit(W,M,Y=None):
+def modele_logit(W,M,Y=None, Gamma=None):
     """
      [probas, loglik] = modele_logit(W,X,Y)
     
@@ -78,8 +78,12 @@ def modele_logit(W,M,Y=None):
      probas de la fa�oc suivante : probas = modele_logit(W,M)
     """
     #todo: verify this code when Y != none
-    if Y != None:
+    if Y is not None:
         n1, K = Y.shape
+        
+        if Gamma is not None:
+            Gamma = Gamma*np.ones((1,K))
+            
         n2, q = M.shape # ici q c'est q+1
         if n1==n2:
             n=n1;
@@ -88,7 +92,7 @@ def modele_logit(W,M,Y=None):
     else:
         n,q=M.shape
         
-    if Y != None:
+    if Y is not None:
         #todo: finish this code
         if np.size(W,1) == (K-1): # pas de vecteur nul dans W donc l'ajouter
             wK=np.zeros((q,1));
@@ -103,7 +107,6 @@ def modele_logit(W,M,Y=None):
     
     MW = M@W; # multiplication matricielle
     maxm = MW.max(1).reshape((len(MW.max(1)), 1))
-    print(maxm)
     MW = MW - maxm @ np.ones((1,K)); #normalisation
     
     expMW = np.exp(MW)
@@ -114,10 +117,16 @@ def modele_logit(W,M,Y=None):
     
     probas = expMW/frc;
     
-    if Y != None:
-        temp=Y*np.log(expMW.sum(axis=1)*np.ones((1,K)))
-        temp=(Y*MW) - temp
-        loglik = sum(temp.sum(axis=1));
+    if Y is not None:
+        if Gamma is None:
+            temp = Y*np.log(expMW.sum(axis=1)*np.ones((1,K)))
+            temp = (Y*MW) - temp
+            loglik = sum(temp.sum(axis=1))
+        else:
+            temp = (Gamma*Y)*np.log(np.array([expMW.sum(axis=1)]).T*np.ones((1,K)))
+            temp = (Gamma*(Y*MW)) - temp
+            loglik = sum(temp.sum(axis=1))
+        
         if np.isnan(loglik):
             MW=M@W;
             minm = -745.1;
@@ -126,10 +135,15 @@ def modele_logit(W,M,Y=None):
             MW= np.minimum(MW,maxm);
             expMW = np.exp(MW);
             
-            
-            temp=Y*np.log(expMW.sum(axis=1)*np.ones((1,K))+defConst.eps)
-            temp=(Y*MW) - temp
-            loglik = sum(temp.sum(axis=1))
+            if Gamma is None:
+                temp=Y*np.log(expMW.sum(axis=1)*np.ones((1,K))+defConst.eps)
+                temp=(Y*MW) - temp
+                loglik = sum(temp.sum(axis=1))
+            else:
+                temp=(Gamma*Y)*np.log(expMW.sum(axis=1)*np.ones((1,K))+defConst.eps)
+                temp=((Gamma*Y)*MW) - temp
+                loglik = sum(temp.sum(axis=1))
+                
         if np.isnan(loglik):
             raise ValueError('Probleme loglik IRLS NaN (!!!)')
     else:
@@ -203,4 +217,5 @@ def test_norm():
     #[ 0.28571429  0.33333333  0.38095238]]
     
 #test_norm()
+    
     
