@@ -189,6 +189,12 @@ class IRLS():
         else:
             self.reg_irls = 0
             
+        
+        if trace:
+            utl.fileGlobalTrace.close()
+            utl.fileGlobalTrace = None  
+            
+            
 def testIRLS():
     import scipy.io
     mat = scipy.io.loadmat('data/IRLStest.mat')

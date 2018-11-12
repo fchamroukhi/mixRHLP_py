@@ -13,7 +13,24 @@ import utils as utl
 import constants as const
 import default_constants as defConst
 import MixFRHLP_Parameters as mixParam
-        
+import MixIRLS as mixirls
+
+
+class MixFRHLPSolution():
+    def __init__(self):
+        self.param = np.NaN
+        self.Psi = np.NaN
+        self.h_ig = np.NaN*np.empty([const.n, const.G])
+        self.c_ig = np.NaN
+        self.klas = np.NaN*np.empty([const.n, 1])
+        self.tau_ijgk = np.NaN*np.empty([const.G, const.n * const.m, const.K])
+        self.Ex_g = np.NaN*np.empty([const.m, const.G])
+        self.loglik = np.NaN
+        self.stored_loglik = np.NaN*np.empty([1, const.total_EM_tries])
+        self.comp_loglik = np.NaN
+        self.stored_com_loglik = np.NaN*np.empty([1, const.total_EM_tries])
+        self.log_alphag_fg_xij = np.zeros((const.n,const.G))
+
 class MixFRHLP():
     """
           1. param : the model parameters MixParam class
@@ -50,8 +67,13 @@ class MixFRHLP():
         self.klas = np.NaN*np.empty([const.n, 1])
         self.tau_ijgk = np.NaN*np.empty([const.G, const.n * const.m, const.K])
         self.Ex_g = np.NaN*np.empty([const.m, const.G])
+        self.loglik = np.NaN
+        self.stored_loglik = np.NaN*np.empty([1, const.total_EM_tries])
         self.comp_loglik = np.NaN
         self.stored_com_loglik = np.NaN*np.empty([1, const.total_EM_tries])
+        self.log_alphag_fg_xij = np.zeros((const.n,const.G))
+        
+        self.mixSolution = MixFRHLPSolution()
         
     def fit_EM(self, trace=True):
         """
@@ -95,30 +117,65 @@ class MixFRHLP():
             log_tau_ijgk = np.zeros((const.G, const.n*const.m, const.K))
             
             log_fg_xij = np.zeros((const.n,const.G))
-            log_alphag_fg_xij = np.zeros((const.n,const.G))
+            self.log_alphag_fg_xij = np.zeros((const.n,const.G))
             
             
             while not(converge) and (iteration<= const.max_iter_EM):
                 """
                 E-Step
                 """
-                self.__EStep(X, phiBeta, log_tau_ijgk, log_fg_xij, log_alphag_fg_xij)
+                self.__EStep(X, phiBeta, log_tau_ijgk, log_fg_xij)
                 """
                 M-Step
                 """
-                self.__MStep()
+                self.__MStep(X, phiBeta, phiW)
+                
+                #FIN EM
+                
+                iteration+=1
+                
+                utl.globalTrace('EM   : Iteration : {0}   log-likelihood : {1} \n'.format(iteration, self.loglik))
+                if prev_loglik-self.loglik>1e-5:
+                    utl.globalTrace('!!!!! EM log-likelihood is decreasing from {0} to {1}!\n'.format(prev_loglik, self.loglik))
+                    top+=1
+                    if top>20:
+                        break
+                
+                converge = abs((self.loglik-prev_loglik)/prev_loglik)<=const.threshold
+                prev_loglik = self.loglik;
+                self.stored_loglik.append(self.loglik)  
+            
             
             cpu_time = time.time()-start_time
             cputime_total.append(cpu_time)
             
-            
+            self.Psi = np.array([self.param.alpha_g.T.ravel(), self.param.Wg.T.ravel(), self.param.beta_g.T.ravel(), self.param.sigma_g.T.ravel()])
+            if self.loglik > best_loglik:
+                self.mixSolution.param = self.param
+                self.mixSolution.Psi = self.Psi
+                self.mixSolution.h_ig = self.h_ig
+                #self.mixSolution.c_ig = self.c_ig
+                #self.mixSolution.klas = self.klas
+                self.mixSolution.tau_ijgk = self.tau_ijgk
+                self.mixSolution.Ex_g = self.Ex_g
+                self.mixSolution.loglik = self.loglik
+                self.mixSolution.stored_loglik = self.stored_loglik
+                self.mixSolution.log_alphag_fg_xij = self.log_alphag_fg_xij
+                
+                best_loglik = self.loglik
+                
+            if const.total_EM_tries>1:
+                utl.globalTrace('max value: {0} \n',self.loglik)
+                
+        self.mixSolution.klas, self.mixSolution.c_ig = utl.MAP(self.mixSolution.h_ig); # c_ig the hard partition of the curves
+        
         utl.globalTrace("End EM\n")
         if trace:
             utl.fileGlobalTrace.close()
             utl.fileGlobalTrace = None
             
         
-    def __EStep(self, X, phiBeta, log_tau_ijgk, log_fg_xij, log_alphag_fg_xij):
+    def __EStep(self, X, phiBeta, log_tau_ijgk, log_fg_xij):
         """
         E-step
         """
@@ -158,31 +215,30 @@ class MixFRHLP():
             
             temp = log_sumk_pijgk_fgk_xij.reshape(const.m,const.n).T
             log_fg_xij[:,g] = temp.sum(axis = 1) #[n x 1]:  sum over j=1,...,m: fg_xij = prod_j sum_k pi_{jgk} N(x_{ij},mu_{gk},s_{gk))
-            log_alphag_fg_xij[:,g] = np.log(alpha_g[g]) + log_fg_xij[:,g] # [nxg] 
+            self.log_alphag_fg_xij[:,g] = np.log(alpha_g[g]) + log_fg_xij[:,g] # [nxg] 
             
-        log_alphag_fg_xij = np.minimum(log_alphag_fg_xij,np.log(sys.float_info.max))
-        log_alphag_fg_xij = np.maximum(log_alphag_fg_xij,np.log(sys.float_info.min))
+        self.log_alphag_fg_xij = np.minimum(self.log_alphag_fg_xij,np.log(sys.float_info.max))
+        self.log_alphag_fg_xij = np.maximum(self.log_alphag_fg_xij,np.log(sys.float_info.min))
 
         # cluster posterior probabilities p(c_i=g|X)
-        h_ig = np.exp(utl.log_normalize(log_alphag_fg_xij))
+        self.h_ig = np.exp(utl.log_normalize(self.log_alphag_fg_xij))
         
         # log-likelihood
-        temp = np.exp(log_alphag_fg_xij)
-        loglik = sum(np.log(temp.sum(axis = 1)))
+        temp = np.exp(self.log_alphag_fg_xij)
+        self.loglik = sum(np.log(temp.sum(axis = 1)))
         
-        return loglik, h_ig
     
     
-    def __MStep(self, X, phiBeta, h_ig):
+    def __MStep(self, X, phiBeta, phiW):
         """
         M-step
         """
         # Maximization w.r.t alpha_g
-        self.param.alpha_g = np.array([h_ig.sum(axis=0)]).T/const.n
+        self.param.alpha_g = np.array([self.h_ig.sum(axis=0)]).T/const.n
         
         # Maximization w.r.t betagk et sigmagk
         for g in range(0,const.G):
-            temp =  np.matlib.repmat(h_ig[:,g],const.m,1) # [m x n]
+            temp =  np.matlib.repmat(self.h_ig[:,g],const.m,1) # [m x n]
             cluster_weights = temp.T.reshape(temp.size,1)
             tauijk = self.tau_ijgk[g,:,:] #[(nxm) x K]
             if const.variance_type.lower() == 'common':  
@@ -218,6 +274,9 @@ class MixFRHLP():
             IRLS : Regression logistique multinomiale pondérée par cluster
             """
             Wg_init = self.param.Wg[g,:,:]
-            irls = IRLS(cluster_weights, tauijk, phiW, Wg_init)
-                
+            irls = mixirls.IRLS()
+            irls.runIRLS(cluster_weights, tauijk, phiW, Wg_init)
+            
+            self.param.Wg[g,:,:]=irls.wk;             
+            self.param.pi_jgk[g,:,:] = np.matlib.repmat(irls.piik[1:const.m,:],const.n,1); 
 #solution =  MixFRHLP_EM(data); 
