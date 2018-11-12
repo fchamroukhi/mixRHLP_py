@@ -8,7 +8,6 @@ Created on Sat Oct 27 14:00:40 2018
 import time
 import sys
 import numpy as np
-import math
 import utils as utl
 import constants as const
 import default_constants as defConst
@@ -17,19 +16,39 @@ import MixIRLS as mixirls
 
 
 class MixFRHLPSolution():
-    def __init__(self):
-        self.param = np.NaN
-        self.Psi = np.NaN
-        self.h_ig = np.NaN*np.empty([const.n, const.G])
-        self.c_ig = np.NaN
+    def __init__(self, param, Psi, h_ig, tau_ijgk, Ex_g, loglik, stored_loglik, log_alphag_fg_xij):
+        self.param = param
+        self.Psi = Psi
+        self.h_ig = h_ig
+        self.tau_ijgk = tau_ijgk
+        self.Ex_g = Ex_g
+        self.loglik = loglik
+        self.stored_loglik = stored_loglik
+        self.log_alphag_fg_xij = log_alphag_fg_xij
+        
+        #klas and c_ig are recomputed by MAP
         self.klas = np.NaN*np.empty([const.n, 1])
-        self.tau_ijgk = np.NaN*np.empty([const.G, const.n * const.m, const.K])
-        self.Ex_g = np.NaN*np.empty([const.m, const.G])
-        self.loglik = np.NaN
-        self.stored_loglik = np.NaN*np.empty([1, const.total_EM_tries])
-        self.comp_loglik = np.NaN
-        self.stored_com_loglik = np.NaN*np.empty([1, const.total_EM_tries])
-        self.log_alphag_fg_xij = np.zeros((const.n,const.G))
+        self.c_ig = np.NaN
+        
+    def setCompleteSolution(self, phiBeta, cputime_total):
+        for g in range(0,const.G):
+            self.polynomials[g,:,:] = phiBeta[0:const.m,:]@self.param.beta_g[g,:,:]
+            self.weighted_polynomials[g,:,:] = self.param.pi_jgk[g,:,:]*self.polynomials[g,:,:]
+            self.Ex_g[:,g] = self.weighted_polynomials[g,:,:].sum(axis=1); 
+        
+        self.mixSolution.Ex_g = self.mixSolution.Ex_g[0:const.m,:] 
+        self.mixSolution.cputime = np.mean(cputime_total)
+        
+        nu = len(self.Psi);
+        # BIC AIC et ICL*
+        self.BIC = self.loglik - (nu*np.log(const.n)/2) #n*m/2!
+        self.AIC = self.loglik - nu
+        # ICL*             
+        # Compute the comp-log-lik 
+        cig_log_alphag_fg_xij = (self.c_ig)*(self.log_alphag_fg_xij);
+        comp_loglik = sum(cig_log_alphag_fg_xij.sum(axis=1)) 
+
+        self.ICL = comp_loglik - nu*np.log(const.n)/2 #n*m/2!
 
 class MixFRHLP():
     """
@@ -151,24 +170,22 @@ class MixFRHLP():
             
             self.Psi = np.array([self.param.alpha_g.T.ravel(), self.param.Wg.T.ravel(), self.param.beta_g.T.ravel(), self.param.sigma_g.T.ravel()])
             if self.loglik > best_loglik:
-                self.mixSolution.param = self.param
-                self.mixSolution.Psi = self.Psi
-                self.mixSolution.h_ig = self.h_ig
-                #self.mixSolution.c_ig = self.c_ig
-                #self.mixSolution.klas = self.klas
-                self.mixSolution.tau_ijgk = self.tau_ijgk
-                self.mixSolution.Ex_g = self.Ex_g
-                self.mixSolution.loglik = self.loglik
-                self.mixSolution.stored_loglik = self.stored_loglik
-                self.mixSolution.log_alphag_fg_xij = self.log_alphag_fg_xij
-                
+                self.bestSolution = MixFRHLPSolution(self.param, self.Psi, self.h_ig, self.tau_ijgk, self.Ex_g, self.loglik, self.stored_loglik, self.log_alphag_fg_xij)
                 best_loglik = self.loglik
                 
             if const.total_EM_tries>1:
-                utl.globalTrace('max value: {0} \n',self.loglik)
-                
-        self.mixSolution.klas, self.mixSolution.c_ig = utl.MAP(self.mixSolution.h_ig); # c_ig the hard partition of the curves
+                utl.globalTrace('max value: {0} \n',self.mixSolution.loglik)
         
+              
+        self.bestSolution.klas, self.bestSolution.c_ig = utl.MAP(self.bestSolution.h_ig); # c_ig the hard partition of the curves
+        
+        
+        if const.total_EM_tries>1:
+            utl.globalTrace('max value: {0} \n',self.mixSolution.loglik)
+        
+        self.bestSolution.setCompleteSolution(phiBeta, cpu_time)
+        
+
         utl.globalTrace("End EM\n")
         if trace:
             utl.fileGlobalTrace.close()
