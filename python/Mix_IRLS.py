@@ -92,7 +92,7 @@ class IRLS():
         W_old = Winit;
         
         piik_old, loglik_old = utl.modele_logit(W_old,M,Tau,Gamma);
-        loglik_old = loglik_old - pow(lmda*(np.linalg.norm(W_old[:],2)),2)
+        loglik_old = loglik_old - pow(lmda*(np.linalg.norm(W_old.T.ravel(),2)),2)
         
         iteration = 0;
         converge = False;
@@ -143,22 +143,27 @@ class IRLS():
             
             # mise a jour des probas et de la loglik
             piik, loglik = utl.modele_logit(W, M, Tau ,Gamma)
+            
             loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
             
             """
             Verifier si Qw1(w^(c+1),w^(c))> Qw1(w^(c),w^(c)) 
             (adaptation) de Newton Raphson : W(c+1) = W(c) - pas*H(W)^(-1)*g(W)
             """
-            pas = 1; # initialisation pas d'adaptation de l'algo Newton raphson
-            alpha = 2;
-            while (loglik < loglik_old):
-                pas = pas/alpha; # pas d'adaptation de l'algo Newton raphson
-                #recalcul du parametre W et de la loglik
-                w = np.array([W_old.T.ravel()]).T - pas@np.linalg.inv(Hw_old)@gw_old ;
-                W = np.reshape(w,(q,const.K-1)).T
-                # mise a jour des probas et de la loglik
-                piik, loglik = utl.modele_logit(W, M, Tau ,Gamma)
-                loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
+#            pas = 1; # initialisation pas d'adaptation de l'algo Newton raphson
+#            alpha = 2;
+#            print(loglik)
+#            print(loglik_old)
+#            while (loglik < loglik_old):
+#                pas = pas/alpha; # pas d'adaptation de l'algo Newton raphson
+#                #recalcul du parametre W et de la loglik
+#                w = np.array([W_old.T.ravel()]).T - pas*np.linalg.inv(Hw_old)@gw_old ;
+#                W = np.reshape(w,(q,const.K-1)).T
+#                # mise a jour des probas et de la loglik
+#                print('Start model logit')
+#                piik, loglik = utl.modele_logit(W, M, Tau ,Gamma)
+#                print('end model logit')
+#                loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
                 
             converge1 = abs((loglik-loglik_old)/loglik_old) <= 1e-7
             converge2 = abs(loglik-loglik_old) <= 1e-6
@@ -175,9 +180,9 @@ class IRLS():
         utl.globalTrace('Fin IRLS \n')
         
         if converge:
-            utl.globalTrace('\n IRLS : convergence  OK ; nbre d''iterations : {0}\n'.format(iteration))
+            utl.globalTrace('IRLS : convergence  OK ; nbre d''iterations : {0}\n'.format(iteration))
         else:
-            utl.globalTrace('\n IRLS : pas de convergence (augmenter le nombre d''iterations > {0}) \n'.format(iteration))
+            utl.globalTrace('\nIRLS : pas de convergence (augmenter le nombre d''iterations > {0}) \n'.format(iteration))
             
             
         self.wk = W;
@@ -208,5 +213,5 @@ def testIRLS():
     del mat
     return irls
     
-irls = testIRLS()   
+#irls = testIRLS()   
     

@@ -35,7 +35,7 @@ def detect_path(pathname):
 
 def modele_logit(W,M,Y=None, Gamma=None):
     """
-     [probas, loglik] = modele_logit(W,X,Y)
+     [probas, loglik] = modele_logit(W,X,Y)M try: 1
     
      calcule les pobabilites selon un le modele logistique suivant :
     
@@ -126,6 +126,7 @@ def modele_logit(W,M,Y=None, Gamma=None):
             temp = (Gamma*Y)*np.log(np.array([expMW.sum(axis=1)]).T*np.ones((1,K)))
             temp = (Gamma*(Y*MW)) - temp
             loglik = sum(temp.sum(axis=1))
+            
         
         if np.isnan(loglik):
             MW=M@W;
@@ -208,8 +209,10 @@ def MAP(post_probas):
     
     """
     N, K = post_probas.shape
-    tmp,ikmax = post_probas.max(1)
-    partition_MAP = (ikmax@np.ones((0,K))) == (np.ones((N,1))@np.array([range(0,K)]));
+    
+    ikmax = post_probas.max(1)
+    ikmax = np.reshape(ikmax,(ikmax.size,1))
+    partition_MAP = (ikmax@np.ones((1,K))) == (np.ones((N,1))@np.array([range(0,K)]));
     klas = np.ones((N,1))
     for k in range(0,K):
         klas[partition_MAP[:,k]==1]=k

@@ -104,20 +104,21 @@ class MixParam():
             #random initialization
             Lmin= round(m/(const.K+1)) #nbr pts min dans un segments
             tk_init = [0] * (const.K+1)
+            tk_init[0]=-1
             K_1=const.K;
             #todo: verify indexes ???
-            for k in range(0,const.K-1):
-                K_1 = K_1-1;
-                temp = np.arange(tk_init[k]+Lmin,m-K_1*Lmin+1)
+            for k in range(1,const.K):
+                K_1 = K_1-1
+                temp = np.arange(tk_init[k-1]+Lmin,m-K_1*Lmin)
                 ind = np.random.permutation(len(temp))
-                tk_init[k+1]= temp[ind[0]];
+                tk_init[k]= temp[ind[0]];
                 
-            tk_init[const.K] = m; 
+            tk_init[const.K] = m-1; 
             
             sigma=[]
             betak_list = []
-            for k in range(0, const.K-1):
-                i = tk_init[k];
+            for k in range(0, const.K):
+                i = tk_init[k]+1;
                 j = tk_init[k+1];
                 Xij = Xg[:,i:j];
                 Xij = np.reshape(Xij.T,(np.prod(Xij.shape), 1))
@@ -133,10 +134,8 @@ class MixParam():
                     #todo: verify if sk is always one value and not a matrix
                     sk = z.T@z/(n*mk); 
                     sigma.append(sk[0][0])
-                    
             #remake betak
             betak = np.hstack(betak_list)
-            
         return betak, sigma
                 
     def __initHlp(self, phiW, try_EM):
@@ -161,7 +160,7 @@ def main_initialize():
     #pour les n courbes (regularly sampled)
     phiBeta = np.matlib.repmat(phiBeta, const.n, 1);
     phiW = np.matlib.repmat(phiW, const.n, 1);
-    try_EM = 1
+    try_EM = 2
     
     param = MixParam()
     param.initialize_MixFRHLP_EM(phiBeta, phiW, try_EM)

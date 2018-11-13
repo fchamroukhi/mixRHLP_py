@@ -12,12 +12,14 @@ import utils as utl
 import constants as const
 import default_constants as defConst
 import MixFRHLP_Parameters as mixParam
-import MixIRLS as mixirls
+import Mix_IRLS as mixirls
+import matplotlib.pyplot as plt
 
 
 class MixFRHLPSolution():
     def __init__(self, param, Psi, h_ig, tau_ijgk, Ex_g, loglik, stored_loglik, log_alphag_fg_xij):
         self.param = param
+        self.param.pi_jgk = self.param.pi_jgk[:,0:const.m,:]
         self.Psi = Psi
         self.h_ig = h_ig
         self.tau_ijgk = tau_ijgk
@@ -30,14 +32,18 @@ class MixFRHLPSolution():
         self.klas = np.NaN*np.empty([const.n, 1])
         self.c_ig = np.NaN
         
+        self.polynomials = np.NaN*np.empty([const.G, const.m, const.K])
+        self.weighted_polynomials = np.NaN*np.empty([const.G, const.m, const.K])
+        
     def setCompleteSolution(self, phiBeta, cputime_total):
         for g in range(0,const.G):
             self.polynomials[g,:,:] = phiBeta[0:const.m,:]@self.param.beta_g[g,:,:]
+            print(self.param.pi_jgk[g,:,:].shape)
             self.weighted_polynomials[g,:,:] = self.param.pi_jgk[g,:,:]*self.polynomials[g,:,:]
             self.Ex_g[:,g] = self.weighted_polynomials[g,:,:].sum(axis=1); 
         
-        self.mixSolution.Ex_g = self.mixSolution.Ex_g[0:const.m,:] 
-        self.mixSolution.cputime = np.mean(cputime_total)
+        self.Ex_g = self.Ex_g[0:const.m,:] 
+        self.cputime = np.mean(cputime_total)
         
         nu = len(self.Psi);
         # BIC AIC et ICL*
@@ -87,12 +93,12 @@ class MixFRHLP():
         self.tau_ijgk = np.NaN*np.empty([const.G, const.n * const.m, const.K])
         self.Ex_g = np.NaN*np.empty([const.m, const.G])
         self.loglik = np.NaN
-        self.stored_loglik = np.NaN*np.empty([1, const.total_EM_tries])
+        self.stored_loglik = np.NaN*np.empty([const.total_EM_tries,1])
         self.comp_loglik = np.NaN
         self.stored_com_loglik = np.NaN*np.empty([1, const.total_EM_tries])
         self.log_alphag_fg_xij = np.zeros((const.n,const.G))
         
-        self.mixSolution = MixFRHLPSolution()
+        #self.mixSolution = MixFRHLPSolution()
         
     def fit_EM(self, trace=True):
         """
@@ -159,11 +165,10 @@ class MixFRHLP():
                     top+=1
                     if top>20:
                         break
-                
                 converge = abs((self.loglik-prev_loglik)/prev_loglik)<=const.threshold
+                
                 prev_loglik = self.loglik;
-                self.stored_loglik.append(self.loglik)  
-            
+                self.stored_loglik[iteration-1]=self.loglik
             
             cpu_time = time.time()-start_time
             cputime_total.append(cpu_time)
@@ -174,14 +179,14 @@ class MixFRHLP():
                 best_loglik = self.loglik
                 
             if const.total_EM_tries>1:
-                utl.globalTrace('max value: {0} \n',self.mixSolution.loglik)
+                utl.globalTrace('max value: {0} \n'.format(self.loglik))
         
               
         self.bestSolution.klas, self.bestSolution.c_ig = utl.MAP(self.bestSolution.h_ig); # c_ig the hard partition of the curves
         
         
         if const.total_EM_tries>1:
-            utl.globalTrace('max value: {0} \n',self.mixSolution.loglik)
+            utl.globalTrace('max value: {0} \n'.format(self.loglik))
         
         self.bestSolution.setCompleteSolution(phiBeta, cpu_time)
         
@@ -283,8 +288,8 @@ class MixFRHLP():
                     temp = phigk@np.array([beta_gk[:,k]]).T
                     sigma_gk[k]= sum((Xgk-temp)**2)/(sum(cluster_weights*segment_weights))
                     
-            self.param.beta_g[g,:,:] = beta_gk;
-            self.param.sigma_g[g,:] = sigma_gk;
+            self.param.beta_g[g,:,:] = beta_gk
+            self.param.sigma_g[g,:] = list(sigma_gk)
             
             """
             Maximization w.r.t W 
@@ -294,6 +299,16 @@ class MixFRHLP():
             irls = mixirls.IRLS()
             irls.runIRLS(cluster_weights, tauijk, phiW, Wg_init)
             
+#            a=irls.piik[0:const.m,:]
+#            plt.plot(a)
+#            plt.show()
+            
             self.param.Wg[g,:,:]=irls.wk;             
-            self.param.pi_jgk[g,:,:] = np.matlib.repmat(irls.piik[1:const.m,:],const.n,1); 
-#solution =  MixFRHLP_EM(data); 
+            self.param.pi_jgk[g,:,:] = np.matlib.repmat(irls.piik[0:const.m,:],const.n,1); 
+            
+def main_script():
+    solution =  MixFRHLP(); 
+    solution.fit_EM()
+    return solution
+
+s = main_script()
