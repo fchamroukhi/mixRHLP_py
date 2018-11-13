@@ -1,0 +1,22 @@
+Start EM
+EM try: 1
+Start IRLS
+IRLS : Iteration 0 Log-vraisemblance -11535.429031013735 
+IRLS : Iteration 1 Log-vraisemblance -11527.139925242154 
+IRLS : Iteration 2 Log-vraisemblance -11527.138266052367 
+IRLS : Iteration 3 Log-vraisemblance -11527.138266052367 
+Fin IRLS 
+IRLS : convergence  OK ; nbre diterations : 3
+Start IRLS
+IRLS : Iteration 0 Log-vraisemblance -1.192248269335182e-39 
+IRLS : Iteration 1 Log-vraisemblance -1.192248269335182e-39 
+Fin IRLS 
+IRLS : convergence  OK ; nbre diterations : 1
+Start IRLS
+IRLS : Iteration 0 Log-vraisemblance -6.42696260612667e-11 
+IRLS : Iteration 1 Log-vraisemblance -6.42696260612667e-11 
+Fin IRLS 
+IRLS : convergence  OK ; nbre diterations : 1
+EM   : Iteration : 1   log-likelihood : -13183.304916665697 
+Start IRLS
+IRLS : Iteration 0 Log-vraisemblance -11527.138266052361 
