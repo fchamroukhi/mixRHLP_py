@@ -160,7 +160,7 @@ def main_initialize():
     #pour les n courbes (regularly sampled)
     phiBeta = np.matlib.repmat(phiBeta, const.n, 1);
     phiW = np.matlib.repmat(phiW, const.n, 1);
-    try_EM = 2
+    try_EM = 1
     
     param = MixParam()
     param.initialize_MixFRHLP_EM(phiBeta, phiW, try_EM)
