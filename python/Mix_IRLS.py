@@ -8,6 +8,7 @@ Created on Wed Oct 31 17:04:19 2018
 import utils as utl
 import constants as const
 import numpy as np
+import os
 
 #load lambda;
 lmda = 1e-9 # cas du MAP ( a priori gaussien sur W) (penalisation L2)
@@ -115,6 +116,8 @@ class IRLS():
                     gw_old[qq,k] = gwk.T@vq
                     
             gw_old = np.array([np.reshape(gw_old,q*(const.K-1),1)]).T;
+            
+            
             
             # Hessienne
             for k in range(0,const.K-1):
