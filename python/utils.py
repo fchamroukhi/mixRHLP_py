@@ -9,6 +9,7 @@ import numpy as np
 import os
 from sklearn.preprocessing import normalize
 import default_constants as defConst
+import matplotlib.pyplot as plt
 
 fileGlobalTrace=None
 
@@ -106,7 +107,8 @@ def modele_logit(W,M,Y=None, Gamma=None):
     
     
     MW = M@W; # multiplication matricielle
-    maxm = MW.max(1).reshape((len(MW.max(1)), 1))
+    maxm = MW.max(1)
+    maxm = maxm.reshape((len(maxm), 1))
     MW = MW - maxm @ np.ones((1,K)); #normalisation
     
     expMW = np.exp(MW)
@@ -210,7 +212,7 @@ def MAP(post_probas):
     """
     N, K = post_probas.shape
     
-    ikmax = post_probas.max(1)
+    ikmax = np.argmax(post_probas,axis=1)
     ikmax = np.reshape(ikmax,(ikmax.size,1))
     partition_MAP = (ikmax@np.ones((1,K))) == (np.ones((N,1))@np.array([range(0,K)]));
     klas = np.ones((N,1))
@@ -235,6 +237,32 @@ def log_normalize(matrix):
     temp=temp.T
     return matrix - np.matlib.repmat(a + np.log( temp ) ,1,d)
 
+
+def showResults(data, solution):
+    n,m = data.shape
+    klas = solution.bestSolution.klas.reshape(n)
+    font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : 14}
+
+    plt.matplotlib.rc('font', **font)
+    t = np.arange(m)
+    G = len(solution.bestSolution.param.alpha_g);
+    colors = ['r','b','g','m','c','k','y']
+    colors_cluster_means = [[0.8, 0, 0],[0, 0, 0.8],[0, 0.8, 0],'m','c','k','y']
+    
+    for g in range(0,G):
+        cluster_g = data[klas==g ,:];
+        plt.plot(t,cluster_g.T,colors[g],linewidth=0.1);    
+        plt.plot(t,solution.bestSolution.Ex_g[:,g], colors_cluster_means[g],linewidth=3)
+    plt.xlabel('Time')
+    plt.ylabel('y')
+    plt.xlim(0, m-1)
+    plt.show()
+    
+    
+    
+
 def normalize_matrix(matrix):
     """
         Scikit-learn normalize function that lets you apply various normalizations. 
@@ -243,6 +271,7 @@ def normalize_matrix(matrix):
     """
     normed_matrix = normalize(matrix, axis=1, norm='l1')  
     return normed_matrix
+
 
 
 def test_norm():

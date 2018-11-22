@@ -76,10 +76,7 @@ class IRLS():
         
         
     def runIRLS(self, Gamma, Tau, M, Winit = None, trace=False):
-        if trace:
-            utl.detect_path(const.TraceDir)
-            utl.fileGlobalTrace=open(const.TraceDir + "IRLS_Trace{0}.txt".format(const.dataName), "w")
-        utl.globalTrace("Start IRLS\n")
+        #utl.globalTrace("Start IRLS\n")
         
         
         #n,K = Tau.shape
@@ -155,17 +152,17 @@ class IRLS():
             """
 #            pas = 1; # initialisation pas d'adaptation de l'algo Newton raphson
 #            alpha = 2;
-#            print(loglik)
-#            print(loglik_old)
+#            #print(loglik)
+#            #print(loglik_old)
 #            while (loglik < loglik_old):
 #                pas = pas/alpha; # pas d'adaptation de l'algo Newton raphson
 #                #recalcul du parametre W et de la loglik
 #                w = np.array([W_old.T.ravel()]).T - pas*np.linalg.inv(Hw_old)@gw_old ;
 #                W = np.reshape(w,(q,const.K-1)).T
 #                # mise a jour des probas et de la loglik
-#                print('Start model logit')
+#                #print('Start model logit')
 #                piik, loglik = utl.modele_logit(W, M, Tau ,Gamma)
-#                print('end model logit')
+#                #print('end model logit')
 #                loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
                 
             converge1 = abs((loglik-loglik_old)/loglik_old) <= 1e-7
@@ -179,13 +176,13 @@ class IRLS():
             LL.append(loglik_old)
             loglik_old = loglik
             
-            utl.globalTrace('IRLS : Iteration {0} Log-vraisemblance {1} \n'.format(iteration, loglik_old))
-        utl.globalTrace('Fin IRLS \n')
+            #utl.globalTrace('IRLS : Iteration {0} Log-vraisemblance {1} \n'.format(iteration, loglik_old))
+        #utl.globalTrace('Fin IRLS \n')
         
-        if converge:
-            utl.globalTrace('IRLS : convergence  OK ; nbre d''iterations : {0}\n'.format(iteration))
-        else:
-            utl.globalTrace('\nIRLS : pas de convergence (augmenter le nombre d''iterations > {0}) \n'.format(iteration))
+        #if converge:
+        #    utl.globalTrace('IRLS : convergence  OK ; nbre d''iterations : {0}\n'.format(iteration))
+        #else:
+        #    utl.globalTrace('\nIRLS : pas de convergence (augmenter le nombre d''iterations > {0}) \n'.format(iteration))
             
             
         self.wk = W;
@@ -198,10 +195,6 @@ class IRLS():
             self.reg_irls = 0
             
         
-        if trace:
-            utl.fileGlobalTrace.close()
-            utl.fileGlobalTrace = None  
-            
             
 def testIRLS():
     import scipy.io

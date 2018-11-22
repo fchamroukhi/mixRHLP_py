@@ -31,14 +31,12 @@ varianceTypes=['free', 'common']
 q=1 # dimension de w (ordre de reg logistique)
 p = 1 # dimension de beta (ordre de reg polynomiale)
 variance_type = varianceTypes[0]
-total_EM_tries=10
+total_EM_tries=2
 init_kmeans=True
 max_iter_EM=1000
 threshold=1e-5
-verbose=0
-verbose_IRLS=0
 
-n_tries = 2
+#n_tries = 2
 G = 3 # nombre de clusters
 K = 3 # nombre de regimes
 

@@ -26,7 +26,7 @@ if init_kmeans
     verbose_kmeans = 0;
     
     res_kmeans = Kmeans_faicel(D,G,n_tries_kmeans, max_iter_kmeans, verbose_kmeans);
-    %res_kmeans.klas=[ones(10,1), 2*ones(10,1), 3*ones(10,1)];
+    res_kmeans=[ones(10,1); 2*ones(10,1), 3*ones(10,2]
     for g=1:G
         Xg = D(res_kmeans.klas==g ,:); %if kmeans            
         param_init =  init_regression_param(Xg, K,phiBeta, variance_type, try_algo);   
@@ -38,7 +38,7 @@ if init_kmeans
         end
     end
 else
-    ind = randperm(n);%1:n;
+    ind = 1:n;%randperm(n);
     D=data;
     for g=1:G
         if g<G
@@ -171,6 +171,6 @@ end
      
 
  end
-   % para.sigmak
-   %  para.betak
-   %  pause 
+    para.sigmak
+     para.betak
+     pause 
