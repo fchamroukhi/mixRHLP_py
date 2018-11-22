@@ -101,7 +101,7 @@ best_loglik = -inf;
 cputime_total = [];
 while try_EM < total_EM_tries
     try_EM = try_EM +1;
-    fprintf('EM try n° %d\n',try_EM);
+    fprintf('EM try nï¿½ %d\n',try_EM);
     time = cputime;    
     
     % % Initialisation 
@@ -162,7 +162,7 @@ while try_EM < total_EM_tries
         end      
         log_alphag_fg_xij = min(log_alphag_fg_xij,log(realmax));
         log_alphag_fg_xij = max(log_alphag_fg_xij,log(realmin));
-
+        
         % cluster posterior probabilities p(c_i=g|X)
         %h_ig = alphag_fg_xij./(sum(alphag_fg_xij,2)*ones(1,G));% [nxg]
         h_ig = exp(log_normalize(log_alphag_fg_xij)); 

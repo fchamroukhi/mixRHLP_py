@@ -133,6 +133,13 @@ class MixFRHLP():
             self.param = mixParam.MixParam()
             self.param.initialize_MixFRHLP_EM(phiBeta, phiW, try_EM)
             
+            #todo: delete
+            #self.param.sigma_g = np.array([[1.1962,1.2821,0.9436],[1.2485,1.1025,1.5289],[0.9995,0.9589,0.9512]])
+            #self.param.beta_g[0,:,:] = np.array([[6.7429,1.3500 ,6.9402],[-4.1544,7.6295,-0.2227]])
+            #self.param.beta_g[1,:,:] = np.array([[7.5825,6.0601 ,3.9628],[ -7.2452, -2.6757, 0.0313]])
+            #self.param.beta_g[2,:,:] = np.array([[4.9583,    9.5519,    4.8896],[ 0.1544,   -6.8148,    0.1226]])
+            
+            
             iteration = 0; 
             converge = False
             prev_loglik = -np.Inf
@@ -164,6 +171,7 @@ class MixFRHLP():
                 iteration+=1
                 
                 utl.globalTrace('EM   : Iteration : {0}   log-likelihood : {1} \n'.format(iteration, self.loglik))
+                #print('EM   : Iteration : {0}   log-likelihood : {1} \n'.format(iteration, self.loglik))
                 if prev_loglik-self.loglik>1e-5:
                     utl.globalTrace('!!!!! EM log-likelihood is decreasing from {0} to {1}!\n'.format(prev_loglik, self.loglik))
                     top+=1
@@ -183,14 +191,14 @@ class MixFRHLP():
                 best_loglik = self.loglik
                 
             if const.total_EM_tries>1:
-                utl.globalTrace('max value: {0} \n'.format(self.loglik))
+                utl.globalTrace('max value (em try): {0} \n'.format(self.loglik))
         
               
         self.bestSolution.klas, self.bestSolution.c_ig = utl.MAP(self.bestSolution.h_ig); # c_ig the hard partition of the curves
         
         
         if const.total_EM_tries>1:
-            utl.globalTrace('max value: {0} \n'.format(self.loglik))
+            utl.globalTrace('max value (best solution): {0} \n'.format(self.bestSolution.loglik))
         
         self.bestSolution.setCompleteSolution(phiBeta, cpu_time)
         
@@ -250,7 +258,8 @@ class MixFRHLP():
 
         # cluster posterior probabilities p(c_i=g|X)
         self.h_ig = np.exp(utl.log_normalize(self.log_alphag_fg_xij))
-        
+        #print(self.h_ig.sum(1))
+        #wait = input("PRESS ENTER TO CONTINUE.")
         # log-likelihood
         temp = np.exp(self.log_alphag_fg_xij)
         self.loglik = sum(np.log(temp.sum(axis = 1)))
@@ -279,7 +288,7 @@ class MixFRHLP():
             for k in range(0,const.K):
                 segment_weights = np.array([tauijk[:,k]]).T #poids du kieme segment   pour le cluster g  
                 # poids pour avoir K segments floues du gieme cluster flou 
-                phigk = (np.sqrt(cluster_weights*segment_weights)*np.ones((1,const.p+1)))*phiBeta #[(n*m)*(p+1)]
+                phigk = (np.sqrt(cluster_weights*segment_weights)@np.ones((1,const.p+1)))*phiBeta #[(n*m)*(p+1)]
                 Xgk = np.sqrt(cluster_weights*segment_weights)*X
                 
                 # maximization w.r.t beta_gk: Weighted least squares
@@ -307,9 +316,6 @@ class MixFRHLP():
             
             irls.runIRLS(cluster_weights, tauijk, phiW, Wg_init)
             
-#            a=irls.piik[0:const.m,:]
-#            plt.plot(a)
-#            plt.show()
             
             self.param.Wg[g,:,:]=irls.wk;             
             self.param.pi_jgk[g,:,:] = np.matlib.repmat(irls.piik[0:const.m,:],const.n,1); 
@@ -320,3 +326,4 @@ def main_script():
     return solution
 
 s = main_script()
+plt.plot(s.bestSolution.stored_loglik)

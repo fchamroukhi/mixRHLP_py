@@ -60,11 +60,12 @@ clc;
 
 n1 = 10 ;  n2 = 10 ;    n3 = 10;
 
-load mean_1_flou;
-y1 =ones(n1,1)*mean_1_flou'+ normrnd(5,1,length(mean_1_flou),n1)'+1;
-y3 = [normrnd(7,1,80,n2);normrnd(5,1,130,n2); normrnd(4,1,140,n2)]';
-y2 = [normrnd(5,1,120,n3);normrnd(7,1,70,n3);normrnd(5,1,160,n3)]';
-data = [y1 ; y2 ; y3];
+%load mean_1_flou;
+%y1 =ones(n1,1)*mean_1_flou'+ normrnd(5,1,length(mean_1_flou),n1)'+1;
+%y3 = [normrnd(7,1,80,n2);normrnd(5,1,130,n2); normrnd(4,1,140,n2)]';
+%y2 = [normrnd(5,1,120,n3);normrnd(7,1,70,n3);normrnd(5,1,160,n3)]';
+%data = [y1 ; y2 ; y3];
+data = importdata('generated_data_1.txt');
 
 G = 3;% nombre de clusters
 K = 3;% nombre de regimes
@@ -87,6 +88,7 @@ q = 1;% dimension de w (ordre de reg logistique)
 
 %type_variance = 'common';
 type_variance = 'free';
+variance_type='free';
 n_tries = 2;
 max_iter = 1000;
 init_kmeans = 1;
@@ -105,7 +107,10 @@ solution =  MixFRHLP_EM(data, G , K, p, q, type_variance, init_kmeans, n_tries, 
 % aic(K)=solution.AIC;
 % icl(K)=solution.ICL1;
 % end
-afficher_resultats(data,solution)
+
+
+
+%afficher_resultats(data,solution)
 
 
 
