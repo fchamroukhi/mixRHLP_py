@@ -1,22 +1,493 @@
 Start EM
 EM try: 1
-Start IRLS
-IRLS : Iteration 0 Log-vraisemblance -11535.429031013735 
-IRLS : Iteration 1 Log-vraisemblance -11527.139925242154 
-IRLS : Iteration 2 Log-vraisemblance -11527.138266052367 
-IRLS : Iteration 3 Log-vraisemblance -11527.138266052367 
-Fin IRLS 
-IRLS : convergence  OK ; nbre diterations : 3
-Start IRLS
-IRLS : Iteration 0 Log-vraisemblance -1.192248269335182e-39 
-IRLS : Iteration 1 Log-vraisemblance -1.192248269335182e-39 
-Fin IRLS 
-IRLS : convergence  OK ; nbre diterations : 1
-Start IRLS
-IRLS : Iteration 0 Log-vraisemblance -6.42696260612667e-11 
-IRLS : Iteration 1 Log-vraisemblance -6.42696260612667e-11 
-Fin IRLS 
-IRLS : convergence  OK ; nbre diterations : 1
-EM   : Iteration : 1   log-likelihood : -13183.304916665697 
-Start IRLS
-IRLS : Iteration 0 Log-vraisemblance -11527.138266052361 
+IRLS : Iteration 0 Log-vraisemblance -3845.1462546372222 
+IRLS : Iteration 0 Log-vraisemblance -3845.139766039151 
+IRLS : Iteration 0 Log-vraisemblance -3845.1430103381763 
+EM   : Iteration : 1   log-likelihood : -18142.260487651445 
+IRLS : Iteration 0 Log-vraisemblance -3741.382154507104 
+IRLS : Iteration 0 Log-vraisemblance -3470.7650249297267 
+IRLS : Iteration 0 Log-vraisemblance -3326.7337104884737 
+EM   : Iteration : 2   log-likelihood : -16645.46829792563 
+IRLS : Iteration 0 Log-vraisemblance -3680.1736634221825 
+IRLS : Iteration 0 Log-vraisemblance -3410.785708380264 
+IRLS : Iteration 0 Log-vraisemblance -3134.936449419064 
+EM   : Iteration : 3   log-likelihood : -16480.571806468804 
+IRLS : Iteration 0 Log-vraisemblance -3637.337396461375 
+IRLS : Iteration 0 Log-vraisemblance -3356.918319960785 
+IRLS : Iteration 0 Log-vraisemblance -2939.1942790879875 
+EM   : Iteration : 4   log-likelihood : -16379.546306964752 
+IRLS : Iteration 0 Log-vraisemblance -3603.754751966205 
+IRLS : Iteration 0 Log-vraisemblance -3307.5678859706395 
+IRLS : Iteration 0 Log-vraisemblance -2739.4722999021187 
+EM   : Iteration : 5   log-likelihood : -16298.842317052373 
+IRLS : Iteration 0 Log-vraisemblance -3576.5581573017967 
+IRLS : Iteration 0 Log-vraisemblance -3262.72087767534 
+IRLS : Iteration 0 Log-vraisemblance -2540.3597429899264 
+EM   : Iteration : 6   log-likelihood : -16234.448802563684 
+IRLS : Iteration 0 Log-vraisemblance -3553.17111503351 
+IRLS : Iteration 0 Log-vraisemblance -3221.6330940132025 
+IRLS : Iteration 0 Log-vraisemblance -2346.7237707772765 
+EM   : Iteration : 7   log-likelihood : -16179.00391701231 
+IRLS : Iteration 0 Log-vraisemblance -3532.639650209281 
+IRLS : Iteration 0 Log-vraisemblance -3183.9936715467607 
+IRLS : Iteration 0 Log-vraisemblance -2164.0605812190884 
+EM   : Iteration : 8   log-likelihood : -16129.388699098878 
+IRLS : Iteration 0 Log-vraisemblance -3514.308710955975 
+IRLS : Iteration 0 Log-vraisemblance -3149.2530622216664 
+IRLS : Iteration 0 Log-vraisemblance -2000.0205197752612 
+EM   : Iteration : 9   log-likelihood : -16085.516615845256 
+IRLS : Iteration 0 Log-vraisemblance -3497.732606549991 
+IRLS : Iteration 0 Log-vraisemblance -3117.0471296593405 
+IRLS : Iteration 0 Log-vraisemblance -1858.967099168915 
+EM   : Iteration : 10   log-likelihood : -16048.27333577187 
+IRLS : Iteration 0 Log-vraisemblance -3482.487760796192 
+IRLS : Iteration 0 Log-vraisemblance -3087.0408689061064 
+IRLS : Iteration 0 Log-vraisemblance -1739.590311258585 
+EM   : Iteration : 11   log-likelihood : -16017.057346280037 
+IRLS : Iteration 0 Log-vraisemblance -3468.099023751575 
+IRLS : Iteration 0 Log-vraisemblance -3059.004656877119 
+IRLS : Iteration 0 Log-vraisemblance -1638.9329229722573 
+EM   : Iteration : 12   log-likelihood : -15991.482373689681 
+IRLS : Iteration 0 Log-vraisemblance -3454.1217920061977 
+IRLS : Iteration 0 Log-vraisemblance -3032.6693779459188 
+IRLS : Iteration 0 Log-vraisemblance -1555.0373482470177 
+EM   : Iteration : 13   log-likelihood : -15971.775551078637 
+IRLS : Iteration 0 Log-vraisemblance -3440.2170312462044 
+IRLS : Iteration 0 Log-vraisemblance -3007.770395502442 
+IRLS : Iteration 0 Log-vraisemblance -1485.9655390768908 
+EM   : Iteration : 14   log-likelihood : -15957.461586800047 
+IRLS : Iteration 0 Log-vraisemblance -3426.1437418723367 
+IRLS : Iteration 0 Log-vraisemblance -2984.0559026189926 
+IRLS : Iteration 0 Log-vraisemblance -1429.165343652896 
+EM   : Iteration : 15   log-likelihood : -15947.195726313175 
+IRLS : Iteration 0 Log-vraisemblance -3411.7262325147067 
+IRLS : Iteration 0 Log-vraisemblance -2961.319943475801 
+IRLS : Iteration 0 Log-vraisemblance -1381.8879866303826 
+EM   : Iteration : 16   log-likelihood : -15939.542432704351 
+IRLS : Iteration 0 Log-vraisemblance -3396.8302176707907 
+IRLS : Iteration 0 Log-vraisemblance -2939.3972246744474 
+IRLS : Iteration 0 Log-vraisemblance -1341.7495280476066 
+EM   : Iteration : 17   log-likelihood : -15933.467068632614 
+IRLS : Iteration 0 Log-vraisemblance -3381.3482302726757 
+IRLS : Iteration 0 Log-vraisemblance -2918.1605354251333 
+IRLS : Iteration 0 Log-vraisemblance -1306.9202926492596 
+EM   : Iteration : 18   log-likelihood : -15928.358322366057 
+IRLS : Iteration 0 Log-vraisemblance -3365.189835327977 
+IRLS : Iteration 0 Log-vraisemblance -2897.5092567149195 
+IRLS : Iteration 0 Log-vraisemblance -1276.0834960604577 
+EM   : Iteration : 19   log-likelihood : -15923.878342328111 
+IRLS : Iteration 0 Log-vraisemblance -3348.2746974760707 
+IRLS : Iteration 0 Log-vraisemblance -2877.363088195058 
+IRLS : Iteration 0 Log-vraisemblance -1248.3112004704747 
+EM   : Iteration : 20   log-likelihood : -15919.83808661593 
+IRLS : Iteration 0 Log-vraisemblance -3330.5274319737196 
+IRLS : Iteration 0 Log-vraisemblance -2857.655825421545 
+IRLS : Iteration 0 Log-vraisemblance -1222.9506514502955 
+EM   : Iteration : 21   log-likelihood : -15916.124034415918 
+IRLS : Iteration 0 Log-vraisemblance -3311.873801186785 
+IRLS : Iteration 0 Log-vraisemblance -2838.3319905266185 
+IRLS : Iteration 0 Log-vraisemblance -1199.5355877518896 
+EM   : Iteration : 22   log-likelihood : -15912.661162508088 
+IRLS : Iteration 0 Log-vraisemblance -3292.237734639198 
+IRLS : Iteration 0 Log-vraisemblance -2819.3440278259322 
+IRLS : Iteration 0 Log-vraisemblance -1177.7253275308133 
+EM   : Iteration : 23   log-likelihood : -15909.39428207505 
+IRLS : Iteration 0 Log-vraisemblance -3271.5388545740916 
+IRLS : Iteration 0 Log-vraisemblance -2800.6505821644696 
+IRLS : Iteration 0 Log-vraisemblance -1157.2634929534722 
+EM   : Iteration : 24   log-likelihood : -15906.278883208131 
+IRLS : Iteration 0 Log-vraisemblance -3249.6902132465825 
+IRLS : Iteration 0 Log-vraisemblance -2782.215078645624 
+IRLS : Iteration 0 Log-vraisemblance -1137.9514142420774 
+EM   : Iteration : 25   log-likelihood : -15903.276402489824 
+IRLS : Iteration 0 Log-vraisemblance -3226.596057244516 
+IRLS : Iteration 0 Log-vraisemblance -2764.0047055833716 
+IRLS : Iteration 0 Log-vraisemblance -1119.6308515137948 
+EM   : Iteration : 26   log-likelihood : -15900.351749849548 
+IRLS : Iteration 0 Log-vraisemblance -3202.1494508267097 
+IRLS : Iteration 0 Log-vraisemblance -2745.989554180288 
+IRLS : Iteration 0 Log-vraisemblance -1102.1728790217167 
+EM   : Iteration : 27   log-likelihood : -15897.471792896107 
+IRLS : Iteration 0 Log-vraisemblance -3176.2296152749473 
+IRLS : Iteration 0 Log-vraisemblance -2728.1419331917064 
+IRLS : Iteration 0 Log-vraisemblance -1085.470476787045 
+EM   : Iteration : 28   log-likelihood : -15894.604242362822 
+IRLS : Iteration 0 Log-vraisemblance -3148.698831353688 
+IRLS : Iteration 0 Log-vraisemblance -2710.4357838173605 
+IRLS : Iteration 0 Log-vraisemblance -1069.43350301471 
+EM   : Iteration : 29   log-likelihood : -15891.716586459705 
+IRLS : Iteration 0 Log-vraisemblance -3119.3987471163646 
+IRLS : Iteration 0 Log-vraisemblance -2692.846198847576 
+IRLS : Iteration 0 Log-vraisemblance -1053.9851856427379 
+EM   : Iteration : 30   log-likelihood : -15888.774926840388 
+IRLS : Iteration 0 Log-vraisemblance -3088.145930881277 
+IRLS : Iteration 0 Log-vraisemblance -2675.3490260759722 
+IRLS : Iteration 0 Log-vraisemblance -1039.0596716396005 
+EM   : Iteration : 31   log-likelihood : -15885.74260224056 
+IRLS : Iteration 0 Log-vraisemblance -3054.7261461908615 
+IRLS : Iteration 0 Log-vraisemblance -2657.920561062436 
+IRLS : Iteration 0 Log-vraisemblance -1024.6003049970057 
+EM   : Iteration : 32   log-likelihood : -15882.578502799568 
+IRLS : Iteration 0 Log-vraisemblance -3018.889100743625 
+IRLS : Iteration 0 Log-vraisemblance -2640.5373299333446 
+IRLS : Iteration 0 Log-vraisemblance -1010.5584047001937 
+EM   : Iteration : 33   log-likelihood : -15879.235069481543 
+IRLS : Iteration 0 Log-vraisemblance -2980.340538906855 
+IRLS : Iteration 0 Log-vraisemblance -2623.1759826012767 
+IRLS : Iteration 0 Log-vraisemblance -996.8923541112433 
+EM   : Iteration : 34   log-likelihood : -15875.655759372137 
+IRLS : Iteration 0 Log-vraisemblance -2938.735510795029 
+IRLS : Iteration 0 Log-vraisemblance -2605.813308436419 
+IRLS : Iteration 0 Log-vraisemblance -983.5668669767366 
+EM   : Iteration : 35   log-likelihood : -15871.77208523156 
+IRLS : Iteration 0 Log-vraisemblance -2893.6729794549824 
+IRLS : Iteration 0 Log-vraisemblance -2588.4264083438384 
+IRLS : Iteration 0 Log-vraisemblance -970.5523314625704 
+EM   : Iteration : 36   log-likelihood : -15867.500307980239 
+IRLS : Iteration 0 Log-vraisemblance -2844.6954983762103 
+IRLS : Iteration 0 Log-vraisemblance -2570.993052159472 
+IRLS : Iteration 0 Log-vraisemblance -957.8241479544278 
+EM   : Iteration : 37   log-likelihood : -15862.738293694862 
+IRLS : Iteration 0 Log-vraisemblance -2791.3003975045067 
+IRLS : Iteration 0 Log-vraisemblance -2553.4922440264686 
+IRLS : Iteration 0 Log-vraisemblance -945.361955916378 
+EM   : Iteration : 38   log-likelihood : -15857.363799439045 
+IRLS : Iteration 0 Log-vraisemblance -2732.973384279831 
+IRLS : Iteration 0 Log-vraisemblance -2535.9049860707005 
+IRLS : Iteration 0 Log-vraisemblance -933.148559922643 
+EM   : Iteration : 39   log-likelihood : -15851.23685132144 
+IRLS : Iteration 0 Log-vraisemblance -2669.2605704119396 
+IRLS : Iteration 0 Log-vraisemblance -2518.215161034922 
+IRLS : Iteration 0 Log-vraisemblance -921.1681901230132 
+EM   : Iteration : 40   log-likelihood : -15844.211069756393 
+IRLS : Iteration 0 Log-vraisemblance -2599.896421090674 
+IRLS : Iteration 0 Log-vraisemblance -2500.41033802418 
+IRLS : Iteration 0 Log-vraisemblance -909.4034525782263 
+EM   : Iteration : 41   log-likelihood : -15836.16119817238 
+IRLS : Iteration 0 Log-vraisemblance -2524.9911854355614 
+IRLS : Iteration 0 Log-vraisemblance -2482.4821572758724 
+IRLS : Iteration 0 Log-vraisemblance -897.830027143534 
+EM   : Iteration : 42   log-likelihood : -15827.033740995706 
+IRLS : Iteration 0 Log-vraisemblance -2445.231234995299 
+IRLS : Iteration 0 Log-vraisemblance -2464.425832423349 
+IRLS : Iteration 0 Log-vraisemblance -886.4083314935416 
+EM   : Iteration : 43   log-likelihood : -15816.916733477086 
+IRLS : Iteration 0 Log-vraisemblance -2361.950398622194 
+IRLS : Iteration 0 Log-vraisemblance -2446.2383407383973 
+IRLS : Iteration 0 Log-vraisemblance -875.0733382372684 
+EM   : Iteration : 44   log-likelihood : -15806.092790198787 
+IRLS : Iteration 0 Log-vraisemblance -2276.860974863722 
+IRLS : Iteration 0 Log-vraisemblance -2427.9151891209353 
+IRLS : Iteration 0 Log-vraisemblance -863.7291997798019 
+EM   : Iteration : 45   log-likelihood : -15794.996281549236 
+IRLS : Iteration 0 Log-vraisemblance -2191.3814243833654 
+IRLS : Iteration 0 Log-vraisemblance -2409.446255551629 
+IRLS : Iteration 0 Log-vraisemblance -852.2615030650497 
+EM   : Iteration : 46   log-likelihood : -15784.011237680306 
+IRLS : Iteration 0 Log-vraisemblance -2105.919670294137 
+IRLS : Iteration 0 Log-vraisemblance -2390.8112922982823 
+IRLS : Iteration 0 Log-vraisemblance -840.5734608369253 
+EM   : Iteration : 47   log-likelihood : -15773.197608010509 
+IRLS : Iteration 0 Log-vraisemblance -2019.6873720432377 
+IRLS : Iteration 0 Log-vraisemblance -2371.9788910384345 
+IRLS : Iteration 0 Log-vraisemblance -828.6261431354527 
+EM   : Iteration : 48   log-likelihood : -15762.172709467595 
+IRLS : Iteration 0 Log-vraisemblance -1931.1847354560575 
+IRLS : Iteration 0 Log-vraisemblance -2352.904869609021 
+IRLS : Iteration 0 Log-vraisemblance -816.4495701598429 
+EM   : Iteration : 49   log-likelihood : -15750.227530347605 
+IRLS : Iteration 0 Log-vraisemblance -1838.97676745541 
+IRLS : Iteration 0 Log-vraisemblance -2333.5343955350127 
+IRLS : Iteration 0 Log-vraisemblance -804.1205772175042 
+EM   : Iteration : 50   log-likelihood : -15736.50860191672 
+IRLS : Iteration 0 Log-vraisemblance -1742.441168713747 
+IRLS : Iteration 0 Log-vraisemblance -2313.803417429734 
+IRLS : Iteration 0 Log-vraisemblance -791.7345681153759 
+EM   : Iteration : 51   log-likelihood : -15720.130121300705 
+IRLS : Iteration 0 Log-vraisemblance -1642.461288880667 
+IRLS : Iteration 0 Log-vraisemblance -2293.6383372135056 
+IRLS : Iteration 0 Log-vraisemblance -779.3920144858153 
+EM   : Iteration : 52   log-likelihood : -15700.282992316948 
+IRLS : Iteration 0 Log-vraisemblance -1542.017734922765 
+IRLS : Iteration 0 Log-vraisemblance -2272.954599999319 
+IRLS : Iteration 0 Log-vraisemblance -767.1961723596079 
+EM   : Iteration : 53   log-likelihood : -15676.521469262947 
+IRLS : Iteration 0 Log-vraisemblance -1446.2168373448221 
+IRLS : Iteration 0 Log-vraisemblance -2251.655342302614 
+IRLS : Iteration 0 Log-vraisemblance -755.2444084269266 
+EM   : Iteration : 54   log-likelihood : -15649.353239643131 
+IRLS : Iteration 0 Log-vraisemblance -1360.9384877595303 
+IRLS : Iteration 0 Log-vraisemblance -2229.6281500322193 
+IRLS : Iteration 0 Log-vraisemblance -743.6106577444426 
+EM   : Iteration : 55   log-likelihood : -15620.808354698409 
+IRLS : Iteration 0 Log-vraisemblance -1290.3916485746101 
+IRLS : Iteration 0 Log-vraisemblance -2206.73617964843 
+IRLS : Iteration 0 Log-vraisemblance -732.3683392575222 
+EM   : Iteration : 56   log-likelihood : -15593.931782838295 
+IRLS : Iteration 0 Log-vraisemblance -1235.7760623825063 
+IRLS : Iteration 0 Log-vraisemblance -2182.8100039676374 
+IRLS : Iteration 0 Log-vraisemblance -721.7126886153367 
+EM   : Iteration : 57   log-likelihood : -15571.108214224148 
+IRLS : Iteration 0 Log-vraisemblance -1195.6091640323402 
+IRLS : Iteration 0 Log-vraisemblance -2157.6497539204 
+IRLS : Iteration 0 Log-vraisemblance -712.0220696713087 
+EM   : Iteration : 58   log-likelihood : -15553.081796101449 
+IRLS : Iteration 0 Log-vraisemblance -1166.9836477714198 
+IRLS : Iteration 0 Log-vraisemblance -2131.026536812257 
+IRLS : Iteration 0 Log-vraisemblance -703.6581149068633 
+EM   : Iteration : 59   log-likelihood : -15539.096269584625 
+IRLS : Iteration 0 Log-vraisemblance -1146.93295499083 
+IRLS : Iteration 0 Log-vraisemblance -2102.6780812940524 
+IRLS : Iteration 0 Log-vraisemblance -696.7996024407856 
+EM   : Iteration : 60   log-likelihood : -15527.825583567475 
+IRLS : Iteration 0 Log-vraisemblance -1133.0288728000153 
+IRLS : Iteration 0 Log-vraisemblance -2072.2930531844145 
+IRLS : Iteration 0 Log-vraisemblance -691.4281710296681 
+EM   : Iteration : 61   log-likelihood : -15518.064696975604 
+IRLS : Iteration 0 Log-vraisemblance -1123.4670919629614 
+IRLS : Iteration 0 Log-vraisemblance -2039.4917495912202 
+IRLS : Iteration 0 Log-vraisemblance -687.3699985004137 
+EM   : Iteration : 62   log-likelihood : -15508.822532199936 
+IRLS : Iteration 0 Log-vraisemblance -1117.0430591743145 
+IRLS : Iteration 0 Log-vraisemblance -2003.8187004738322 
+IRLS : Iteration 0 Log-vraisemblance -684.3706460641639 
+EM   : Iteration : 63   log-likelihood : -15499.282159143097 
+IRLS : Iteration 0 Log-vraisemblance -1113.0443273113997 
+IRLS : Iteration 0 Log-vraisemblance -1964.7630585470656 
+IRLS : Iteration 0 Log-vraisemblance -682.1650567002275 
+EM   : Iteration : 64   log-likelihood : -15488.728596249244 
+IRLS : Iteration 0 Log-vraisemblance -1111.1119348450381 
+IRLS : Iteration 0 Log-vraisemblance -1921.8315389800382 
+IRLS : Iteration 0 Log-vraisemblance -680.5178132454673 
+EM   : Iteration : 65   log-likelihood : -15476.470250125483 
+IRLS : Iteration 0 Log-vraisemblance -1111.131676721173 
+IRLS : Iteration 0 Log-vraisemblance -1874.7031686649518 
+IRLS : Iteration 0 Log-vraisemblance -679.2378795829018 
+EM   : Iteration : 66   log-likelihood : -15461.806865522962 
+IRLS : Iteration 0 Log-vraisemblance -1113.1557903013481 
+IRLS : Iteration 0 Log-vraisemblance -1823.4681374550028 
+IRLS : Iteration 0 Log-vraisemblance -678.1784883196839 
+EM   : Iteration : 67   log-likelihood : -15444.094680737724 
+IRLS : Iteration 0 Log-vraisemblance -1117.3025638845484 
+IRLS : Iteration 0 Log-vraisemblance -1768.8673601352064 
+IRLS : Iteration 0 Log-vraisemblance -677.2299738690298 
+EM   : Iteration : 68   log-likelihood : -15422.966232404991 
+IRLS : Iteration 0 Log-vraisemblance -1123.5404230983295 
+IRLS : Iteration 0 Log-vraisemblance -1712.3735410565869 
+IRLS : Iteration 0 Log-vraisemblance -676.3110827264999 
+EM   : Iteration : 69   log-likelihood : -15398.67615974294 
+IRLS : Iteration 0 Log-vraisemblance -1131.2908074830098 
+IRLS : Iteration 0 Log-vraisemblance -1656.0454628416287 
+IRLS : Iteration 0 Log-vraisemblance -675.3590994030297 
+EM   : Iteration : 70   log-likelihood : -15372.254072363035 
+IRLS : Iteration 0 Log-vraisemblance -1139.0357751500671 
+IRLS : Iteration 0 Log-vraisemblance -1602.270355732542 
+IRLS : Iteration 0 Log-vraisemblance -674.3222916740162 
+EM   : Iteration : 71   log-likelihood : -15344.998853318282 
+IRLS : Iteration 0 Log-vraisemblance -1144.4305283574147 
+IRLS : Iteration 0 Log-vraisemblance -1553.68985047107 
+IRLS : Iteration 0 Log-vraisemblance -673.1577971203293 
+EM   : Iteration : 72   log-likelihood : -15317.73003965888 
+IRLS : Iteration 0 Log-vraisemblance -1145.3108621063764 
+IRLS : Iteration 0 Log-vraisemblance -1512.619718665105 
+IRLS : Iteration 0 Log-vraisemblance -671.831562686861 
+EM   : Iteration : 73   log-likelihood : -15291.346516449377 
+IRLS : Iteration 0 Log-vraisemblance -1141.3407618087847 
+IRLS : Iteration 0 Log-vraisemblance -1479.2163557940742 
+IRLS : Iteration 0 Log-vraisemblance -670.3109823756287 
+EM   : Iteration : 74   log-likelihood : -15267.79124252036 
+IRLS : Iteration 0 Log-vraisemblance -1134.5569775486379 
+IRLS : Iteration 0 Log-vraisemblance -1451.6736551939346 
+IRLS : Iteration 0 Log-vraisemblance -668.56034609037 
+EM   : Iteration : 75   log-likelihood : -15248.72583933906 
+IRLS : Iteration 0 Log-vraisemblance -1127.7137638080776 
+IRLS : Iteration 0 Log-vraisemblance -1428.0296422489112 
+IRLS : Iteration 0 Log-vraisemblance -666.539707921038 
+EM   : Iteration : 76   log-likelihood : -15234.434388727766 
+IRLS : Iteration 0 Log-vraisemblance -1122.0702626653629 
+IRLS : Iteration 0 Log-vraisemblance -1406.98464150896 
+IRLS : Iteration 0 Log-vraisemblance -664.1934054330992 
+EM   : Iteration : 77   log-likelihood : -15224.066017848598 
+IRLS : Iteration 0 Log-vraisemblance -1117.4567543628418 
+IRLS : Iteration 0 Log-vraisemblance -1387.5956750615132 
+IRLS : Iteration 0 Log-vraisemblance -661.4602364136683 
+EM   : Iteration : 78   log-likelihood : -15216.307048945682 
+IRLS : Iteration 0 Log-vraisemblance -1113.3551627534432 
+IRLS : Iteration 0 Log-vraisemblance -1368.9235729527138 
+IRLS : Iteration 0 Log-vraisemblance -658.2849487495808 
+EM   : Iteration : 79   log-likelihood : -15210.041203865983 
+IRLS : Iteration 0 Log-vraisemblance -1109.410948012429 
+IRLS : Iteration 0 Log-vraisemblance -1350.1691769937056 
+IRLS : Iteration 0 Log-vraisemblance -654.6129759691233 
+EM   : Iteration : 80   log-likelihood : -15204.498465475104 
+IRLS : Iteration 0 Log-vraisemblance -1105.279942487951 
+IRLS : Iteration 0 Log-vraisemblance -1330.9223300429855 
+IRLS : Iteration 0 Log-vraisemblance -650.3865957715961 
+EM   : Iteration : 81   log-likelihood : -15199.212216987982 
+IRLS : Iteration 0 Log-vraisemblance -1100.5971294070578 
+IRLS : Iteration 0 Log-vraisemblance -1311.3077442399644 
+IRLS : Iteration 0 Log-vraisemblance -645.5441871241014 
+EM   : Iteration : 82   log-likelihood : -15193.99093128553 
+IRLS : Iteration 0 Log-vraisemblance -1095.2618268067088 
+IRLS : Iteration 0 Log-vraisemblance -1291.8173399939371 
+IRLS : Iteration 0 Log-vraisemblance -640.0201374297828 
+EM   : Iteration : 83   log-likelihood : -15188.969960560731 
+IRLS : Iteration 0 Log-vraisemblance -1089.2865124968278 
+IRLS : Iteration 0 Log-vraisemblance -1272.6719409255174 
+IRLS : Iteration 0 Log-vraisemblance -633.744765408813 
+EM   : Iteration : 84   log-likelihood : -15184.230777635028 
+IRLS : Iteration 0 Log-vraisemblance -1082.5973752992224 
+IRLS : Iteration 0 Log-vraisemblance -1253.7732863426343 
+IRLS : Iteration 0 Log-vraisemblance -626.6441578206359 
+EM   : Iteration : 85   log-likelihood : -15179.642598832006 
+IRLS : Iteration 0 Log-vraisemblance -1075.1563490657852 
+IRLS : Iteration 0 Log-vraisemblance -1234.9868386465387 
+IRLS : Iteration 0 Log-vraisemblance -618.6397101213463 
+EM   : Iteration : 86   log-likelihood : -15175.083948368716 
+IRLS : Iteration 0 Log-vraisemblance -1066.9487006714503 
+IRLS : Iteration 0 Log-vraisemblance -1216.2452081366523 
+IRLS : Iteration 0 Log-vraisemblance -609.6478938537797 
+EM   : Iteration : 87   log-likelihood : -15170.480588690421 
+IRLS : Iteration 0 Log-vraisemblance -1057.9724577509612 
+IRLS : Iteration 0 Log-vraisemblance -1197.5354714418668 
+IRLS : Iteration 0 Log-vraisemblance -599.5803215639665 
+EM   : Iteration : 88   log-likelihood : -15165.782697304752 
+IRLS : Iteration 0 Log-vraisemblance -1048.233216094569 
+IRLS : Iteration 0 Log-vraisemblance -1178.8793597027307 
+IRLS : Iteration 0 Log-vraisemblance -588.3439041008102 
+EM   : Iteration : 89   log-likelihood : -15160.950853178398 
+IRLS : Iteration 0 Log-vraisemblance -1037.7417153771653 
+IRLS : Iteration 0 Log-vraisemblance -1160.3114999279292 
+IRLS : Iteration 0 Log-vraisemblance -575.8412045586522 
+EM   : Iteration : 90   log-likelihood : -15155.948085449963 
+IRLS : Iteration 0 Log-vraisemblance -1026.51281658503 
+IRLS : Iteration 0 Log-vraisemblance -1141.874446978408 
+IRLS : Iteration 0 Log-vraisemblance -561.9711215512191 
+EM   : Iteration : 91   log-likelihood : -15150.736957171093 
+IRLS : Iteration 0 Log-vraisemblance -1014.5651614173468 
+IRLS : Iteration 0 Log-vraisemblance -1123.612469698782 
+IRLS : Iteration 0 Log-vraisemblance -546.6300770252176 
+EM   : Iteration : 92   log-likelihood : -15145.27721643652 
+IRLS : Iteration 0 Log-vraisemblance -1001.9211664945319 
+IRLS : Iteration 0 Log-vraisemblance -1105.5662868102504 
+IRLS : Iteration 0 Log-vraisemblance -529.7139524774781 
+EM   : Iteration : 93   log-likelihood : -15139.524063214976 
+IRLS : Iteration 0 Log-vraisemblance -988.6070906558801 
+IRLS : Iteration 0 Log-vraisemblance -1087.7702988177125 
+IRLS : Iteration 0 Log-vraisemblance -511.1211350175995 
+EM   : Iteration : 94   log-likelihood : -15133.426971496117 
+IRLS : Iteration 0 Log-vraisemblance -974.6529938981022 
+IRLS : Iteration 0 Log-vraisemblance -1070.2495479706074 
+IRLS : Iteration 0 Log-vraisemblance -490.7571887621221 
+EM   : Iteration : 95   log-likelihood : -15126.92896968648 
+IRLS : Iteration 0 Log-vraisemblance -960.0924678711929 
+IRLS : Iteration 0 Log-vraisemblance -1053.0194990359184 
+IRLS : Iteration 0 Log-vraisemblance -468.5418224942652 
+EM   : Iteration : 96   log-likelihood : -15119.966694760638 
+IRLS : Iteration 0 Log-vraisemblance -944.9620712632767 
+IRLS : Iteration 0 Log-vraisemblance -1036.0856892987506 
+IRLS : Iteration 0 Log-vraisemblance -444.41896452724995 
+EM   : Iteration : 97   log-likelihood : -15112.471706250602 
+IRLS : Iteration 0 Log-vraisemblance -929.3004374867486 
+IRLS : Iteration 0 Log-vraisemblance -1019.444379790424 
+IRLS : Iteration 0 Log-vraisemblance -418.37077982539284 
+EM   : Iteration : 98   log-likelihood : -15104.374118810238 
+IRLS : Iteration 0 Log-vraisemblance -913.1470687124535 
+IRLS : Iteration 0 Log-vraisemblance -1003.0838958570603 
+IRLS : Iteration 0 Log-vraisemblance -390.43621094920036 
+EM   : Iteration : 99   log-likelihood : -15095.610174696481 
+IRLS : Iteration 0 Log-vraisemblance -896.5408539352172 
+IRLS : Iteration 0 Log-vraisemblance -986.9864272964907 
+IRLS : Iteration 0 Log-vraisemblance -360.7333605381176 
+EM   : Iteration : 100   log-likelihood : -15086.135834721472 
+IRLS : Iteration 0 Log-vraisemblance -879.5183742004493 
+IRLS : Iteration 0 Log-vraisemblance -971.1299204549165 
+IRLS : Iteration 0 Log-vraisemblance -329.48131591860454 
+EM   : Iteration : 101   log-likelihood : -15075.947494428483 
+IRLS : Iteration 0 Log-vraisemblance -862.1120803487593 
+IRLS : Iteration 0 Log-vraisemblance -955.4897495750305 
+IRLS : Iteration 0 Log-vraisemblance -297.016374641266 
+EM   : Iteration : 102   log-likelihood : -15065.10608971901 
+IRLS : Iteration 0 Log-vraisemblance -844.3484331364351 
+IRLS : Iteration 0 Log-vraisemblance -940.0407414310085 
+IRLS : Iteration 0 Log-vraisemblance -263.83103854344847 
+EM   : Iteration : 103   log-likelihood : -15053.753631400165 
+IRLS : Iteration 0 Log-vraisemblance -826.2460914182928 
+IRLS : Iteration 0 Log-vraisemblance -924.7620423378826 
+IRLS : Iteration 0 Log-vraisemblance -230.75884674945272 
+EM   : Iteration : 104   log-likelihood : -15042.12560393007 
+IRLS : Iteration 0 Log-vraisemblance -807.814222296645 
+IRLS : Iteration 0 Log-vraisemblance -909.6463219622284 
+IRLS : Iteration 0 Log-vraisemblance -199.373129793052 
+EM   : Iteration : 105   log-likelihood : -15030.624495075292 
+IRLS : Iteration 0 Log-vraisemblance -789.0509792690406 
+IRLS : Iteration 0 Log-vraisemblance -894.7051320982916 
+IRLS : Iteration 0 Log-vraisemblance -172.15283203662565 
+EM   : Iteration : 106   log-likelihood : -15020.009105800167 
+IRLS : Iteration 0 Log-vraisemblance -769.9421623999597 
+IRLS : Iteration 0 Log-vraisemblance -879.9561308694576 
+IRLS : Iteration 0 Log-vraisemblance -151.44491177067823 
+EM   : Iteration : 107   log-likelihood : -15011.369053110177 
+IRLS : Iteration 0 Log-vraisemblance -750.4600311480028 
+IRLS : Iteration 0 Log-vraisemblance -865.3942906779076 
+IRLS : Iteration 0 Log-vraisemblance -137.4542825730157 
+EM   : Iteration : 108   log-likelihood : -15005.267993932956 
+IRLS : Iteration 0 Log-vraisemblance -730.5621898022204 
+IRLS : Iteration 0 Log-vraisemblance -850.9815299838693 
+IRLS : Iteration 0 Log-vraisemblance -128.2555043176265 
+EM   : Iteration : 109   log-likelihood : -15001.055148351845 
+IRLS : Iteration 0 Log-vraisemblance -710.1904314048687 
+IRLS : Iteration 0 Log-vraisemblance -836.6874204848257 
+IRLS : Iteration 0 Log-vraisemblance -122.04885799612276 
+EM   : Iteration : 110   log-likelihood : -14997.778548425522 
+IRLS : Iteration 0 Log-vraisemblance -689.2693880480315 
+IRLS : Iteration 0 Log-vraisemblance -822.5081709501782 
+IRLS : Iteration 0 Log-vraisemblance -117.85226045332858 
+EM   : Iteration : 111   log-likelihood : -14994.905848745653 
+IRLS : Iteration 0 Log-vraisemblance -667.7047998544404 
+IRLS : Iteration 0 Log-vraisemblance -808.4422162833714 
+IRLS : Iteration 0 Log-vraisemblance -115.04858988886599 
+EM   : Iteration : 112   log-likelihood : -14992.176088025013 
+IRLS : Iteration 0 Log-vraisemblance -645.3811971610498 
+IRLS : Iteration 0 Log-vraisemblance -794.4808549918763 
+IRLS : Iteration 0 Log-vraisemblance -113.18265511154002 
+EM   : Iteration : 113   log-likelihood : -14989.42933395508 
+IRLS : Iteration 0 Log-vraisemblance -622.1587852352825 
+IRLS : Iteration 0 Log-vraisemblance -780.6101661851379 
+IRLS : Iteration 0 Log-vraisemblance -111.93333077075243 
+EM   : Iteration : 114   log-likelihood : -14986.55447948542 
+IRLS : Iteration 0 Log-vraisemblance -597.8693269697601 
+IRLS : Iteration 0 Log-vraisemblance -766.8130912803686 
+IRLS : Iteration 0 Log-vraisemblance -111.08743193444364 
+EM   : Iteration : 115   log-likelihood : -14983.465704030283 
+IRLS : Iteration 0 Log-vraisemblance -572.3085899205797 
+IRLS : Iteration 0 Log-vraisemblance -753.0706022320699 
+IRLS : Iteration 0 Log-vraisemblance -110.5066863128129 
+EM   : Iteration : 116   log-likelihood : -14980.083955680677 
+IRLS : Iteration 0 Log-vraisemblance -545.2270573379989 
+IRLS : Iteration 0 Log-vraisemblance -739.3624986964966 
+IRLS : Iteration 0 Log-vraisemblance -110.10176717517064 
+EM   : Iteration : 117   log-likelihood : -14976.32294181703 
+IRLS : Iteration 0 Log-vraisemblance -516.3422787579084 
+IRLS : Iteration 0 Log-vraisemblance -725.6680353243498 
+IRLS : Iteration 0 Log-vraisemblance -109.81440941775521 
+EM   : Iteration : 118   log-likelihood : -14972.079571392818 
+IRLS : Iteration 0 Log-vraisemblance -485.3122500753762 
+IRLS : Iteration 0 Log-vraisemblance -711.966430223245 
+IRLS : Iteration 0 Log-vraisemblance -109.60622891116202 
+EM   : Iteration : 119   log-likelihood : -14967.221826220044 
+IRLS : Iteration 0 Log-vraisemblance -451.74695505983357 
+IRLS : Iteration 0 Log-vraisemblance -698.2372860573008 
+IRLS : Iteration 0 Log-vraisemblance -109.45168809423365 
+EM   : Iteration : 120   log-likelihood : -14961.577504541168 
+IRLS : Iteration 0 Log-vraisemblance -415.23706848990423 
+IRLS : Iteration 0 Log-vraisemblance -684.4609414839597 
+IRLS : Iteration 0 Log-vraisemblance -109.33364380176761 
+EM   : Iteration : 121   log-likelihood : -14954.921446766723 
+IRLS : Iteration 0 Log-vraisemblance -375.4432504691351 
+IRLS : Iteration 0 Log-vraisemblance -670.6187657196022 
+IRLS : Iteration 0 Log-vraisemblance -109.2404959828102 
+EM   : Iteration : 122   log-likelihood : -14946.967991373576 
+IRLS : Iteration 0 Log-vraisemblance -332.30759152024314 
+IRLS : Iteration 0 Log-vraisemblance -656.6934067657764 
+IRLS : Iteration 0 Log-vraisemblance -109.1643390252937 

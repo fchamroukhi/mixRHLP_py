@@ -91,6 +91,8 @@ while ~converge & (iter<max_iter)
             end
         end
         gw_old = reshape(gw_old,q*(K-1),1);
+    
+    
     % Hessienne
     for k=1:K-1
         for ell=1:K-1

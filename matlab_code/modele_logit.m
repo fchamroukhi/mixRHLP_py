@@ -44,6 +44,7 @@ function [probas, loglik] = modele_logit(W,M,Y)
 %
 % Faicel Chamroukhi 31 Octobre 2008 (mise � jour)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 if nargin > 2
     [n1,K] = size(Y);
     [n2,q] = size(M);% ici q c'est q+1
@@ -94,9 +95,9 @@ if nargin>2    %calcul de la log-vraisemblance
        error('Probleme loglik IRLS NaN (!!!)');
     end
 else
+    
     loglik = [];
 end
 probas = piik;
-
 
 

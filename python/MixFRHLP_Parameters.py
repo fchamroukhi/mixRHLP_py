@@ -46,6 +46,10 @@ class MixParam():
         if const.init_kmeans:
             kmeans = KMeans(n_clusters = const.G, init = 'k-means++', max_iter = 400, n_init = 20, random_state = 0)
             klas = kmeans.fit_predict(const.data)
+            
+            #klas = [np.zeros(10),[1]*np.ones(10), [2]*np.ones(10)]
+            #klas = np.hstack(klas)
+            
             for g in range(0,const.G):
                 Xg = const.data[klas==g ,:]; #if kmeans  
                 betak, sigma = self.__initRegressionParam(Xg, phiBeta, try_EM)
@@ -84,7 +88,7 @@ class MixParam():
                 i = (k-1)*zi;
                 j = k*zi;
                 Xij = Xg[:,i:j];
-                Xij = np.reshape(Xij.T,(np.prod(Xij.shape), 1))
+                Xij = np.reshape(Xij,(np.prod(Xij.shape), 1))
                 phi_ij = phiBeta[i:j,:];
                 Phi_ij = np.matlib.repmat(phi_ij, n, 1);
                 bk = np.linalg.inv(Phi_ij.T@Phi_ij)@Phi_ij.T@Xij;
@@ -121,7 +125,7 @@ class MixParam():
                 i = tk_init[k]+1;
                 j = tk_init[k+1];
                 Xij = Xg[:,i:j];
-                Xij = np.reshape(Xij.T,(np.prod(Xij.shape), 1))
+                Xij = np.reshape(Xij,(np.prod(Xij.shape), 1))
                 phi_ij = phiBeta[i:j,:];
                 Phi_ij = np.matlib.repmat(phi_ij, n, 1);
                 bk = np.linalg.inv(Phi_ij.T@Phi_ij)@Phi_ij.T@Xij;
@@ -136,6 +140,9 @@ class MixParam():
                     sigma.append(sk[0][0])
             #remake betak
             betak = np.hstack(betak_list)
+        #print(betak)
+        #print(sigma)
+        #wait = input('PLEASE PRESS ENTER')
         return betak, sigma
                 
     def __initHlp(self, phiW, try_EM):
