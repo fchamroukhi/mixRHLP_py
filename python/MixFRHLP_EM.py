@@ -13,7 +13,7 @@ import constants as const
 import default_constants as defConst
 import MixFRHLP_Parameters as mixParam
 import Mix_IRLS as mixirls
-import matplotlib.pyplot as plt
+
 
 
 class MixFRHLPSolution():
@@ -93,11 +93,15 @@ class MixFRHLP():
         self.tau_ijgk = np.NaN*np.empty([const.G, const.n * const.m, const.K])
         self.Ex_g = np.NaN*np.empty([const.m, const.G])
         self.loglik = np.NaN
-        self.stored_loglik = np.NaN*np.empty([const.max_iter_EM,1])
-        self.comp_loglik = np.NaN
-        self.stored_com_loglik = np.NaN*np.empty([1, const.total_EM_tries])
+        self.stored_loglik = np.NaN*np.empty([const.max_iter_EM, const.total_EM_tries])
+        #self.comp_loglik = np.NaN
+        #self.stored_com_loglik = np.NaN*np.empty([1, const.total_EM_tries])
+        
+        
         self.log_alphag_fg_xij = np.zeros((const.n,const.G))
         
+        
+        self.cputime_total = []
         #self.mixSolution = MixFRHLPSolution()
         
     def fit_EM(self, trace=True):
@@ -122,7 +126,7 @@ class MixFRHLP():
         top=0
         try_EM = 0
         best_loglik = -np.Inf
-        cputime_total = []
+        
         
         while try_EM < const.total_EM_tries:
             try_EM+=1
@@ -137,7 +141,7 @@ class MixFRHLP():
             #self.param.sigma_g = np.array([[1.1962,1.2821,0.9436],[1.2485,1.1025,1.5289],[0.9995,0.9589,0.9512]])
             #self.param.beta_g[0,:,:] = np.array([[6.7429,1.3500 ,6.9402],[-4.1544,7.6295,-0.2227]])
             #self.param.beta_g[1,:,:] = np.array([[7.5825,6.0601 ,3.9628],[ -7.2452, -2.6757, 0.0313]])
-            #self.param.beta_g[2,:,:] = np.array([[4.9583,    9.5519,    4.8896],[ 0.1544,   -6.8148,    0.1226]])
+            #self.param.betdo the followin (I think if I put the whole context of what I am doing, it will be ma_g[2,:,:] = np.array([[4.9583,    9.5519,    4.8896],[ 0.1544,   -6.8148,    0.1226]])
             
             
             iteration = 0; 
@@ -180,10 +184,10 @@ class MixFRHLP():
                 converge = abs((self.loglik-prev_loglik)/prev_loglik)<=const.threshold
                 
                 prev_loglik = self.loglik;
-                self.stored_loglik[iteration-1]=self.loglik
+                self.stored_loglik[iteration-1, try_EM-1]=self.loglik
             
             cpu_time = time.time()-start_time
-            cputime_total.append(cpu_time)
+            self.cputime_total.append(cpu_time)
             
             self.Psi = np.array([self.param.alpha_g.T.ravel(), self.param.Wg.T.ravel(), self.param.beta_g.T.ravel(), self.param.sigma_g.T.ravel()])
             if self.loglik > best_loglik:
@@ -320,10 +324,3 @@ class MixFRHLP():
             self.param.Wg[g,:,:]=irls.wk;             
             self.param.pi_jgk[g,:,:] = np.matlib.repmat(irls.piik[0:const.m,:],const.n,1); 
             
-def main_script():
-    solution =  MixFRHLP(); 
-    solution.fit_EM()
-    return solution
-
-s = main_script()
-plt.plot(s.bestSolution.stored_loglik)
