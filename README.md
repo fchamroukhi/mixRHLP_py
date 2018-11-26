@@ -1,6 +1,6 @@
 # Introduction to source code for Python codes for functional data clustering and segmentation with mixture of regressions with hidden logistic processes (MixRHLP): 
 
-**Faĩcel Chamrouckhi & Bartcus Marius**
+**Faicel Chamrouckhi & Bartcus Marius**
 
 firstname.lastname@unicaen.fr
 
@@ -29,7 +29,6 @@ help(f)
 
 these gives information on the selected source code with information on classes and functions
 each function and class has it's comments that will be given by "help(f)"
-
 
 
 ### THE SHORT DESCRIPTION OF EACH PYTHON FILE

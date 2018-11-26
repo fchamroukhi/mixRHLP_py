@@ -110,7 +110,7 @@ solution =  MixFRHLP_EM(data, G , K, p, q, type_variance, init_kmeans, n_tries, 
 
 
 
-%afficher_resultats(data,solution)
+afficher_resultats(data,solution)
 
 
 

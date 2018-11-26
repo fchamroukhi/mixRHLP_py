@@ -251,17 +251,40 @@ def showResults(data, solution):
     colors = ['r','b','g','m','c','k','y']
     colors_cluster_means = [[0.8, 0, 0],[0, 0, 0.8],[0, 0.8, 0],'m','c','k','y']
     
+    plt.figure(1)
+    
     for g in range(0,G):
         cluster_g = data[klas==g ,:];
         plt.plot(t,cluster_g.T,colors[g],linewidth=0.1);    
         plt.plot(t,solution.bestSolution.Ex_g[:,g], colors_cluster_means[g],linewidth=3)
+        
     plt.xlabel('Time')
     plt.ylabel('y')
     plt.xlim(0, m-1)
+    plt.savefig('figures/data_clustering.png')
+    
+    
+    for g in range(0,G):
+        plt.figure(g+2)
+        plt.subplot(2, 1, 1)
+        cluster_g = data[klas==g ,:]
+        plt.plot(t,cluster_g.T,colors[g])
+        plt.plot(t,solution.bestSolution.polynomials[g,:,:],'k--',linewidth=1)
+        plt.plot(t,solution.bestSolution.Ex_g[:,g],colors_cluster_means[g],linewidth=3)
+        plt.title('Cluster {0}'.format(g))
+        plt.ylabel('y');
+        plt.xlim([0, m-1])
+        
+        plt.subplot(2, 1, 2)
+        plt.plot(t,solution.bestSolution.param.pi_jgk[g,0:m,:],linewidth=2);
+        plt.ylabel('Logistic proportions')
+        plt.xlabel('Time')
+        ax = plt.gca()
+        ax.set_yticklabels(np.linspace(0,1,6))
+        plt.xlim([0, m-1])
+        
+        plt.savefig('figures/cluster{0}.png'.format(g))
     plt.show()
-    
-    
-    
 
 def normalize_matrix(matrix):
     """
