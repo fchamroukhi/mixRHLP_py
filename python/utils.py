@@ -239,6 +239,10 @@ def log_normalize(matrix):
 
 
 def showResults(data, solution):
+    plt.figure(1)
+    plt.plot(solution.bestSolution.stored_loglik)
+    plt.show()
+    
     n,m = data.shape
     klas = solution.bestSolution.klas.reshape(n)
     font = {'family' : 'normal',
@@ -251,7 +255,7 @@ def showResults(data, solution):
     colors = ['r','b','g','m','c','k','y']
     colors_cluster_means = [[0.8, 0, 0],[0, 0, 0.8],[0, 0.8, 0],'m','c','k','y']
     
-    plt.figure(1)
+    plt.figure(2)
     
     for g in range(0,G):
         cluster_g = data[klas==g ,:];
@@ -265,7 +269,7 @@ def showResults(data, solution):
     
     
     for g in range(0,G):
-        plt.figure(g+2)
+        plt.figure(g+3)
         plt.subplot(2, 1, 1)
         cluster_g = data[klas==g ,:]
         plt.plot(t,cluster_g.T,colors[g])
