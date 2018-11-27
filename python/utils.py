@@ -172,7 +172,7 @@ def designmatrix_FRHLP(x,p,q=None):
         
     phi=np.NaN * np.empty([len(x), order_max+1])
     for ordr in range(order_max+1):
-        phi[:,ordr] = x**ordr # phi2w = [1 t t.^2 t.^3 t.^p;......;...]
+        phi[:,ordr] = (x**ordr).transpose() # phi2w = [1 t t.^2 t.^3 t.^p;......;...]
     #todo: verify        
     phiBeta = phi[:,0:p+1]; # Matrice de regresseurs pour Beta
 
@@ -239,6 +239,11 @@ def log_normalize(matrix):
 
 
 def showResults(data, solution):
+    plt.figure(1, figsize=(10,8))
+    plt.plot(solution.bestSolution.stored_loglik)
+    
+    plt.savefig('figures/stored_loglik.png')
+    
     n,m = data.shape
     klas = solution.bestSolution.klas.reshape(n)
     font = {'family' : 'normal',
@@ -251,7 +256,7 @@ def showResults(data, solution):
     colors = ['r','b','g','m','c','k','y']
     colors_cluster_means = [[0.8, 0, 0],[0, 0, 0.8],[0, 0.8, 0],'m','c','k','y']
     
-    plt.figure(1)
+    plt.figure(2, figsize=(10,8))
     
     for g in range(0,G):
         cluster_g = data[klas==g ,:];
@@ -265,7 +270,7 @@ def showResults(data, solution):
     
     
     for g in range(0,G):
-        plt.figure(g+2)
+        plt.figure(g+3,figsize=(10,8))
         plt.subplot(2, 1, 1)
         cluster_g = data[klas==g ,:]
         plt.plot(t,cluster_g.T,colors[g])

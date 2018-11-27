@@ -28,18 +28,27 @@ import datasets
     """
 varianceTypes=['free', 'common']
 
-q=1 # dimension de w (ordre de reg logistique)
-p = 1 # dimension de beta (ordre de reg polynomiale)
+
 variance_type = varianceTypes[0]
-total_EM_tries=2
+total_EM_tries=1
 init_kmeans=True
 max_iter_EM=1000
 threshold=1e-5
 
-#n_tries = 2
-G = 3 # nombre de clusters
-K = 3 # nombre de regimes
 
+
+def setModelDimension(pp,qq,GG,KK):
+    global p
+    global q
+    global G
+    global K
+    q=qq # dimension de w (ordre de reg logistique)
+    p = pp # dimension de beta (ordre de reg polynomiale)
+    #n_tries = 2
+    G = GG # nombre de clusters
+    K = KK # nombre de regimes
+    
+#setModelDimension(1,1,3,3)
 
 
 """
