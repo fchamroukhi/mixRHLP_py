@@ -115,6 +115,7 @@ class MixFRHLP():
         
         # 1. Construction des matrices de regression
         x = np.linspace(0,1,const.m) # ou rentrer le vecteur de covariables des courbes
+        x = np.reshape(x,(len(x),1))
         # 2. pour 1 courbe
         phiBeta, phiW = utl.designmatrix_FRHLP(x, const.p, const.q);
         #pour les n courbes (regularly sampled)
