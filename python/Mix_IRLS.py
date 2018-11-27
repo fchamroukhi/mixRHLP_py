@@ -130,7 +130,7 @@ class IRLS():
                             Hkl[qqa,qqb] = hwk[0,0]
                             
                     
-                    Hw_old[k*q : (k+1)*q, ell*q : ell*q+2] = -Hkl
+                    Hw_old[k*q : (k+1)*q, ell*q : (ell+1)*q] = -Hkl
                     
                     
             
@@ -139,13 +139,15 @@ class IRLS():
             gw_old = gw_old - np.array([lmda*W_old.T.ravel()]).T
             # Newton Raphson : W(c+1) = W(c) - H(W(c))^(-1)g(W(c))  
             w = np.array([W_old.T.ravel()]).T - np.linalg.inv(Hw_old)@gw_old ; #[(q+1)x(K-1),1]
-            W = np.reshape(w,(q,const.K-1)).T #[(q+1)*(K-1)] 
-            
+            W = np.reshape(w,(const.K-1, q)).T #[(q+1)*(K-1)] 
+            #wait=input('enter')
             # mise a jour des probas et de la loglik
             piik, loglik = utl.modele_logit(W, M, Tau ,Gamma)
             
             loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
             
+            #print('IRLS : Iteration {0} Log-vraisemblance {1} \n'.format(iteration, loglik_old))
+            #wait=input('press enter')
             """
             Verifier si Qw1(w^(c+1),w^(c))> Qw1(w^(c),w^(c)) 
             (adaptation) de Newton Raphson : W(c+1) = W(c) - pas*H(W)^(-1)*g(W)
@@ -154,13 +156,15 @@ class IRLS():
 #            alpha = 2;
 #            #print(loglik)
 #            #print(loglik_old)
+#            it=0;
 #            while (loglik < loglik_old):
 #                pas = pas/alpha; # pas d'adaptation de l'algo Newton raphson
 #                #recalcul du parametre W et de la loglik
-#                w = np.array([W_old.T.ravel()]).T - pas*np.linalg.inv(Hw_old)@gw_old ;
-#                W = np.reshape(w,(q,const.K-1)).T
+#                w = np.array([W_old.T.ravel()]).T - pas*np.linalg.inv(Hw_old)@gw_old
+#                W = np.reshape(w,(const.K-1, q)).T
 #                # mise a jour des probas et de la loglik
-#                #print('Start model logit')
+#                it+=1;
+#                print('Start model logit {0}\n'.format(it))
 #                piik, loglik = utl.modele_logit(W, M, Tau ,Gamma)
 #                #print('end model logit')
 #                loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
@@ -176,7 +180,7 @@ class IRLS():
             LL.append(loglik_old)
             loglik_old = loglik
             
-            #utl.globalTrace('IRLS : Iteration {0} Log-vraisemblance {1} \n'.format(iteration, loglik_old))
+            utl.globalTrace('IRLS : Iteration {0} Log-vraisemblance {1} \n'.format(iteration, loglik_old))
         #utl.globalTrace('Fin IRLS \n')
         
         #if converge:

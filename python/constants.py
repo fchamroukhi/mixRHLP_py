@@ -30,16 +30,16 @@ varianceTypes=['free', 'common']
 
 
 variance_type = varianceTypes[0]
-total_EM_tries=2
+total_EM_tries=1
 init_kmeans=True
 max_iter_EM=1000
 threshold=1e-5
 
 
 
-def setModelDimension(qq,pp,GG,KK):
-    global q
+def setModelDimension(pp,qq,GG,KK):
     global p
+    global q
     global G
     global K
     q=qq # dimension de w (ordre de reg logistique)
