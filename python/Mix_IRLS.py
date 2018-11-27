@@ -97,7 +97,7 @@ class IRLS():
         max_iter = 300;
         LL = [];
         
-        utl.globalTrace('IRLS : Iteration {0} Log-vraisemblance {1} \n'.format(iteration, loglik_old))
+        #utl.globalTrace('IRLS : Iteration {0} Log-vraisemblance {1} \n'.format(iteration, loglik_old))
         
         while not converge and  (iteration<max_iter):
             # Hw_old matrice carree de dimensions hx x hx
@@ -146,8 +146,9 @@ class IRLS():
             
             loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
             
-            #print('IRLS : Iteration {0} Log-vraisemblance {1} \n'.format(iteration, loglik_old))
-            #wait=input('press enter')
+            
+            
+        
             """
             Verifier si Qw1(w^(c+1),w^(c))> Qw1(w^(c),w^(c)) 
             (adaptation) de Newton Raphson : W(c+1) = W(c) - pas*H(W)^(-1)*g(W)
@@ -181,7 +182,8 @@ class IRLS():
             loglik_old = loglik
             
             utl.globalTrace('IRLS : Iteration {0} Log-vraisemblance {1} \n'.format(iteration, loglik_old))
-        #utl.globalTrace('Fin IRLS \n')
+            
+            
         
         #if converge:
         #    utl.globalTrace('IRLS : convergence  OK ; nbre d''iterations : {0}\n'.format(iteration))
