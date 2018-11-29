@@ -30,7 +30,7 @@ varianceTypes=['free', 'common']
 
 
 variance_type = varianceTypes[0]
-total_EM_tries=2
+total_EM_tries=5
 init_kmeans=True
 max_iter_EM=1000
 threshold=1e-5
