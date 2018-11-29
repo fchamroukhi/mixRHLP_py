@@ -30,12 +30,14 @@ varianceTypes=['free', 'common']
 
 
 variance_type = varianceTypes[0]
-total_EM_tries=1
+total_EM_tries=2
 init_kmeans=True
 max_iter_EM=1000
 threshold=1e-5
 
 
+algorithms=['EM', 'CEM']
+alg=algorithms[1]
 
 def setModelDimension(pp,qq,GG,KK):
     global p
