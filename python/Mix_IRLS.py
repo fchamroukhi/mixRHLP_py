@@ -8,7 +8,6 @@ Created on Wed Oct 31 17:04:19 2018
 import utils as utl
 import constants as const
 import numpy as np
-import os
 
 #load lambda;
 lmda = 1e-9 # cas du MAP ( a priori gaussien sur W) (penalisation L2)
@@ -71,7 +70,7 @@ class IRLS():
         self.LL= None
         self.loglik = None
         self.piik = None
-        self.reg_irls = None
+        self.reg_irls = 0
         
         
         

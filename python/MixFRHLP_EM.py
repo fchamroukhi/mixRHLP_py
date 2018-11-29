@@ -17,7 +17,7 @@ import Mix_IRLS as mixirls
 
 
 class MixFRHLPSolution():
-    def __init__(self, param, Psi, h_ig, tau_ijgk, Ex_g, loglik, stored_loglik, log_alphag_fg_xij):
+    def __init__(self, param, Psi, h_ig, tau_ijgk, Ex_g, loglik, stored_loglik, comp_loglik, stored_comp_loglik, log_alphag_fg_xij):
         self.param = param
         self.param.pi_jgk = self.param.pi_jgk[:,0:const.m,:]
         self.Psi = Psi
@@ -26,7 +26,12 @@ class MixFRHLPSolution():
         self.Ex_g = Ex_g
         self.loglik = loglik
         self.stored_loglik = stored_loglik
+        self.comp_loglik = comp_loglik
+        self.stored_comp_loglik = stored_comp_loglik
         self.log_alphag_fg_xij = log_alphag_fg_xij
+        
+        if const.alg.lower() == 'cem':
+            self.loglik = sum(np.log(np.exp(log_alphag_fg_xij).sum(1)));
         
         #klas and c_ig are recomputed by MAP
         self.klas = np.NaN*np.empty([const.n, 1])
@@ -92,10 +97,11 @@ class MixFRHLP():
         self.klas = np.NaN*np.empty([const.n, 1])
         self.tau_ijgk = np.NaN*np.empty([const.G, const.n * const.m, const.K])
         self.Ex_g = np.NaN*np.empty([const.m, const.G])
+        
         self.loglik = np.NaN
         self.stored_loglik = np.NaN*np.empty([const.max_iter_EM, const.total_EM_tries])
-        #self.comp_loglik = np.NaN
-        #self.stored_com_loglik = np.NaN*np.empty([1, const.total_EM_tries])
+        self.comp_loglik = np.NaN
+        self.stored_com_loglik = np.NaN*np.empty([const.max_iter_EM, const.total_EM_tries])
         
         
         self.log_alphag_fg_xij = np.zeros((const.n,const.G))
@@ -110,7 +116,10 @@ class MixFRHLP():
         """
         if trace:
             utl.detect_path(const.TraceDir)
-            utl.fileGlobalTrace=open(const.TraceDir + "FitEM_Trace{0}.txt".format(const.dataName), "w")
+            if const.alg.lower() == 'cem':
+                utl.fileGlobalTrace=open(const.TraceDir + "FitCEM_Trace{0}.txt".format(const.dataName), "w")
+            if const.alg.lower() == 'em':
+                utl.fileGlobalTrace=open(const.TraceDir + "FitEM_Trace{0}.txt".format(const.dataName), "w")
         utl.globalTrace("Start EM\n")
         
         # 1. Construction des matrices de regression
@@ -126,7 +135,7 @@ class MixFRHLP():
         
         top=0
         try_EM = 0
-        best_loglik = -np.Inf
+        best_criterion = -np.Inf
         
         
         while try_EM < const.total_EM_tries:
@@ -147,7 +156,7 @@ class MixFRHLP():
             
             iteration = 0; 
             converge = False
-            prev_loglik = -np.Inf
+            prev_criterion = -np.Inf
             
             #EM
             self.tau_ijgk = np.zeros((const.G, const.n*const.m, const.K)) # segments post prob  
@@ -158,6 +167,7 @@ class MixFRHLP():
             
             
             while not(converge) and (iteration<= const.max_iter_EM):
+                iteration+=1
                 """
                 E-Step
                 """
@@ -165,40 +175,76 @@ class MixFRHLP():
                 
                 
                 
+                
+                irls = mixirls.IRLS()
+                
+                
+                
+                """
+                CM-Step
+                """
+                if const.alg.lower() == 'cem':
+                    self.__CMStep(X, phiBeta, phiW, irls)
+                    utl.globalTrace('CEM   : Iteration : {0}   criterion : {1} \n'.format(iteration, self.comp_loglik))
+                    
+                    if prev_criterion-self.comp_loglik>1e-5:
+                        utl.globalTrace('!!!!! EM log-likelihood is decreasing from {0} to {1}!\n'.format(prev_criterion, self.loglik))
+                        top+=1
+                        if top>20:
+                            break
+                    
+                    converge = abs((self.comp_loglik-prev_criterion)/prev_criterion)<=const.threshold
+                    prev_criterion = self.comp_loglik
+                    self.stored_com_loglik[iteration-1, try_EM-1]=self.comp_loglik
+                 
                 """
                 M-Step
                 """
-                self.__MStep(X, phiBeta, phiW)
+                if const.alg.lower() == 'em':
+                    self.__MStep(X, phiBeta, phiW, irls)
+                    utl.globalTrace('EM   : Iteration : {0}   log-likelihood : {1} \n'.format(iteration, self.loglik))
                 
-                #FIN EM
                 
-                iteration+=1
                 
-                utl.globalTrace('EM   : Iteration : {0}   log-likelihood : {1} \n'.format(iteration, self.loglik))
-                #print('EM   : Iteration : {0}   log-likelihood : {1} \n'.format(iteration, self.loglik))
-                if prev_loglik-self.loglik>1e-5:
-                    utl.globalTrace('!!!!! EM log-likelihood is decreasing from {0} to {1}!\n'.format(prev_loglik, self.loglik))
-                    top+=1
-                    if top>20:
-                        break
-                converge = abs((self.loglik-prev_loglik)/prev_loglik)<=const.threshold
+                    if prev_criterion-self.loglik>1e-5:
+                        utl.globalTrace('!!!!! EM log-likelihood is decreasing from {0} to {1}!\n'.format(prev_criterion, self.loglik))
+                        top+=1
+                        if top>20:
+                            break
+                    
+                    converge = abs((self.loglik-prev_criterion)/prev_criterion)<=const.threshold
+                    prev_criterion = self.loglik;
+                    self.stored_loglik[iteration-1, try_EM-1]=self.loglik
                 
-                prev_loglik = self.loglik;
-                self.stored_loglik[iteration-1, try_EM-1]=self.loglik
+                
             
             cpu_time = time.time()-start_time
             self.cputime_total.append(cpu_time)
             
             self.Psi = np.array([self.param.alpha_g.T.ravel(), self.param.Wg.T.ravel(), self.param.beta_g.T.ravel(), self.param.sigma_g.T.ravel()])
-            if self.loglik > best_loglik:
-                self.bestSolution = MixFRHLPSolution(self.param, self.Psi, self.h_ig, self.tau_ijgk, self.Ex_g, self.loglik, self.stored_loglik, self.log_alphag_fg_xij)
-                best_loglik = self.loglik
+            
+            if const.alg.lower() == 'cem':
+                crit=self.comp_loglik
+            if const.alg.lower() == 'em':
+                crit=self.loglik
+                
+            if crit > best_criterion:
+                self.bestSolution = MixFRHLPSolution(self.param, self.Psi, self.h_ig, self.tau_ijgk, self.Ex_g, self.loglik, self.stored_loglik, self.comp_loglik, self.stored_com_loglik, self.log_alphag_fg_xij)
+                best_criterion = crit
                 
             if const.total_EM_tries>1:
-                utl.globalTrace('max value (em try): {0} \n'.format(self.loglik))
+                utl.globalTrace('max value (one try): {0} \n'.format(self.loglik))
         
-              
-        self.bestSolution.klas, self.bestSolution.c_ig = utl.MAP(self.bestSolution.h_ig); # c_ig the hard partition of the curves
+        
+        
+        
+        
+        
+        if const.alg.lower() == 'cem':  
+            self.bestSolution.klas = self.klas
+            self.bestSolution.c_ig = self.c_ig
+        if const.alg.lower() == 'em':      
+            self.bestSolution.klas, self.bestSolution.c_ig = utl.MAP(self.bestSolution.h_ig); # c_ig the hard partition of the curves
         
         
         if const.total_EM_tries>1:
@@ -212,7 +258,7 @@ class MixFRHLP():
             utl.fileGlobalTrace.close()
             utl.fileGlobalTrace = None
             
-        
+    
     def __EStep(self, X, phiBeta, log_tau_ijgk, log_fg_xij):
         """
         E-step
@@ -264,7 +310,7 @@ class MixFRHLP():
         
     
     
-    def __MStep(self, X, phiBeta, phiW):
+    def __MStep(self, X, phiBeta, phiW, irls):
         """
         M-step
         """
@@ -320,7 +366,7 @@ class MixFRHLP():
             IRLS : Regression logistique multinomiale pondérée par cluster
             """
             Wg_init = self.param.Wg[g,:,:]
-            irls = mixirls.IRLS()
+            
             
             irls.runIRLS(tauijk, phiW, Wg_init, cluster_weights)
             
@@ -332,21 +378,21 @@ class MixFRHLP():
         # cluster posterior probabilities p(c_i=g|X)
         self.h_ig = np.exp(utl.log_normalize(self.log_alphag_fg_xij))
         
-        [klas, c_ig] = utl.MAP(self.h_ig); # c_ig the hard partition of the curves 
+        [self.klas, self.c_ig] = utl.MAP(self.h_ig); # c_ig the hard partition of the curves 
  
         #Compute the optimized criterion  
-        cig_log_alphag_fg_xij = c_ig*self.log_alphag_fg_xij;
+        cig_log_alphag_fg_xij = self.c_ig*self.log_alphag_fg_xij;
         self.comp_loglik = sum(cig_log_alphag_fg_xij.sum(axis=1)) +  irls.reg_irls ; 
         
-        self.param.alpha_g = c_ig.sum(0).T/const.n;
+        self.param.alpha_g = self.c_ig.sum(0).T/const.n;
         
         # Maximization w.r.t betagk et sigmagk
-        cluster_labels =  np.matlib.repmat(klas,1,const.m).T # [m x n]
+        cluster_labels =  np.matlib.repmat(self.klas,1,const.m).T # [m x n]
         cluster_labels = cluster_labels.T.ravel()
         # Maximization w.r.t betagk et sigmagk
         for g in range(0,const.G):
             Xg = X[cluster_labels==g ,:]; # cluster g (found from a hard clustering)
-            tauijk = self.tau_ijgk[cluster_labels==g,:,g]
+            tauijk = self.tau_ijgk[g,cluster_labels==g,:]
             if const.variance_type.lower() == 'common':  
                 s = 0 
             else:

@@ -121,7 +121,9 @@ def modele_logit(W,M,Y=None, Gamma=None):
     
     if Y is not None:
         if Gamma is None:
-            temp = Y*np.log(expMW.sum(axis=1)*np.ones((1,K)))
+            temp = expMW.sum(axis=1)
+            temp = np.reshape(temp,(len(temp),1))
+            temp = Y*np.log(temp*np.ones((1,K)))
             temp = (Y*MW) - temp
             loglik = sum(temp.sum(axis=1))
         else:
@@ -240,7 +242,9 @@ def log_normalize(matrix):
 
 def showResults(data, solution):
     plt.figure(1, figsize=(10,8))
-    plt.plot(solution.bestSolution.stored_loglik)
+    plt.plot(solution.bestSolution.stored_comp_loglik)
+    #plt.plot(solution.bestSolution.stored_loglik)
+        
     
     plt.savefig('figures/stored_loglik.png')
     
