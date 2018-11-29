@@ -75,7 +75,7 @@ class IRLS():
         
         
         
-    def runIRLS(self, Gamma, Tau, M, Winit = None, trace=False):
+    def runIRLS(self, Tau, M, Winit = None, Gamma=None, trace=False):
         #utl.globalTrace("Start IRLS\n")
         
         

@@ -165,7 +165,6 @@ class MixFRHLP():
                 
                 
                 
-                
                 """
                 M-Step
                 """
@@ -218,6 +217,7 @@ class MixFRHLP():
         """
         E-step
         """
+                
         alpha_g = self.param.alpha_g
         for g in range(0,const.G):
             
@@ -260,7 +260,14 @@ class MixFRHLP():
         self.log_alphag_fg_xij = np.minimum(self.log_alphag_fg_xij,np.log(sys.float_info.max))
         self.log_alphag_fg_xij = np.maximum(self.log_alphag_fg_xij,np.log(sys.float_info.min))
 
-
+        
+        
+    
+    
+    def __MStep(self, X, phiBeta, phiW):
+        """
+        M-step
+        """
         # cluster posterior probabilities p(c_i=g|X)
         self.h_ig = np.exp(utl.log_normalize(self.log_alphag_fg_xij))
         #print(self.h_ig.sum(1))
@@ -270,12 +277,8 @@ class MixFRHLP():
         self.loglik = sum(np.log(temp.sum(axis = 1)))
         #print(self.loglik)
         #wait = input("PRESS ENTER TO CONTINUE.")
-    
-    
-    def __MStep(self, X, phiBeta, phiW):
-        """
-        M-step
-        """
+        
+        
         # Maximization w.r.t alpha_g
         self.param.alpha_g = np.array([self.h_ig.sum(axis=0)]).T/const.n
         
@@ -319,9 +322,64 @@ class MixFRHLP():
             Wg_init = self.param.Wg[g,:,:]
             irls = mixirls.IRLS()
             
-            irls.runIRLS(cluster_weights, tauijk, phiW, Wg_init)
+            irls.runIRLS(tauijk, phiW, Wg_init, cluster_weights)
             
             
             self.param.Wg[g,:,:]=irls.wk;             
             self.param.pi_jgk[g,:,:] = np.matlib.repmat(irls.piik[0:const.m,:],const.n,1); 
             
+    def __CMStep(self, X, phiBeta, phiW, irls):
+        # cluster posterior probabilities p(c_i=g|X)
+        self.h_ig = np.exp(utl.log_normalize(self.log_alphag_fg_xij))
+        
+        [klas, c_ig] = utl.MAP(self.h_ig); # c_ig the hard partition of the curves 
+ 
+        #Compute the optimized criterion  
+        cig_log_alphag_fg_xij = c_ig*self.log_alphag_fg_xij;
+        self.comp_loglik = sum(cig_log_alphag_fg_xij.sum(axis=1)) +  irls.reg_irls ; 
+        
+        self.param.alpha_g = c_ig.sum(0).T/const.n;
+        
+        # Maximization w.r.t betagk et sigmagk
+        cluster_labels =  np.matlib.repmat(klas,1,const.m).T # [m x n]
+        cluster_labels = cluster_labels.T.ravel()
+        # Maximization w.r.t betagk et sigmagk
+        for g in range(0,const.G):
+            Xg = X[cluster_labels==g ,:]; # cluster g (found from a hard clustering)
+            tauijk = self.tau_ijgk[cluster_labels==g,:,g]
+            if const.variance_type.lower() == 'common':  
+                s = 0 
+            else:
+                sigma_gk = np.zeros((const.K,1))
+                
+            beta_gk = np.NaN * np.empty([const.p +1, const.K])
+            for k in range(0,const.K):
+                segment_weights = np.array([tauijk[:,k]]).T #poids du kieme segment   pour le cluster g  
+                phigk = (np.sqrt(segment_weights)@np.ones((1,const.p+1)))*phiBeta[cluster_labels==g,:] #[(n*m)*(p+1)]
+                Xgk = np.sqrt(segment_weights)*Xg
+                # maximization w.r.t beta_gk: Weighted least squares 
+                temp = np.linalg.inv(phigk.T@phigk + defConst.eps*np.eye(const.p+1))@phigk.T@Xgk
+                beta_gk[:,k] = temp.ravel() # Maximization w.r.t betagk
+                # Maximization w.r.t au sigma_gk :   
+                if const.variance_type.lower() == 'common':
+                    sk = sum((Xgk-phigk@beta_gk[:,k])**2)
+                    s = s+sk
+                    sigma_gk = s/sum(sum(tauijk))
+                else:
+                    temp = phigk@np.array([beta_gk[:,k]]).T
+                    sigma_gk[k]= sum((Xgk-temp)**2)/(sum(segment_weights))
+                    
+            self.param.beta_g[g,:,:] = beta_gk
+            self.param.sigma_g[g,:] = list(sigma_gk)
+            
+            """
+            Maximization w.r.t W 
+            IRLS : Regression logistique multinomiale pondérée par cluster
+            """
+            Wg_init = self.param.Wg[g,:,:]
+            
+            irls.runIRLS(tauijk, phiW[cluster_labels==g,:],  Wg_init)
+            
+            
+            self.param.Wg[g,:,:]=irls.wk;             
+            self.param.pi_jgk[g,:,:] = np.matlib.repmat(irls.piik[0:const.m,:],const.n,1); 
