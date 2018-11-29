@@ -90,6 +90,7 @@ class IRLS():
         W_old = Winit;
         
         piik_old, loglik_old = utl.modele_logit(W_old,M,Tau,Gamma);
+        
         loglik_old = loglik_old - pow(lmda*(np.linalg.norm(W_old.T.ravel(),2)),2)
         
         iteration = 0;
@@ -107,7 +108,10 @@ class IRLS():
             
             # Gradient :
             for k in range(0,const.K-1):
-                gwk = Gamma*np.array([(Tau[:,k] - piik_old[:,k])]).T
+                if Gamma is None:
+                    gwk = np.array([(Tau[:,k] - piik_old[:,k])]).T
+                else:
+                    gwk = Gamma*np.array([(Tau[:,k] - piik_old[:,k])]).T
                 for qq in range(0,q):
                     vq = M[:,qq]
                     gw_old[qq,k] = gwk.T@vq
@@ -120,7 +124,10 @@ class IRLS():
             for k in range(0,const.K-1):
                 for ell in range(0, const.K-1):
                     delta_kl=int(k==ell) # kronecker delta 
-                    gwk = Gamma*(np.array([piik_old[:,k]]).T*(np.ones((n,1))*delta_kl - np.array([piik_old[:,ell]]).T))
+                    if Gamma is None:
+                        gwk = np.array([piik_old[:,k]]).T*(np.ones((n,1))*delta_kl - np.array([piik_old[:,ell]]).T)
+                    else:
+                        gwk = Gamma*(np.array([piik_old[:,k]]).T*(np.ones((n,1))*delta_kl - np.array([piik_old[:,ell]]).T))
                     Hkl = np.zeros((q,q))
                     for qqa in range(0,q):
                         vqa=np.array([M[:,qqa]]).T
