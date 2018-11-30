@@ -278,7 +278,7 @@ class MixFRHLP():
             for k in range(0,const.K):
                 beta_gk = beta_g[:,k]
                 if const.variance_type.lower() == 'common':
-                    sgk = self.param.sigma_g(g)
+                    sgk = self.param.sigma_g[g]
                 else:
                     #todo: verify
                     sgk = self.param.sigma_g[k,g]
@@ -354,9 +354,9 @@ class MixFRHLP():
                 
                 # Maximization w.r.t au sigma_gk :   
                 if const.variance_type.lower() == 'common':
-                    sk = sum((Xgk-phigk@beta_gk[:,k])**2)
+                    sk = sum((Xgk-np.array([phigk@beta_gk[:,k]]).T)**2)
                     s = s+sk;
-                    sigma_gk = s/sum(sum((cluster_weights@np.ones((1,const.K)))*tauijk))
+                    sigma_gk = s/sum((cluster_weights@np.ones((1,const.K))*tauijk).sum(0))
                 else:
                     temp = phigk@np.array([beta_gk[:,k]]).T
                     sigma_gk[k]= sum((Xgk-temp)**2)/(sum(cluster_weights*segment_weights))

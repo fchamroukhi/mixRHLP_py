@@ -27,7 +27,7 @@ class MixParam():
         self.beta_g = np.NaN * np.empty([const.G, const.p +1, const.K])
         
         if const.variance_type.lower() == 'common':
-            self.sigma_g = np.NaN * np.empty([const.G])
+            self.sigma_g = np.NaN * np.empty([const.G, 1])
         else:
             self.sigma_g = np.NaN * np.empty([const.G, const.K])
             
