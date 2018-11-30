@@ -248,7 +248,10 @@ class MixFRHLP():
         
         
         if const.total_EM_tries>1:
-            utl.globalTrace('max value (best solution): {0} \n'.format(self.bestSolution.loglik))
+            if const.alg.lower() == 'cem':
+                utl.globalTrace('max value (best solution): {0} \n'.format(self.bestSolution.comp_loglik))
+            if const.alg.lower() == 'em':
+                utl.globalTrace('max value (best solution): {0} \n'.format(self.bestSolution.loglik))
         
         self.bestSolution.setCompleteSolution(phiBeta, cpu_time)
         
