@@ -11,13 +11,53 @@ Also we recomand to install anaconda from: [https://www.anaconda.com/download/] 
 One of the important packages that we use in our code are:
 1) NumPy [http://www.numpy.org/]
 2) Scikit-Learn [http://scikit-learn.org/stable/]
+3) matplotlib [https://matplotlib.org/]
 
-The following python codes contain:
-1) constants.py
-2) datasets.py
-3) data_utils.py
-4) utils.py
-5) MixFRHLP_EM.py
+When using the code 
+When using this code please cite the following papers : The two first ones concern the model and its use in clusterng and the two last ones concern the model and its use in discrimination.
+
+
+```
+ @article{Chamroukhi-RHLP-2009,
+ 	Author = {Chamroukhi, F. and Sam\'{e}, A. and Govaert, G. and Aknin, P.},
+ 	Journal = {Neural Networks},
+ 	Number = {5-6},
+ 	Pages = {593--602},
+	Publisher = {Elsevier Science Ltd.},
+ 	Title = {Time series modeling by a regression approach based on a latent process},
+ 	Volume = {22},
+ 	Year = {2009}
+     }
+ @article{Chamroukhi-MixRHLP-2011,
+ 	Author = {Sam{\'e}, A. and Chamroukhi, F. and Govaert, G{\'e}rard and Aknin, P.},
+ 	Issue = 4,
+ 	Journal = {Advances in Data Analysis and Classification},
+ 	Pages = {301--321},
+ 	Publisher = {Springer Berlin / Heidelberg},
+ 	Title = {Model-based clustering and segmentation of time series with changes in regime},
+ 	Volume = 5,
+ 	Year = {2011}
+     }
+
+ @article{Chamroukhi-RHLP-FLDA,
+ 	Author = {Chamroukhi, F. and Sam\'{e}, A. and Govaert, G. and Aknin, P.},
+ 	Journal = {Neurocomputing},
+ 	Number = {7-9},
+ 	Pages = {1210--1221},
+ 	Title = {A hidden process regression model for functional data description. Application to curve discrimination},
+ 	Volume = {73},
+ 	Year = {2010}
+     }
+
+ @article{Chamroukhi-FMDA-2013,
+ 	Author = {Chamroukhi, F. and Glotin, H. and Sam{\'e}, A.},
+ 	Journal = {Neurocomputing},
+ 	Pages = {153-163},
+ 	Title = {Model-based functional mixture discriminant analysis with hidden process regression for curve classification},
+ 	Volume = {112},
+ 	Year = {2013}
+     }    
+```
 
 
 ### To obtain a detailed information on each of theese source code:
@@ -32,8 +72,12 @@ each function and class has it's comments that will be given by "help(f)"
 
 
 ### THE SHORT DESCRIPTION OF EACH PYTHON FILE
+1) script_EM_MixFRHLP _script to run the EM or CEM algorithm_
 1) constants.py	_settings to run the algorithm_                        
 2) datasets.py _The data sets setting names_
 4) data_utils.py _Generate artificial data sets_
 5) utils.py _routines python: file reading, writing files, matrix normalizations, etc_
-6) MixFRHLP_EM.py _The main MixFRHLP EM algorithm implementation_
+6) MixFRHLP_EM.py _The main MixFRHLP EM and CEM algorithm implementation_
+7) MixFRHLP_Parameters.py _The model pararameters initialization_
+8) Mix_IRLS.py _IRLS algorithm_
+
