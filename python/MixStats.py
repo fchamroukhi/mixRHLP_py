@@ -61,7 +61,7 @@ class MixStats():
         plt.xlabel('Time')
         plt.ylabel('y')
         plt.xlim(0, mixModel.m-1)
-        plt.savefig('figures/data_clustering.png')
+        #plt.savefig('figures/data_clustering.png')
         
         
         for g in range(0,G):
