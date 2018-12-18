@@ -156,72 +156,138 @@ def modele_logit(W,M,Y=None, Gamma=None):
             
     return probas, loglik
     
-def designmatrix_FRHLP(x,p,q=None):
-    """
-    requires:
-        x - data
-        p - dimension de beta (ordre de reg polynomiale)
-        q (Optional) - dimension de w (ordre de reg logistique)
-    ensures:
-        creates the parameters phiBeta and phiW
-    """
-    if x.shape[0] == 1:
-        x=x.T; # en vecteur
-    
-    order_max = p    
-    if q!=None:
-        order_max = max(p,q)
-        
-    phi=np.NaN * np.empty([len(x), order_max+1])
-    for ordr in range(order_max+1):
-        phi[:,ordr] = (x**ordr).transpose() # phi2w = [1 t t.^2 t.^3 t.^p;......;...]
-    #todo: verify        
-    phiBeta = phi[:,0:p+1]; # Matrice de regresseurs pour Beta
-
-    phiW =[];
-    if q!=None:
-        phiW = phi[:,0:q+1]; # matrice de regresseurs pour w
-    
-    return phiBeta, phiW
             
 
 
-def MAP(post_probas):
-    """
-     calcule une partition d'un echantillon par la regle du Maximum A Posteriori à partir des
+def IRLS(Tau, M, Winit = None, Gamma=None, trace=False):
+    #utl.globalTrace("Start IRLS\n")
     
-     probabilites a posteriori 
     
-     Entrees : post_probas , Matrice de dimensions [n x K] des probabibiltes a
-     posteriori (matrice de la partition floue)
+    n,K = Tau.shape
+    n,q = M.shape; #q ici c'est (q+1)
+    if Winit is None:
+        Winit = np.zeros((q, K-1))
     
-           n : taille de l'echantillon
+    I = np.eye(q*(K-1));
     
-           K : nombres de classes
+    #Initialisation du IRLS (iter = 0)
+    W_old = Winit;
     
-           klas(i) = arg   max (post_probas(i,k)) , for all i=1,...,n
-                         1<=k<=K
-                   = arg   max  p(zi=k|xi;theta)
-                         1<=k<=K
-                   = arg   max  p(zi=k;theta)p(xi|zi=k;theta)/sum{l=1}^{K}p(zi=l;theta) p(xi|zi=l;theta)
-                         1<=k<=K
+    piik_old, loglik_old = modele_logit(W_old,M,Tau,Gamma);
     
-     Sorties : classes : vecteur collones contenant les classe (1:K)
+    lmda = 1e-9
+    loglik_old = loglik_old - pow(lmda*(np.linalg.norm(W_old.T.ravel(),2)),2)
     
-           Z : Matrice de dimension [nxK] de la partition dure : ses elements sont zik, avec zik=1 si xi
-           appartient à la classe k (au sens du MAP) et zero sinon.
+    iteration = 0;
+    converge = False;
+    max_iter = 300;
+    LL = [];
     
-    """
-    N, K = post_probas.shape
+    #utl.globalTrace('IRLS : Iteration {0} Log-vraisemblance {1} \n'.format(iteration, loglik_old))
     
-    ikmax = np.argmax(post_probas,axis=1)
-    ikmax = np.reshape(ikmax,(ikmax.size,1))
-    partition_MAP = (ikmax@np.ones((1,K))) == (np.ones((N,1))@np.array([range(0,K)]));
-    klas = np.ones((N,1))
-    for k in range(0,K):
-        klas[partition_MAP[:,k]==1]=k
-    Z=partition_MAP
-    return klas, Z
+    while not converge and  (iteration<max_iter):
+        # Hw_old matrice carree de dimensions hx x hx
+        hx = q*(K-1)
+        Hw_old = np.zeros((hx,hx))
+        gw_old = np.zeros((q, K-1))# todo: verify with matlab this line?
+        
+        # Gradient :
+        for k in range(0, K-1):
+            if Gamma is None:
+                gwk = np.array([(Tau[:,k] - piik_old[:,k])]).T
+            else:
+                gwk = Gamma*np.array([(Tau[:,k] - piik_old[:,k])]).T
+            for qq in range(0,q):
+                vq = M[:,qq]
+                gw_old[qq,k] = gwk.T@vq
+                
+        gw_old = np.array([np.reshape(gw_old,q*(K-1),1)]).T;
+        
+        
+        
+        # Hessienne
+        for k in range(0, K-1):
+            for ell in range(0, K-1):
+                delta_kl=int(k==ell) # kronecker delta 
+                if Gamma is None:
+                    gwk = np.array([piik_old[:,k]]).T*(np.ones((n,1))*delta_kl - np.array([piik_old[:,ell]]).T)
+                else:
+                    gwk = Gamma*(np.array([piik_old[:,k]]).T*(np.ones((n,1))*delta_kl - np.array([piik_old[:,ell]]).T))
+                Hkl = np.zeros((q,q))
+                for qqa in range(0,q):
+                    vqa=np.array([M[:,qqa]]).T
+                    for qqb in range(0,q):
+                        vqb=np.array([M[:,qqb]]).T  
+                        hwk = vqb.T@(gwk*vqa)
+                        Hkl[qqa,qqb] = hwk[0,0]
+                        
+                
+                Hw_old[k*q : (k+1)*q, ell*q : (ell+1)*q] = -Hkl
+                
+                
+        
+        # si a priori gaussien sur W (lambda ~ 1e-9)
+        Hw_old = Hw_old + lmda*I;
+        gw_old = gw_old - np.array([lmda*W_old.T.ravel()]).T
+        # Newton Raphson : W(c+1) = W(c) - H(W(c))^(-1)g(W(c))  
+        w = np.array([W_old.T.ravel()]).T - np.linalg.inv(Hw_old)@gw_old ; #[(q+1)x(K-1),1]
+        W = np.reshape(w,(K-1, q)).T #[(q+1)*(K-1)] 
+        #wait=input('enter')
+        # mise a jour des probas et de la loglik
+        piik, loglik = modele_logit(W, M, Tau ,Gamma)
+        
+        loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
+        
+        
+        
+    
+        """
+        Verifier si Qw1(w^(c+1),w^(c))> Qw1(w^(c),w^(c)) 
+        (adaptation) de Newton Raphson : W(c+1) = W(c) - pas*H(W)^(-1)*g(W)
+        """
+#        pas = 1; # initialisation pas d'adaptation de l'algo Newton raphson
+#        alpha = 2;
+#        #print(loglik)
+#        #print(loglik_old)
+#        it=0;
+#        while (loglik < loglik_old):
+#            pas = pas/alpha; # pas d'adaptation de l'algo Newton raphson
+#            #recalcul du parametre W et de la loglik
+#            w = np.array([W_old.T.ravel()]).T - pas*np.linalg.inv(Hw_old)@gw_old
+#            W = np.reshape(w,(const.K-1, q)).T
+#            # mise a jour des probas et de la loglik
+#            it+=1;
+#            print('Start model logit {0}\n'.format(it))
+#            piik, loglik = utl.modele_logit(W, M, Tau ,Gamma)
+#            #print('end model logit')
+#            loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
+            
+        converge1 = abs((loglik-loglik_old)/loglik_old) <= 1e-7
+        converge2 = abs(loglik-loglik_old) <= 1e-6
+        
+        converge = converge1 | converge2
+        
+        piik_old = piik;
+        W_old = W;
+        iteration += 1;
+        LL.append(loglik_old)
+        loglik_old = loglik
+        
+        #utl.globalTrace('IRLS : Iteration {0} Log-vraisemblance {1} \n'.format(iteration, loglik_old))
+        
+        
+    
+    #if converge:
+    #    utl.globalTrace('IRLS : convergence  OK ; nbre d''iterations : {0}\n'.format(iteration))
+    #else:
+    #    utl.globalTrace('\nIRLS : pas de convergence (augmenter le nombre d''iterations > {0}) \n'.format(iteration))
+        
+     
+    if lmda!=0: #pour l'injection de l'a priori dans le calcul de la  loglik de l'EM dans le cas du MAP
+        reg_irls = - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
+    else:
+        reg_irls = 0
+    return W, piik, reg_irls, LL, loglik    
 
 """
     ########################################
