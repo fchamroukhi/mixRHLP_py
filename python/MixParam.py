@@ -149,7 +149,54 @@ class MixParam:
             for g in range(0,mixModel.G):
                 self.Wg[g,:,:] = np.random.rand(mixModel.q+1,mixModel.K-1); #initialisation aléatoire du vercteur param�tre du IRLS
                 self.pi_jgk[g,:,:] = utl.modele_logit(self.Wg[g,:,:],phiW)[0];
+    
+    def CMStep(self, mixModel, mixStats, phi, mixOptions):
+        self.alpha_g = mixStats.c_ig.sum(0).T/mixModel.n
+        # Maximization w.r.t betagk et sigmagk
+        cluster_labels =  np.matlib.repmat(mixStats.klas,1,mixModel.m).T # [m x n]
+        cluster_labels = cluster_labels.T.ravel()
+        # Maximization w.r.t betagk et sigmagk
+        for g in range(0,mixModel.G):
+            Xg = mixModel.XR[cluster_labels==g ,:]; # cluster g (found from a hard clustering)
+            tauijk = mixStats.tau_ijgk[g,cluster_labels==g,:]
+            if mixOptions.variance_type == enums.variance_types.common:
+                s = 0 
+            else:
+                sigma_gk = np.zeros((mixModel.K,1))
                 
+            beta_gk = np.NaN * np.empty([mixModel.p+1, mixModel.K])
+            for k in range(0,mixModel.K):
+                segment_weights = np.array([tauijk[:,k]]).T #poids du kieme segment   pour le cluster g  
+                phigk = (np.sqrt(segment_weights)@np.ones((1,mixModel.p+1)))*phi.phiBeta[cluster_labels==g,:] #[(n*m)*(p+1)]
+                Xgk = np.sqrt(segment_weights)*Xg
+                # maximization w.r.t beta_gk: Weighted least squares 
+                temp = np.linalg.inv(phigk.T@phigk + np.spacing(1)*np.eye(mixModel.p+1))@phigk.T@Xgk
+                beta_gk[:,k] = temp.ravel() # Maximization w.r.t betagk
+                # Maximization w.r.t au sigma_gk :  
+                if mixOptions.variance_type == enums.variance_types.common:
+                    sk = sum((Xgk-phigk@beta_gk[:,k])**2)
+                    s = s+sk
+                    sigma_gk = s/sum(sum(tauijk))
+                else:
+                    temp = phigk@np.array([beta_gk[:,k]]).T
+                    sigma_gk[k]= sum((Xgk-temp)**2)/(sum(segment_weights))
+            
+            self.beta_g[g,:,:] = beta_gk
+            self.sigma_g[g,:] = list(sigma_gk)
+            
+            """
+            Maximization w.r.t W 
+            IRLS : Regression logistique multinomiale pondérée par cluster
+            """
+            Wg_init = self.Wg[g,:,:]
+            
+            wk, piik, reg_irls, _, _ = utl.IRLS(tauijk, phi.phiW[cluster_labels==g,:], Wg_init)
+            
+            self.Wg[g,:,:]=wk;             
+            self.pi_jgk[g,:,:] = np.matlib.repmat(piik[0:mixModel.m,:],mixModel.n,1)
+            
+        return reg_irls
+            
     def MStep(self, mixModel, mixStats, phi, mixOptions):
         """
         M-step

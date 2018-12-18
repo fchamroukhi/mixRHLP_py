@@ -17,13 +17,17 @@ p = 1; #dimension de beta (ordre de reg polynomiale)
 q = 1; #dimension de w (ordre de reg logistique)
 mixModel = model.MixModel(dataFileName, G, K, p, q)
 
-n_tries=3
+n_tries=1
 max_iter=1000
 threshold = 1e-5
 verbose = True
 verbose_IRLS = True
 init_kmeans = True
-modelOptions = options.ModelOptions(n_tries, max_iter, threshold, verbose, verbose_IRLS, init_kmeans, enums.variance_types.common)
+modelOptions = options.ModelOptions(n_tries, max_iter, threshold, verbose, verbose_IRLS, init_kmeans, enums.variance_types.free)
 
 mixParamSolution, mixStatsSolution = learner.EM(mixModel, modelOptions)
 mixStatsSolution.showDataClusterSegmentation(mixModel, mixParamSolution)
+
+
+#mixParamSolution, mixStatsSolution = learner.CEM(mixModel, modelOptions)
+#mixStatsSolution.showDataClusterSegmentation(mixModel, mixParamSolution)

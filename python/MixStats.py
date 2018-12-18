@@ -108,6 +108,7 @@ class MixStats():
 
         self.ICL = self.comp_loglik - nu*np.log(mixModel.n)/2 #n*m/2!
         
+        self.klas = self.klas.reshape(mixModel.n)
         
     def MAP(self):
         """
@@ -144,8 +145,18 @@ class MixStats():
         for k in range(0,K):
             self.klas[self.c_ig[:,k]==1]=k
             
-        self.klas = self.klas.reshape(N)
-            
+        #
+    
+    def CStep(self, reg_irls):
+        # cluster posterior probabilities p(c_i=g|X)
+        self.h_ig = np.exp(utl.log_normalize(self.log_alphag_fg_xij))
+        
+        self.MAP(); # c_ig the hard partition of the curves 
+ 
+        #Compute the optimized criterion  
+        cig_log_alphag_fg_xij = self.c_ig*self.log_alphag_fg_xij;
+        self.comp_loglik = sum(cig_log_alphag_fg_xij.sum(axis=1)) +  reg_irls
+        
     def EStep(self, mixModel, mixParam, phi, variance_type):
         """
         E-step
