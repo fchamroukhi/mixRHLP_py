@@ -230,7 +230,7 @@ while try_CEM_like < total_CEM_tries
                %else
                 %   total_CEM_retries = total_CEM_tries;
                %end
-                solution =  curve_clustering_MixFRHLP_CEM(data,G , K, p,fs, q, variance_type,...
+                solution =  MixFRHLP_CEM(data,G , K, p,fs, q, variance_type,...
                     init_kmeans, total_CEM_retries, max_iter_CEM_like, threshold, verbose, verbose_IRLS);
                 return;
             end
