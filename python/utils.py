@@ -123,11 +123,11 @@ def modele_logit(W,M,Y=None, Gamma=None):
         if Gamma is None:
             temp = expMW.sum(axis=1)
             temp = np.reshape(temp,(len(temp),1))
-            temp = Y*np.log(temp*np.ones((1,K)))
+            temp = Y*np.log(temp@np.ones((1,K)))
             temp = (Y*MW) - temp
             loglik = sum(temp.sum(axis=1))
         else:
-            temp = (Gamma*Y)*np.log(np.array([expMW.sum(axis=1)]).T*np.ones((1,K)))
+            temp = (Gamma*Y)*np.log(np.array([expMW.sum(axis=1)]).T@np.ones((1,K)))
             temp = (Gamma*(Y*MW)) - temp
             loglik = sum(temp.sum(axis=1))
             
@@ -141,11 +141,11 @@ def modele_logit(W,M,Y=None, Gamma=None):
             expMW = np.exp(MW);
             
             if Gamma is None:
-                temp=Y*np.log(expMW.sum(axis=1)*np.ones((1,K))+eps)
+                temp=Y*np.log(expMW.sum(axis=1)@np.ones((1,K))+eps)
                 temp=(Y*MW) - temp
                 loglik = sum(temp.sum(axis=1))
             else:
-                temp=(Gamma*Y)*np.log(expMW.sum(axis=1)*np.ones((1,K))+eps)
+                temp=(Gamma*Y)*np.log(np.array([expMW.sum(axis=1)]).T@np.ones((1,K))+eps)
                 temp=((Gamma*Y)*MW) - temp
                 loglik = sum(temp.sum(axis=1))
                 
