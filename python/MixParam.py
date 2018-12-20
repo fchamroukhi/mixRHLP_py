@@ -22,12 +22,12 @@ class MixParam:
               4. pi_jgk :logistic proportions for cluster g
         """
         self.Wg = np.zeros([mixModel.G, mixModel.q+1, mixModel.K-1])
-        self.beta_g = np.NaN * np.empty([mixModel.G, mixModel.p +1, mixModel.K])
+        self.beta_g = np.NaN * np.empty([mixModel.G, mixModel.p+1, mixModel.K])
         
         if options.variance_type == enums.variance_types.common:
             self.sigma_g = np.NaN * np.empty([mixModel.G, 1])
         else:
-            self.sigma_g = np.NaN * np.empty([mixModel.G, mixModel.K])
+            self.sigma_g = np.NaN * np.empty([mixModel.K, mixModel.G])
             
         self.pi_jgk = np.NaN * np.empty([mixModel.G, mixModel.m*mixModel.n, mixModel.K])
         self.alpha_g = np.NaN * np.empty(mixModel.G)
@@ -134,7 +134,7 @@ class MixParam:
         if variance_type == enums.variance_types.common:
             self.sigma_g[g] = sigma;
         else:
-            self.sigma_g[g,:] = sigma;
+            self.sigma_g[:,g] = sigma;
         
     def __initHlp(self, mixModel, phiW, try_algo):
         """
@@ -235,7 +235,7 @@ class MixParam:
                     sigma_gk[k]= sum((Xgk-temp)**2)/(sum(cluster_weights*segment_weights))
                     
             self.beta_g[g,:,:] = beta_gk
-            self.sigma_g[g,:] = list(sigma_gk)
+            self.sigma_g[:,g] = list(sigma_gk)
             
             """
             Maximization w.r.t W 
