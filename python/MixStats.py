@@ -188,8 +188,7 @@ class MixStats():
             log_pijgk_fgk_xij = np.maximum(log_pijgk_fgk_xij,np.log(sys.float_info.min))
             
             pijgk_fgk_xij = np.exp(log_pijgk_fgk_xij);
-            sumk_pijgk_fgk_xij = np.array([pijgk_fgk_xij.sum(axis = 1)]) # sum over k
-            sumk_pijgk_fgk_xij = sumk_pijgk_fgk_xij.T 
+            sumk_pijgk_fgk_xij = np.array([pijgk_fgk_xij.sum(axis = 1)]).T # sum over k
             log_sumk_pijgk_fgk_xij  = np.log(sumk_pijgk_fgk_xij) #[nxm x 1]
             
             self.log_tau_ijgk[g,:,:] = log_pijgk_fgk_xij - log_sumk_pijgk_fgk_xij @ np.ones((1,mixModel.K))
