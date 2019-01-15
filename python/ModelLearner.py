@@ -113,9 +113,11 @@ def CEM(mixModel, modelOptions):
         while not(converge) and (iteration <= modelOptions.max_iter):
             mixStats.EStep(mixModel,mixParam,phi,modelOptions.variance_type)
             mixStats.CStep(reg_irls)
-            reg_irls = mixParam.CMStep(mixModel, mixStats, phi, modelOptions)
+            reg_irls, good_segmentation = mixParam.CMStep(mixModel, mixStats, phi, modelOptions)
             
-            
+            if (good_segmentation==False):
+                try_EM = try_EM - 1
+                break
             # FIN EM
             iteration += 1
             if (modelOptions.verbose):
