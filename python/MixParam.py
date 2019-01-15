@@ -179,8 +179,12 @@ class MixParam:
                     sigma_gk = s/sum(sum(tauijk))
                 else:
                     temp = phigk@np.array([beta_gk[:,k]]).T
+                    #todo: verify devision by zero null clusters rerun CEM algorithm
+                    if (sum(segment_weights)==0):
+                        good_segmentation = False
+                        return 0, good_segmentation
                     sigma_gk[k]= sum((Xgk-temp)**2)/(sum(segment_weights))
-            
+                    
             self.beta_g[g,:,:] = beta_gk
             self.sigma_g[g,:] = list(sigma_gk)
             
@@ -195,7 +199,7 @@ class MixParam:
             self.Wg[g,:,:]=wk;             
             self.pi_jgk[g,:,:] = np.matlib.repmat(piik[0:mixModel.m,:],mixModel.n,1)
             
-        return reg_irls
+        return reg_irls, True
             
     def MStep(self, mixModel, mixStats, phi, mixOptions):
         """

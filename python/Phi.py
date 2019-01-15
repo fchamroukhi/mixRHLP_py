@@ -6,7 +6,7 @@ Created on Tue Dec 18 08:31:28 2018
 @author: bartcus
 """
 import numpy as np
-
+import numpy.matlib
 
 class Phi():
     def __init__(self, x, p, q, n = 1):
