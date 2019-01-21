@@ -17,7 +17,7 @@ p = 1; #dimension de beta (ordre de reg polynomiale)
 q = 1; #dimension de w (ordre de reg logistique)
 mixModel = model.MixModel(dataFileName, G, K, p, q)
 
-n_tries=1
+n_tries=10
 max_iter=1000
 threshold = 1e-5
 verbose = True
