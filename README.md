@@ -10,11 +10,8 @@ python codes written by
 
 firstname.lastname@unicaen.fr
 
-For using this code we recomand you install anaconda (which contains the necessary packages to run our codes and a set of usefull data science python packages). For installing anaconda see [https://www.anaconda.com/download/]
-The needed packages to run our code are:
-1) NumPy [http://www.numpy.org/]
-2) Scikit-Learn [http://scikit-learn.org/stable/]
-3) matplotlib [https://matplotlib.org/]
+For using this code we recomand you install anaconda (which contains the necessary packages to run our codes and a set of usefull data science python packages). 
+The needed packages to run our code are: NumPy, Scikit-Learn, and matplotlib.
 
 When using this code please cite the following papers : The two first ones concern the model and its use in clusterng and the last ones concern the model and its use in discrimination.
 
