@@ -1,6 +1,6 @@
 # Introduction to source code for Python codes for functional data clustering and segmentation with mixture of regressions with hidden logistic processes (MixRHLP): 
 
-**Faicel Chamrouckhi & Bartcus Marius**
+**Faicel Chamrouckhi**
 
 firstname.lastname@unicaen.fr
 
@@ -8,7 +8,7 @@ firstname.lastname@unicaen.fr
 
 For using this code you need to install python.
 Also we recomand to install anaconda from: [https://www.anaconda.com/download/] that contains a set of usefull data science python packages.
-One of the important packages that we use in our code are:
+The packages that we use in our code are:
 1) NumPy [http://www.numpy.org/]
 2) Scikit-Learn [http://scikit-learn.org/stable/]
 3) matplotlib [https://matplotlib.org/]
@@ -72,12 +72,15 @@ each function and class has it's comments that will be given by "help(f)"
 
 
 ### THE SHORT DESCRIPTION OF EACH PYTHON FILE
-1) script_EM_MixFRHLP _script to run the EM or CEM algorithm_
-1) constants.py	_settings to run the algorithm_                        
-2) datasets.py _The data sets setting names_
-4) data_utils.py _Generate artificial data sets_
-5) utils.py _routines python: file reading, writing files, matrix normalizations, etc_
-6) MixFRHLP_EM.py _The main MixFRHLP EM and CEM algorithm implementation_
-7) MixFRHLP_Parameters.py _The model pararameters initialization_
-8) Mix_IRLS.py _IRLS algorithm_
+1) main_MixFRHLP_EM _Script to run the EM or CEM algorithm_
+2) ModelLearner.py _Contains two functions that are the EM and CEM algorithm._
+3) MixModel.py _Contains the MixModel class with extension of the data object and the number of clusters, the number of regimes, the degree of polynomials, the order of the logistic regression_
+4) MixParam.py _Contains the parameters of the logistic process matrix of dimension, polynomial regression coefficient vectors, the variances for the K regmies, logistic proportions for G clusters. Note that the class contains methods to initialize parameters and the M step of the EM algorithm._
+5) MixStats.py _Contains the parition, the loglikelihood, different information criterias BIC, ICL, etc. This class computes the E step of the EM algorithm._
+6) ModelOptions.py _contains the options needed to set before learning the model._
+7) datasets	_Contains the object to load the dataset and setting all the properties used throw the EM or CEM algorithm_                        
+8) enums.py _The possible enumerations. In this case we have the variance types enumeration that is free or common_
+9) RegressionDesinger.py _Design matrices for the polynomial regression and the logistic regression_
+10) utils.py _Contains the model_logit function that calculates the pobabilities according to multinomial logistic model, an efficient Iteratively Reweighted Least-Squares (IRLS) algorithm, and a function for normalizing a matrix.
+
 
