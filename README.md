@@ -2,7 +2,10 @@
 
 << Note that the codes are also provided in R and Matlab >>
 
+python codes written by
+
 **Faicel Chamrouckhi**
+&
 **Marius Bartcus**
 
 firstname.lastname@unicaen.fr
