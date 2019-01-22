@@ -3,7 +3,7 @@
 """
 Created on Tue Dec 18 08:24:48 2018
 
-@author: bartcus
+@author: Faïcel Chamroukhi
 """
 
 class ModelOptions():

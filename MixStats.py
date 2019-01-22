@@ -3,7 +3,7 @@
 """
 Created on Tue Dec 18 09:47:01 2018
 
-@author: bartcus
+@author: Faïcel Chamroukhi
 """
 import numpy as np
 import enums
@@ -88,7 +88,7 @@ class MixStats():
         
     def computeStats(self, mixModel, mixParam, phi, cpu_time_all):
         for g in range(0,mixModel.G):
-            self.polynomials[g,:,:] = phi.phiBeta[0:mixModel.m,:]@mixParam.beta_g[g,:,:]
+            self.polynomials[g,:,:] = phi.XBeta[0:mixModel.m,:]@mixParam.beta_g[g,:,:]
             
             self.weighted_polynomials[g,:,:] = mixParam.pi_jgk[g,:,:]*self.polynomials[g,:,:]
             self.Ex_g[:,g] = self.weighted_polynomials[g,:,:].sum(axis=1); 
@@ -112,29 +112,27 @@ class MixStats():
         
     def MAP(self):
         """
-         calcule une partition d'un echantillon par la regle du Maximum A Posteriori à partir des
-        
-         probabilites a posteriori 
-        
-         Entrees : post_probas , Matrice de dimensions [n x K] des probabibiltes a
-         posteriori (matrice de la partition floue)
-        
-               n : taille de l'echantillon
-        
-               K : nombres de classes
-        
-               klas(i) = arg   max (post_probas(i,k)) , for all i=1,...,n
-                             1<=k<=K
-                       = arg   max  p(zi=k|xi;theta)
-                             1<=k<=K
-                       = arg   max  p(zi=k;theta)p(xi|zi=k;theta)/sum{l=1}^{K}p(zi=l;theta) p(xi|zi=l;theta)
-                             1<=k<=K
-        
-         Sorties : classes : vecteur collones contenant les classe (1:K)
-        
-               Z : Matrice de dimension [nxK] de la partition dure : ses elements sont zik, avec zik=1 si xi
-               appartient à la classe k (au sens du MAP) et zero sinon.
-        
+        % calculate a partition by applying the Maximum A Posteriori Bayes
+        % allocation rule
+        %
+        %
+        % Inputs : 
+        %   PostProbs, a matrix of dimensions [n x K] of the posterior
+        %  probabilities of a given sample of n observations arizing from K groups
+        %
+        % Outputs:
+        %   klas: a vector of n class labels (z_1, ...z_n) where z_i =k \in {1,...K}
+        %       klas(i) = arg   max (PostProbs(i,k)) , for all i=1,...,n
+        %                     1<=k<=K
+        %               = arg   max  p(zi=k|xi;theta)
+        %                     1<=k<=K
+        %               = arg   max  p(zi=k;theta)p(xi|zi=k;theta)/sum{l=1}^{K}p(zi=l;theta) p(xi|zi=l;theta)
+        %                     1<=k<=K
+        %
+        %
+        %       Z : Hard partition data matrix [nxK] with binary elements Zik such
+        %       that z_ik =1 iff z_i = k
+        %
         """
         N, K = self.h_ig.shape
         
@@ -176,7 +174,7 @@ class MixStats():
                     #todo: verify
                     sgk = mixParam.sigma_g[k,g]
                 
-                temp = phi.phiBeta@beta_gk
+                temp = phi.XBeta@beta_gk
                 temp = temp.reshape((len(temp), 1))
                 z=((mixModel.XR-temp)**2)/sgk;
                 

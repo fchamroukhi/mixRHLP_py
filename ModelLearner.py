@@ -3,17 +3,17 @@
 """
 Created on Tue Dec 18 10:48:08 2018
 
-@author: bartcus
+@author: Faïcel Chamroukhi
 """
 import numpy as np
-import Phi
+import RegressionDesigner as regdes
 import time
 import MixParam as pram
 import MixStats as stats
 from copy import deepcopy
 
 def EM(mixModel, modelOptions):
-    phi = Phi.Phi(mixModel.t, mixModel.p, mixModel.q, mixModel.n)
+    phi = regdes.RegressionDesigner(mixModel.t, mixModel.p, mixModel.q, mixModel.n)
     top = 0
     try_EM = 0
     best_loglik = -np.Inf
@@ -88,20 +88,20 @@ def EM(mixModel, modelOptions):
 
 
 def CEM(mixModel, modelOptions):
-    phi = Phi.Phi(mixModel.t, mixModel.p, mixModel.q, mixModel.n)
+    phi = regdes.RegressionDesigner(mixModel.t, mixModel.p, mixModel.q, mixModel.n)
     top = 0
-    try_EM = 0
+    try_CEM = 0
     best_com_loglik = -np.Inf
     cpu_time_all = []
     
-    while(try_EM < modelOptions.n_tries):
-        try_EM = try_EM+1
-        print("CEM try nr ",try_EM)
+    while(try_CEM < modelOptions.n_tries):
+        try_CEM = try_CEM+1
+        print("CEM try nr ",try_CEM)
         start_time = time.time()
         
         # Initializations
         mixParam = pram.MixParam(mixModel, modelOptions)
-        mixParam.initParam(mixModel, phi, modelOptions, try_EM)
+        mixParam.initParam(mixModel, phi, modelOptions, try_CEM)
         
         iteration = 0
         converge = False
@@ -116,7 +116,7 @@ def CEM(mixModel, modelOptions):
             reg_irls, good_segmentation = mixParam.CMStep(mixModel, mixStats, phi, modelOptions)
             
             if (good_segmentation==False):
-                try_EM = try_EM - 1
+                try_CEM = try_CEM - 1
                 break
             # FIN EM
             iteration += 1
@@ -133,7 +133,7 @@ def CEM(mixModel, modelOptions):
                 converge = abs((mixStats.comp_loglik-prev_comp_loglik)/prev_comp_loglik)<=modelOptions.threshold
             #todo: if is nan convergence
             prev_comp_loglik = mixStats.comp_loglik
-            mixStats.stored_com_loglik[iteration-1, try_EM-1] = mixStats.comp_loglik
+            mixStats.stored_com_loglik[iteration-1, try_CEM-1] = mixStats.comp_loglik
             
         # FIN EM LOOP
         cpu_time = time.time()-start_time
