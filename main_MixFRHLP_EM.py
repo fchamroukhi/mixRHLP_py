@@ -36,15 +36,16 @@ Created on Tue Dec 18 11:20:37 2018
 %     }
 %
 %
-% @article{Chamroukhi-FDA-2018,
-% 	Journal = {},
+%@article{Chamroukhi-FDA-2018,
+% 	Journal = {Wiley Interdisciplinary Reviews: Data Mining and Knowledge Discovery},
 % 	Author = {Faicel Chamroukhi and Hien D. Nguyen},
+% 	Note = {DOI: 10.1002/widm.1298.},
 % 	Volume = {},
 % 	Title = {Model-Based Clustering and Classification of Functional Data},
-% 	Year = {2018},
-% 	eprint ={arXiv:1803.00276v2},
-% 	url =  {https://chamroukhi.users.lmno.cnrs.fr/papers/MBCC-FDA.pdf}
-% 	}
+% 	Year = {2019},
+% 	Month = {to appear},
+% 	url =  {https://chamroukhi.com/papers/MBCC-FDA.pdf}
+%    }
 %
 % @article{Chamroukhi-RHLP-FLDA,
 % 	Author = {Chamroukhi, F. and Sam\'{e}, A. and Govaert, G. and Aknin, P.},
@@ -88,7 +89,7 @@ mixModel = model.MixModel(dataFileName, G, K, p, q)
 """
 model options
 """
-n_tries=2
+n_tries=1
 max_iter=1000
 threshold = 1e-5
 verbose = True
@@ -100,6 +101,10 @@ modelOptions = options.ModelOptions(n_tries, max_iter, threshold, verbose, verbo
 run the EM algorithm
 """
 mixParamSolution, mixStatsSolution = learner.EM(mixModel, modelOptions)
+
+"""
+show the obtained results
+"""
 mixStatsSolution.showDataClusterSegmentation(mixModel, mixParamSolution)
 
 

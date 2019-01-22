@@ -39,6 +39,8 @@ class MixStats():
     def showDataClusterSegmentation(self, mixModel, mixParamSolution):
         plt.figure(1, figsize=(10,8))
         plt.plot(self.stored_loglik)
+        plt.xlabel('iteration')
+        plt.ylabel('objective function')
         #plt.savefig('figures/stored_loglik.png')
         
         font = {'family' : 'normal',
@@ -51,13 +53,21 @@ class MixStats():
         colors = ['r','b','g','m','c','k','y']
         colors_cluster_means = [[0.8, 0, 0],[0, 0, 0.8],[0, 0.8, 0],'m','c','k','y']
         
-        plt.figure(2, figsize=(10,8))
+        
+        plt.figure(2, figsize=(10,8))        
+        plt.plot(t,mixModel.X.T);    
+        plt.title('Original times series')
+        plt.xlabel('Time')
+        plt.ylabel('y')        
+        
+        plt.figure(3, figsize=(10,8))
         
         for g in range(0,G):
             cluster_g = mixModel.X[self.klas==g ,:];
             plt.plot(t,cluster_g.T,colors[g],linewidth=0.1);    
             plt.plot(t, self.Ex_g[:,g], colors_cluster_means[g],linewidth=3)
             
+        plt.title('Clustered and segmented times series')
         plt.xlabel('Time')
         plt.ylabel('y')
         plt.xlim(0, mixModel.m-1)
@@ -65,13 +75,13 @@ class MixStats():
         
         
         for g in range(0,G):
-            plt.figure(g+3,figsize=(10,8))
+            plt.figure(g+4,figsize=(10,8))
             plt.subplot(2, 1, 1)
             cluster_g = mixModel.X[self.klas==g ,:]
             plt.plot(t,cluster_g.T,colors[g])
             plt.plot(t,self.polynomials[g,:,:],'k--',linewidth=1)
             plt.plot(t,self.Ex_g[:,g],colors_cluster_means[g],linewidth=3)
-            plt.title('Cluster {0}'.format(g))
+            plt.title('Cluster {0}'.format(g+1))
             plt.ylabel('y');
             plt.xlim([0, mixModel.m-1])
             
