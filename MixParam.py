@@ -27,8 +27,7 @@ class MixParam:
         if options.variance_type == enums.variance_types.common:
             self.sigma_g = np.NaN * np.empty([mixModel.G, 1])
         else:
-            self.sigma_g = np.NaN * np.empty([mixModel.K, mixModel.G])
-            
+            self.sigma_g = np.NaN * np.empty([mixModel.G, mixModel.K])
         self.pi_jgk = np.NaN * np.empty([mixModel.G, mixModel.m*mixModel.n, mixModel.K])
         self.alpha_g = np.NaN * np.empty(mixModel.G)
     
@@ -132,7 +131,7 @@ class MixParam:
         if variance_type == enums.variance_types.common:
             self.sigma_g[g] = sigma;
         else:
-            self.sigma_g[:,g] = sigma;
+            self.sigma_g[g,:] = sigma;
         
     def __initHlp(self, mixModel, Xw, try_algo):
         """
@@ -230,13 +229,13 @@ class MixParam:
                 if mixOptions.variance_type == enums.variance_types.common:
                     sk = sum((Xgk-np.array([phigk@beta_gk[:,k]]).T)**2)
                     s = s+sk;
-                    sigma_gk = s/sum((cluster_weights@np.ones((1,mixModel.K))*tauijk).sum(0))
+                    sigma_gk = s/sum(sum(cluster_weights@np.ones((1,mixModel.K))*tauijk))
                 else:
                     temp = phigk@np.array([beta_gk[:,k]]).T
                     sigma_gk[k]= sum((Xgk-temp)**2)/(sum(cluster_weights*segment_weights))
                     
             self.beta_g[g,:,:] = beta_gk
-            self.sigma_g[:,g] = list(sigma_gk)
+            self.sigma_g[g,:] = list(sigma_gk)
             
             """
             Maximization w.r.t W 
