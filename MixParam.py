@@ -97,7 +97,7 @@ class MixParam:
             #random initialization
             Lmin= round(m/(K+1)) #nbr pts min dans un segments
             tk_init = [0] * (K+1)
-            tk_init[0]=-1
+            #tk_init[0]=-1
             K_1=K;
             #todo: verify indexes ???
             for k in range(1,K):
@@ -106,8 +106,7 @@ class MixParam:
                 ind = np.random.permutation(len(temp))
                 tk_init[k]= temp[ind[0]];
                 
-            tk_init[K] = m-1; 
-            
+            tk_init[K] = m; 
             sigma=[]
             betak_list = []
             for k in range(0, K):
