@@ -258,7 +258,7 @@ def IRLS(Tau, M, Winit = None, Gamma=None, trace=False):
     piik_old, loglik_old = modele_logit(W_old,M,Tau,Gamma);
     
     lmda = 1e-9
-    loglik_old = loglik_old - pow(lmda*(np.linalg.norm(W_old.T.ravel(),2)),2)
+    loglik_old = loglik_old - sum(sum(W_old**2))#pow(lmda*(np.linalg.norm(W_old.T.ravel(),2)),2)
     
     iteration = 0;
     converge = False;
@@ -318,7 +318,7 @@ def IRLS(Tau, M, Winit = None, Gamma=None, trace=False):
         # mise a jour des probas et de la loglik
         piik, loglik = modele_logit(W, M, Tau ,Gamma)
         
-        loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
+        loglik = loglik - lmda*sum(sum((W**2)))#pow(np.linalg.norm(W.T.ravel(),2),2)
         
         
         
@@ -327,23 +327,22 @@ def IRLS(Tau, M, Winit = None, Gamma=None, trace=False):
          check if Qw1(w^(t+1),w^(t))> Qw1(w^(t),w^(t))
          (adaptive stepsize in case of troubles with stepsize 1) Newton Raphson : W(t+1) = W(t) - stepsize*H(W)^(-1)*g(W)
         """
-#        pas = 1; # initialisation pas d'adaptation de l'algo Newton raphson
-#        alpha = 2;
-#        #print(loglik)
-#        #print(loglik_old)
-#        it=0;
-#        while (loglik < loglik_old):
-#            pas = pas/alpha; # pas d'adaptation de l'algo Newton raphson
-#            #recalcul du parametre W et de la loglik
-#            w = np.array([W_old.T.ravel()]).T - pas*np.linalg.inv(Hw_old)@gw_old
-#            W = np.reshape(w,(const.K-1, q)).T
-#            # mise a jour des probas et de la loglik
-#            it+=1;
-#            print('Start model logit {0}\n'.format(it))
-#            piik, loglik = utl.modele_logit(W, M, Tau ,Gamma)
-#            #print('end model logit')
-#            loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
-            
+        pas = 1; # initialisation pas d'adaptation de l'algo Newton raphson
+        alpha = 2;
+        #print(loglik)
+        #print(loglik_old)
+        it=0;
+        while (loglik < loglik_old):
+            pas = pas/alpha; # pas d'adaptation de l'algo Newton raphson
+            #recalcul du parametre W et de la loglik
+            w = np.array([W_old.T.ravel()]).T - pas*np.linalg.inv(Hw_old)@gw_old
+            W = np.reshape(w,(K-1, q)).T
+            # mise a jour des probas et de la loglik
+            it+=1;
+            piik, loglik = modele_logit(W, M, Tau ,Gamma)
+            #print('end model logit')
+            loglik = loglik - lmda*sum(sum((W**2))) #pow(np.linalg.norm(W.T.ravel(),2),2)
+        
         converge1 = abs((loglik-loglik_old)/loglik_old) <= 1e-7
         converge2 = abs(loglik-loglik_old) <= 1e-6
         
