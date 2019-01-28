@@ -3,7 +3,7 @@
 """
 Created on Tue Dec 18 08:17:56 2018
 
-@author: Faïcel Chamroukhi
+@author: Faïcel Chamroukhi & Bartcus Marius
 """
 import datasets as dta
 

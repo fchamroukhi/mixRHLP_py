@@ -3,7 +3,7 @@
 """
 Created on Sat Oct 27 10:29:21 2018
 
-@author: Faïcel Chamroukhi
+@author: Faïcel Chamroukhi & Bartcus Marius
 """
 import numpy as np
 import os

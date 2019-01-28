@@ -5,7 +5,7 @@ Created on Tue Dec 18 08:31:28 2018
 
 Design matrices for the polynomial regression and the logistic regression
 
-@author: Faïcel Chamroukhi
+@author: Faïcel Chamroukhi & Bartcus Marius
 """
 import numpy as np
 import numpy.matlib

@@ -3,7 +3,7 @@
 """
 Created on Tue Dec 18 09:26:16 2018
 
-@author: Faïcel Chamroukhi
+@author: Faïcel Chamroukhi & Bartcus Marius
 """
 import numpy as np
 import enums
@@ -94,18 +94,29 @@ class MixParam:
             betak = np.hstack(betak_list)
         else:
             #random initialization
-            Lmin= round(m/(K+1)) #nbr pts min dans un segments
+            Lmin= round(m/K)#nbr pts min dans un segments
             tk_init = [0] * (K+1)
             #tk_init[0]=-1
             K_1=K;
             #todo: verify indexes ???
             for k in range(1,K):
                 K_1 = K_1-1
-                temp = np.arange(tk_init[k-1]+Lmin,m-K_1*Lmin)
+                start = tk_init[k-1]+Lmin
+                stop = m-K_1*Lmin
+                
+                if start>stop:
+                    stop = stop-1
+                    step = -1
+                else:
+                    stop = stop+1
+                    step=1
+                
+                temp = list(range(start,stop,step))
                 ind = np.random.permutation(len(temp))
                 tk_init[k]= temp[ind[0]];
-                
+               
             tk_init[K] = m; 
+            print(tk_init) 
             sigma=[]
             betak_list = []
             for k in range(0, K):

@@ -3,7 +3,7 @@
 """
 Created on Tue Dec 18 10:48:08 2018
 
-@author: Faïcel Chamroukhi
+@author: Faïcel Chamroukhi & Bartcus Marius
 """
 import numpy as np
 import RegressionDesigner as regdes

@@ -3,7 +3,7 @@
 """
 Created on Tue Dec 18 09:47:01 2018
 
-@author: Faïcel Chamroukhi
+@author: Faïcel Chamroukhi & Bartcus Marius
 """
 import numpy as np
 import enums
@@ -187,7 +187,7 @@ class MixStats():
                 temp = phi.XBeta@beta_gk
                 temp = temp.reshape((len(temp), 1))
                 z=((mixModel.XR-temp)**2)/sgk;
-                #print(np.log(sgk))
+                #print(sgk)
                 temp = np.array([np.log(pi_jgk[:,k]) - 0.5*(np.log(2*np.pi) + np.log(sgk))]).T - 0.5*z
                 log_pijgk_fgk_xij[:,k] = temp.T #pdf cond à c_i = g et z_i = k de xij
                 
