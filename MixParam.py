@@ -116,7 +116,7 @@ class MixParam:
                 tk_init[k]= temp[ind[0]];
                
             tk_init[K] = m; 
-            print(tk_init) 
+            #print(tk_init) 
             sigma=[]
             betak_list = []
             for k in range(0, K):
