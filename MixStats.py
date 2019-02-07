@@ -3,7 +3,7 @@
 """
 Created on Tue Dec 18 09:47:01 2018
 
-@author: bartcus
+@author: Faïcel Chamroukhi & Bartcus Marius
 """
 import numpy as np
 import enums
@@ -39,6 +39,8 @@ class MixStats():
     def showDataClusterSegmentation(self, mixModel, mixParamSolution):
         plt.figure(1, figsize=(10,8))
         plt.plot(self.stored_loglik)
+        plt.xlabel('iteration')
+        plt.ylabel('objective function')
         #plt.savefig('figures/stored_loglik.png')
         
         font = {'family' : 'normal',
@@ -51,13 +53,21 @@ class MixStats():
         colors = ['r','b','g','m','c','k','y']
         colors_cluster_means = [[0.8, 0, 0],[0, 0, 0.8],[0, 0.8, 0],'m','c','k','y']
         
-        plt.figure(2, figsize=(10,8))
+        
+        plt.figure(2, figsize=(10,8))        
+        plt.plot(t,mixModel.X.T);    
+        plt.title('Original times series')
+        plt.xlabel('Time')
+        plt.ylabel('y')        
+        
+        plt.figure(3, figsize=(10,8))
         
         for g in range(0,G):
             cluster_g = mixModel.X[self.klas==g ,:];
             plt.plot(t,cluster_g.T,colors[g],linewidth=0.1);    
             plt.plot(t, self.Ex_g[:,g], colors_cluster_means[g],linewidth=3)
             
+        plt.title('Clustered and segmented times series')
         plt.xlabel('Time')
         plt.ylabel('y')
         plt.xlim(0, mixModel.m-1)
@@ -65,13 +75,13 @@ class MixStats():
         
         
         for g in range(0,G):
-            plt.figure(g+3,figsize=(10,8))
+            plt.figure(g+4,figsize=(10,8))
             plt.subplot(2, 1, 1)
             cluster_g = mixModel.X[self.klas==g ,:]
             plt.plot(t,cluster_g.T,colors[g])
             plt.plot(t,self.polynomials[g,:,:],'k--',linewidth=1)
             plt.plot(t,self.Ex_g[:,g],colors_cluster_means[g],linewidth=3)
-            plt.title('Cluster {0}'.format(g))
+            plt.title('Cluster {0}'.format(g+1))
             plt.ylabel('y');
             plt.xlim([0, mixModel.m-1])
             
@@ -88,7 +98,7 @@ class MixStats():
         
     def computeStats(self, mixModel, mixParam, phi, cpu_time_all):
         for g in range(0,mixModel.G):
-            self.polynomials[g,:,:] = phi.phiBeta[0:mixModel.m,:]@mixParam.beta_g[g,:,:]
+            self.polynomials[g,:,:] = phi.XBeta[0:mixModel.m,:]@mixParam.beta_g[g,:,:]
             
             self.weighted_polynomials[g,:,:] = mixParam.pi_jgk[g,:,:]*self.polynomials[g,:,:]
             self.Ex_g[:,g] = self.weighted_polynomials[g,:,:].sum(axis=1); 
@@ -112,29 +122,27 @@ class MixStats():
         
     def MAP(self):
         """
-         calcule une partition d'un echantillon par la regle du Maximum A Posteriori à partir des
-        
-         probabilites a posteriori 
-        
-         Entrees : post_probas , Matrice de dimensions [n x K] des probabibiltes a
-         posteriori (matrice de la partition floue)
-        
-               n : taille de l'echantillon
-        
-               K : nombres de classes
-        
-               klas(i) = arg   max (post_probas(i,k)) , for all i=1,...,n
-                             1<=k<=K
-                       = arg   max  p(zi=k|xi;theta)
-                             1<=k<=K
-                       = arg   max  p(zi=k;theta)p(xi|zi=k;theta)/sum{l=1}^{K}p(zi=l;theta) p(xi|zi=l;theta)
-                             1<=k<=K
-        
-         Sorties : classes : vecteur collones contenant les classe (1:K)
-        
-               Z : Matrice de dimension [nxK] de la partition dure : ses elements sont zik, avec zik=1 si xi
-               appartient à la classe k (au sens du MAP) et zero sinon.
-        
+        % calculate a partition by applying the Maximum A Posteriori Bayes
+        % allocation rule
+        %
+        %
+        % Inputs : 
+        %   PostProbs, a matrix of dimensions [n x K] of the posterior
+        %  probabilities of a given sample of n observations arizing from K groups
+        %
+        % Outputs:
+        %   klas: a vector of n class labels (z_1, ...z_n) where z_i =k \in {1,...K}
+        %       klas(i) = arg   max (PostProbs(i,k)) , for all i=1,...,n
+        %                     1<=k<=K
+        %               = arg   max  p(zi=k|xi;theta)
+        %                     1<=k<=K
+        %               = arg   max  p(zi=k;theta)p(xi|zi=k;theta)/sum{l=1}^{K}p(zi=l;theta) p(xi|zi=l;theta)
+        %                     1<=k<=K
+        %
+        %
+        %       Z : Hard partition data matrix [nxK] with binary elements Zik such
+        %       that z_ik =1 iff z_i = k
+        %
         """
         N, K = self.h_ig.shape
         
@@ -174,12 +182,12 @@ class MixStats():
                     sgk = mixParam.sigma_g[g]
                 else:
                     #todo: verify
-                    sgk = mixParam.sigma_g[k,g]
+                    sgk = mixParam.sigma_g[g,k]
                 
-                temp = phi.phiBeta@beta_gk
+                temp = phi.XBeta@beta_gk
                 temp = temp.reshape((len(temp), 1))
                 z=((mixModel.XR-temp)**2)/sgk;
-                
+                #print(sgk)
                 temp = np.array([np.log(pi_jgk[:,k]) - 0.5*(np.log(2*np.pi) + np.log(sgk))]).T - 0.5*z
                 log_pijgk_fgk_xij[:,k] = temp.T #pdf cond à c_i = g et z_i = k de xij
                 

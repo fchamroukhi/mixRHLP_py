@@ -3,7 +3,7 @@
 """
 Created on Sat Oct 27 10:29:21 2018
 
-@author: bartcus
+@author: Faïcel Chamroukhi & Bartcus Marius
 """
 import numpy as np
 import os
@@ -36,47 +36,45 @@ def detect_path(pathname):
 
 def modele_logit(W,M,Y=None, Gamma=None):
     """
-     [probas, loglik] = modele_logit(W,X,Y)M try: 1
-    
-     calcule les pobabilites selon un le modele logistique suivant :
-    
-     probas(i,k) = p(zi=k;W)= \pi_{ik}(W) 
-                            =          exp(wk'vi)
-                              ----------------------------
-                             1 + sum_{l=1}^{K-1} exp(wl'vi)
-     for all i=1,...,n et k=1...K (dans un contexte temporel on parle d'un
-     processus logistique)
-    
-     Entrees :
-    
-             1. W : parametre du modele logistique ,Matrice de dimensions
-             [(q+1)x(K-1)]des vecteurs parametre wk. W = [w1 .. wk..w(K-1)] 
-             avec les wk sont des vecteurs colonnes de dim [(q+1)x1], le dernier 
-             est suppose nul (sum_{k=1}^K \pi_{ik} = 1 -> \pi{iK} =
-             1-sum_{l=1}^{K-1} \pi{il}. vi : vecteur colonne de dimension [(q+1)x1] 
-             qui est la variable explicative (ici le temps): vi = [1;ti;ti^2;...;ti^q];
-             2. M : Matrice de dimensions [nx(q+1)] des variables explicatives. 
-                M = transpose([v1... vi ....vn]) 
-                  = [1 t1 t1^2 ... t1^q
-                     1 t2 t2^2 ... t2^q
-                           ..
-                     1 ti ti^2 ... ti^q
-                           ..
-                     1 tn tn^2 ... tn^q]
-               q : ordre de regression logistique
-               n : nombre d'observations
-            3. Y Matrice de la partition floue (les probas a posteriori tik)
-               tik = p(zi=k|xi;theta^m); Y de dimensions [nxK] avec K le nombre de classes
-     Sorties : 
-    
-            1. probas : Matrice de dim [nxK] des probabilites p(zi=k;W) de la vaiable zi
-              (i=1,...,n)
-            2. loglik : logvraisemblance du parametre W du modele logistique
-               loglik = Q1(W) = Esperance(l(W;Z)|X;theta^m) = E(p(Z;W)|X;theta^m) 
-                      = logsum_{i=1}^{n} sum_{k=1}^{K} tik log p(zi=k;W)
-       
-     Cette fonction peut egalement �tre utilis�e pour calculer seulement les 
-     probas de la fa�oc suivante : probas = modele_logit(W,M)
+         % calculates the pobabilities according to multinomial logistic model:
+         %
+         % probs(i,k) = p(zi=k;W)= \pi_{ik}(W)
+         %                                  exp(wk'vi)
+         %                        =  ----------------------------
+         %                          1 + sum_{l=1}^{K-1} exp(wl'vi)
+         % for i=1,...,n and k=1...K
+         %
+         % Inputs :
+         %
+         %         1. W : parametre du modele logistique ,Matrice de dimensions
+         %         [(q+1)x(K-1)]des vecteurs parametre wk. W = [w1 .. wk..w(K-1)]
+         %         avec les wk sont des vecteurs colonnes de dim [(q+1)x1], le dernier
+         %         est suppose nul (sum_{k=1}^K \pi_{ik} = 1 -> \pi{iK} =
+         %         1-sum_{l=1}^{K-1} \pi{il}. vi : vecteur colonne de dimension [(q+1)x1]
+         %         qui est la variable explicative (ici le temps): vi = [1;ti;ti^2;...;ti^q];
+         %         2. M : Matrice de dimensions [nx(q+1)] des variables explicatives.
+         %            M = transpose([v1... vi ....vn])
+         %              = [1 t1 t1^2 ... t1^q
+         %                 1 t2 t2^2 ... t2^q
+         %                       ..
+         %                 1 ti ti^2 ... ti^q
+         %                       ..
+         %                 1 tn tn^2 ... tn^q]
+         %           q : ordre de regression logistique
+         %           n : nombre d'observations
+         %        3. Y Matrice de la partition floue (les probs a posteriori tik)
+         %           tik = p(zi=k|xi;theta^m); Y de dimensions [nxK] avec K le nombre de classes
+         % Sorties :
+         %
+         %        1. probs : Matrice de dim [nxK] des probabilites p(zi=k;W) de la vaiable zi
+         %          (i=1,...,n)
+         %        2. loglik : logvraisemblance du parametre W du modele logistique
+         %           loglik = Q1(W) = E(l(W;Z)|X;theta^m) = E(p(Z;W)|X;theta^m)
+         %                  = logsum_{i=1}^{n} sum_{k=1}^{K} tik log p(zi=k;W)
+         %
+         % Cette fonction peut egalement ?tre utilis?e pour calculer seulement les
+         % probs de la fa?oc suivante : probs = modele_logit(W,X)
+         %
     """
     #todo: verify this code when Y != none
     if Y is not None:
@@ -160,11 +158,95 @@ def modele_logit(W,M,Y=None, Gamma=None):
 
 
 def IRLS(Tau, M, Winit = None, Gamma=None, trace=False):
-    #utl.globalTrace("Start IRLS\n")
-    
-    
+    """
+        % res = IRLS_MixFRHLP(X, Tau, Gamma, Winit, verbose) : an efficient Iteratively Reweighted Least-Squares (IRLS) algorithm for estimating
+        % the parameters of a multinomial logistic regression model given the
+        % "predictors" X and a partition (hard or smooth) Tau into K>=2 segments,
+        % and a cluster weights Gamma (hard or smooth)
+        % 
+        %
+        % Inputs :
+        %
+        %         X : desgin matrix for the logistic weights.  dim(X) = [nx(q+1)]
+        %                            X = [1 t1 t1^2 ... t1^q
+        %                                 1 t2 t2^2 ... t2^q
+        %                                      ..
+        %                                 1 ti ti^2 ... ti^q
+        %                                      ..
+        %                                 1 tn tn^2 ... tn^q]
+        %            q being the number of predictors
+        %         Tau : matrix of a hard or fauzzy partition of the data (here for
+        %         the RHLP model, Tau is the fuzzy partition represented by the
+        %         posterior probabilities (responsibilities) (tik) obtained at the E-Step).
+        %
+        %         Winit : initial parameter values W(0). dim(Winit) = [(q+1)x(K-1)]
+        %         verbose : 1 to print the loglikelihood values during the IRLS
+        %         iterations, 0 if not
+        %
+        % Outputs :
+        %
+        %          res : structure containing the fields:
+        %              W : the estimated parameter vector. matrix of dim [(q+1)x(K-1)]
+        %                  (the last vector being the null vector)
+        %              piigk : the logistic probabilities (dim [n x K])
+        %              loglik : the value of the maximized objective
+        %              LL : stored values of the maximized objective during the
+        %              IRLS training
+        %
+        %        Probs(i,gk) = Pro(segment k|cluster g;W)
+        %                    = \pi_{ik}(W)
+        %                           exp(wgk'vi)
+        %                    =  ---------------------------
+        %                      1+sum_{l=1}^{K-1} exp(wgl'vi)
+        %
+        %       with :
+        %            * Probs(i,gk) is the prob of component k at time t_i in
+        %            cluster g
+        %            i=1,...n,j=1...m,  k=1,...,K,
+        %            * vi = [1,ti,ti^2,...,ti^q]^T;
+        %       The parameter vecrots are in the matrix W=[w1,...,wK] (with wK is the null vector);
+        %% References
+        % Please cite the following papers for this code:
+        %
+        %
+        % @INPROCEEDINGS{Chamroukhi-IJCNN-2009,
+        %   AUTHOR =       {Chamroukhi, F. and Sam\'e,  A. and Govaert, G. and Aknin, P.},
+        %   TITLE =        {A regression model with a hidden logistic process for feature extraction from time series},
+        %   BOOKTITLE =    {International Joint Conference on Neural Networks (IJCNN)},
+        %   YEAR =         {2009},
+        %   month = {June},
+        %   pages = {489--496},
+        %   Address = {Atlanta, GA},
+        %  url = {https://chamroukhi.users.lmno.cnrs.fr/papers/chamroukhi_ijcnn2009.pdf}
+        % }
+        %
+        % @article{chamroukhi_et_al_NN2009,
+        % 	Address = {Oxford, UK, UK},
+        % 	Author = {Chamroukhi, F. and Sam\'{e}, A. and Govaert, G. and Aknin, P.},
+        % 	Date-Added = {2014-10-22 20:08:41 +0000},
+        % 	Date-Modified = {2014-10-22 20:08:41 +0000},
+        % 	Journal = {Neural Networks},
+        % 	Number = {5-6},
+        % 	Pages = {593--602},
+        % 	Publisher = {Elsevier Science Ltd.},
+        % 	Title = {Time series modeling by a regression approach based on a latent process},
+        % 	Volume = {22},
+        % 	Year = {2009},
+        % 	url  = {https://chamroukhi.users.lmno.cnrs.fr/papers/Chamroukhi_Neural_Networks_2009.pdf}
+        % 	}
+        % @article{Chamroukhi-FDA-2018,
+        % 	Journal = {},
+        % 	Author = {Faicel Chamroukhi and Hien D. Nguyen},
+        % 	Volume = {},
+        % 	Title = {Model-Based Clustering and Classification of Functional Data},
+        % 	Year = {2018},
+        % 	eprint ={arXiv:1803.00276v2},
+        % 	url =  {https://chamroukhi.users.lmno.cnrs.fr/papers/MBCC-FDA.pdf}
+        % 	}
+        %
+    """
     n,K = Tau.shape
-    n,q = M.shape; #q ici c'est (q+1)
+    n,q = M.shape; #q here is (q+1)
     if Winit is None:
         Winit = np.zeros((q, K-1))
     
@@ -176,7 +258,7 @@ def IRLS(Tau, M, Winit = None, Gamma=None, trace=False):
     piik_old, loglik_old = modele_logit(W_old,M,Tau,Gamma);
     
     lmda = 1e-9
-    loglik_old = loglik_old - pow(lmda*(np.linalg.norm(W_old.T.ravel(),2)),2)
+    loglik_old = loglik_old - sum(sum(W_old**2))#pow(lmda*(np.linalg.norm(W_old.T.ravel(),2)),2)
     
     iteration = 0;
     converge = False;
@@ -236,32 +318,31 @@ def IRLS(Tau, M, Winit = None, Gamma=None, trace=False):
         # mise a jour des probas et de la loglik
         piik, loglik = modele_logit(W, M, Tau ,Gamma)
         
-        loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
+        loglik = loglik - lmda*sum(sum((W**2)))#pow(np.linalg.norm(W.T.ravel(),2),2)
         
         
         
     
         """
-        Verifier si Qw1(w^(c+1),w^(c))> Qw1(w^(c),w^(c)) 
-        (adaptation) de Newton Raphson : W(c+1) = W(c) - pas*H(W)^(-1)*g(W)
+         check if Qw1(w^(t+1),w^(t))> Qw1(w^(t),w^(t))
+         (adaptive stepsize in case of troubles with stepsize 1) Newton Raphson : W(t+1) = W(t) - stepsize*H(W)^(-1)*g(W)
         """
-#        pas = 1; # initialisation pas d'adaptation de l'algo Newton raphson
-#        alpha = 2;
-#        #print(loglik)
-#        #print(loglik_old)
-#        it=0;
-#        while (loglik < loglik_old):
-#            pas = pas/alpha; # pas d'adaptation de l'algo Newton raphson
-#            #recalcul du parametre W et de la loglik
-#            w = np.array([W_old.T.ravel()]).T - pas*np.linalg.inv(Hw_old)@gw_old
-#            W = np.reshape(w,(const.K-1, q)).T
-#            # mise a jour des probas et de la loglik
-#            it+=1;
-#            print('Start model logit {0}\n'.format(it))
-#            piik, loglik = utl.modele_logit(W, M, Tau ,Gamma)
-#            #print('end model logit')
-#            loglik = loglik - lmda*pow(np.linalg.norm(W.T.ravel(),2),2)
-            
+        pas = 1; # initialisation pas d'adaptation de l'algo Newton raphson
+        alpha = 2;
+        #print(loglik)
+        #print(loglik_old)
+        it=0;
+        while (loglik < loglik_old):
+            pas = pas/alpha; # pas d'adaptation de l'algo Newton raphson
+            #recalcul du parametre W et de la loglik
+            w = np.array([W_old.T.ravel()]).T - pas*np.linalg.inv(Hw_old)@gw_old
+            W = np.reshape(w,(K-1, q)).T
+            # mise a jour des probas et de la loglik
+            it+=1;
+            piik, loglik = modele_logit(W, M, Tau ,Gamma)
+            #print('end model logit')
+            loglik = loglik - lmda*sum(sum((W**2))) #pow(np.linalg.norm(W.T.ravel(),2),2)
+        
         converge1 = abs((loglik-loglik_old)/loglik_old) <= 1e-7
         converge2 = abs(loglik-loglik_old) <= 1e-6
         
@@ -305,85 +386,6 @@ def log_normalize(matrix):
     temp=temp.T
     return matrix - np.matlib.repmat(a + np.log( temp ) ,1,d)
 
-
-def showResults(data, solution):
-    plt.figure(1, figsize=(10,8))
-    plt.plot(solution.bestSolution.stored_comp_loglik)
-    #plt.plot(solution.bestSolution.stored_loglik)
-        
-    
-    plt.savefig('figures/stored_loglik.png')
-    
-    n,m = data.shape
-    klas = solution.bestSolution.klas.reshape(n)
-    font = {'family' : 'normal',
-        'weight' : 'bold',
-        'size'   : 14}
-
-    plt.matplotlib.rc('font', **font)
-    t = np.arange(m)
-    G = len(solution.bestSolution.param.alpha_g);
-    colors = ['r','b','g','m','c','k','y']
-    colors_cluster_means = [[0.8, 0, 0],[0, 0, 0.8],[0, 0.8, 0],'m','c','k','y']
-    
-    plt.figure(2, figsize=(10,8))
-    
-    for g in range(0,G):
-        cluster_g = data[klas==g ,:];
-        plt.plot(t,cluster_g.T,colors[g],linewidth=0.1);    
-        plt.plot(t,solution.bestSolution.Ex_g[:,g], colors_cluster_means[g],linewidth=3)
-        
-    plt.xlabel('Time')
-    plt.ylabel('y')
-    plt.xlim(0, m-1)
-    plt.savefig('figures/data_clustering.png')
-    
-    
-    for g in range(0,G):
-        plt.figure(g+3,figsize=(10,8))
-        plt.subplot(2, 1, 1)
-        cluster_g = data[klas==g ,:]
-        plt.plot(t,cluster_g.T,colors[g])
-        plt.plot(t,solution.bestSolution.polynomials[g,:,:],'k--',linewidth=1)
-        plt.plot(t,solution.bestSolution.Ex_g[:,g],colors_cluster_means[g],linewidth=3)
-        plt.title('Cluster {0}'.format(g))
-        plt.ylabel('y');
-        plt.xlim([0, m-1])
-        
-        plt.subplot(2, 1, 2)
-        plt.plot(t,solution.bestSolution.param.pi_jgk[g,0:m,:],linewidth=2);
-        plt.ylabel('Logistic proportions')
-        plt.xlabel('Time')
-        ax = plt.gca()
-        ax.set_yticklabels(np.linspace(0,1,6))
-        plt.xlim([0, m-1])
-        
-        plt.savefig('figures/cluster{0}.png'.format(g))
-    plt.show()
-
-def normalize_matrix(matrix):
-    """
-        Scikit-learn normalize function that lets you apply various normalizations. 
-        The "make it sum to 1" is the L1 norm
-        http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.normalize.html
-    """
-    normed_matrix = normalize(matrix, axis=1, norm='l1')  
-    return normed_matrix
-
-
-
-def test_norm():
-    matrix = np.arange(0,27,3).reshape(3,3).astype(np.float64)
-    #array([[  0.,   3.,   6.],
-    #   [  9.,  12.,  15.],
-    #   [ 18.,  21.,  24.]])
-    print(normalize_matrix(matrix))
-    #[[ 0.          0.33333333  0.66666667]
-    #[ 0.25        0.33333333  0.41666667]
-    #[ 0.28571429  0.33333333  0.38095238]]
-    
-#test_norm()
-    
 
 
     

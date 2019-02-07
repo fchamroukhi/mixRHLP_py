@@ -3,7 +3,7 @@
 """
 Created on Tue Dec 18 08:16:11 2018
 
-@author: bartcus
+@author: Faïcel Chamroukhi & Bartcus Marius
 """
 
 from enum import Enum

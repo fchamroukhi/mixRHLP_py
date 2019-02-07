@@ -3,7 +3,7 @@
 """
 Created on Tue Dec 18 09:26:16 2018
 
-@author: bartcus
+@author: Faïcel Chamroukhi & Bartcus Marius
 """
 import numpy as np
 import enums
@@ -27,8 +27,7 @@ class MixParam:
         if options.variance_type == enums.variance_types.common:
             self.sigma_g = np.NaN * np.empty([mixModel.G, 1])
         else:
-            self.sigma_g = np.NaN * np.empty([mixModel.K, mixModel.G])
-            
+            self.sigma_g = np.NaN * np.empty([mixModel.G, mixModel.K])
         self.pi_jgk = np.NaN * np.empty([mixModel.G, mixModel.m*mixModel.n, mixModel.K])
         self.alpha_g = np.NaN * np.empty(mixModel.G)
     
@@ -38,7 +37,7 @@ class MixParam:
         
         # 2. Initialization of the model parameters for each cluster: W (pi_jgk), betak and sigmak    
         #self.Wg, self.pi_jgk = 
-        self.__initHlp(mixModel, phi.phiW, try_algo)
+        self.__initHlp(mixModel, phi.Xw, try_algo)
         
         # 3. Initialization of betagk and sigmagk
         if mixOptions.init_kmeans:
@@ -47,13 +46,13 @@ class MixParam:
             
             for g in range(0,mixModel.G):
                 Xg = mixModel.X[klas==g ,:]; #if kmeans  
-                self.__initRegressionParam(Xg, g, mixModel.K, mixModel.p, phi.phiBeta, mixOptions.variance_type, try_algo)
+                self.__initRegressionParam(Xg, g, mixModel.K, mixModel.p, phi.XBeta, mixOptions.variance_type, try_algo)
                 
         else:
             print('todo: line 41 matlab initialize_MixFRHLP_EM')
             raise RuntimeError('todo: line 41 matlab initialize_MixFRHLP_EM')
             
-    def __initRegressionParam(self, Xg, g, K, p, phiBeta, variance_type, try_algo):
+    def __initRegressionParam(self, Xg, g, K, p, XBeta, variance_type, try_algo):
         """
         aim: initialize the Regresssion model with Hidden Logistic Process
         requires:
@@ -78,7 +77,7 @@ class MixParam:
                 j = k*zi;
                 Xij = Xg[:,i:j];
                 Xij = np.reshape(Xij,(np.prod(Xij.shape), 1))
-                phi_ij = phiBeta[i:j,:];
+                phi_ij = XBeta[i:j,:];
                 Phi_ij = np.matlib.repmat(phi_ij, n, 1);
                 bk = np.linalg.inv(Phi_ij.T@Phi_ij)@Phi_ij.T@Xij;
                 #para.betak(:,k) = bk;
@@ -95,19 +94,29 @@ class MixParam:
             betak = np.hstack(betak_list)
         else:
             #random initialization
-            Lmin= round(m/(K+1)) #nbr pts min dans un segments
+            Lmin= round(m/K)#nbr pts min dans un segments
             tk_init = [0] * (K+1)
-            tk_init[0]=-1
+            #tk_init[0]=-1
             K_1=K;
             #todo: verify indexes ???
             for k in range(1,K):
                 K_1 = K_1-1
-                temp = np.arange(tk_init[k-1]+Lmin,m-K_1*Lmin)
+                start = tk_init[k-1]+Lmin
+                stop = m-K_1*Lmin
+                
+                if start>stop:
+                    stop = stop-1
+                    step = -1
+                else:
+                    stop = stop+1
+                    step=1
+                
+                temp = list(range(start,stop,step))
                 ind = np.random.permutation(len(temp))
                 tk_init[k]= temp[ind[0]];
-                
-            tk_init[K] = m-1; 
-            
+               
+            tk_init[K] = m; 
+            #print(tk_init) 
             sigma=[]
             betak_list = []
             for k in range(0, K):
@@ -115,7 +124,7 @@ class MixParam:
                 j = tk_init[k+1];
                 Xij = Xg[:,i:j];
                 Xij = np.reshape(Xij,(np.prod(Xij.shape), 1))
-                phi_ij = phiBeta[i:j,:];
+                phi_ij = XBeta[i:j,:];
                 Phi_ij = np.matlib.repmat(phi_ij, n, 1);
                 bk = np.linalg.inv(Phi_ij.T@Phi_ij)@Phi_ij.T@Xij;
                 betak_list.append(bk)
@@ -124,7 +133,6 @@ class MixParam:
                 else:
                     mk = j-i
                     z = Xij-Phi_ij@bk;
-                    #todo: verify if sk is always one value and not a matrix
                     sk = z.T@z/(n*mk); 
                     sigma.append(sk[0][0])
             #remake betak
@@ -134,21 +142,21 @@ class MixParam:
         if variance_type == enums.variance_types.common:
             self.sigma_g[g] = sigma;
         else:
-            self.sigma_g[:,g] = sigma;
+            self.sigma_g[g,:] = sigma;
         
-    def __initHlp(self, mixModel, phiW, try_algo):
+    def __initHlp(self, mixModel, Xw, try_algo):
         """
             Initialize the Hidden Logistic Process
         """
         # 1. Initialisation de W (pi_jgk)
-        nm, q1 = phiW.shape;
+        nm, q1 = Xw.shape;
         if  try_algo ==1:
             for g in range(0,mixModel.G):
-                self.pi_jgk[g,:,:] = utl.modele_logit(self.Wg[g,:,:],phiW)[0];
+                self.pi_jgk[g,:,:] = utl.modele_logit(self.Wg[g,:,:],Xw)[0];
         else:
             for g in range(0,mixModel.G):
-                self.Wg[g,:,:] = np.random.rand(mixModel.q+1,mixModel.K-1); #initialisation aléatoire du vercteur param�tre du IRLS
-                self.pi_jgk[g,:,:] = utl.modele_logit(self.Wg[g,:,:],phiW)[0];
+                self.Wg[g,:,:] = np.random.rand(mixModel.q+1,mixModel.K-1); #random initialization of the parameter vector of IRLS
+                self.pi_jgk[g,:,:] = utl.modele_logit(self.Wg[g,:,:],Xw)[0];
     
     def CMStep(self, mixModel, mixStats, phi, mixOptions):
         self.alpha_g = mixStats.c_ig.sum(0).T/mixModel.n
@@ -166,7 +174,7 @@ class MixParam:
                 
             beta_gk = np.NaN * np.empty([mixModel.p+1, mixModel.K])
             for k in range(0,mixModel.K):
-                segment_weights = np.array([tauijk[:,k]]).T #poids du kieme segment   pour le cluster g  
+                segment_weights = np.array([tauijk[:,k]]).T #weight for the hth segment of cluster g  
                 phigk = (np.sqrt(segment_weights)@np.ones((1,mixModel.p+1)))*phi.phiBeta[cluster_labels==g,:] #[(n*m)*(p+1)]
                 Xgk = np.sqrt(segment_weights)*Xg
                 # maximization w.r.t beta_gk: Weighted least squares 
@@ -179,7 +187,6 @@ class MixParam:
                     sigma_gk = s/sum(sum(tauijk))
                 else:
                     temp = phigk@np.array([beta_gk[:,k]]).T
-                    #todo: verify devision by zero null clusters rerun CEM algorithm
                     if (sum(segment_weights)==0):
                         good_segmentation = False
                         return 0, good_segmentation
@@ -194,7 +201,7 @@ class MixParam:
             """
             Wg_init = self.Wg[g,:,:]
             
-            wk, piik, reg_irls, _, _ = utl.IRLS(tauijk, phi.phiW[cluster_labels==g,:], Wg_init)
+            wk, piik, reg_irls, _, _ = utl.IRLS(tauijk, phi.Xw[cluster_labels==g,:], Wg_init)
             
             self.Wg[g,:,:]=wk;             
             self.pi_jgk[g,:,:] = np.matlib.repmat(piik[0:mixModel.m,:],mixModel.n,1)
@@ -220,9 +227,9 @@ class MixParam:
             
             beta_gk = np.NaN * np.empty([mixModel.p +1, mixModel.K])
             for k in range(0,mixModel.K):
-                segment_weights = np.array([tauijk[:,k]]).T #poids du kieme segment   pour le cluster g  
+                segment_weights = np.array([tauijk[:,k]]).T #weight for kth segment of cluster g
                 # poids pour avoir K segments floues du gieme cluster flou 
-                phigk = (np.sqrt(cluster_weights*segment_weights)@np.ones((1,mixModel.p+1)))*phi.phiBeta #[(n*m)*(p+1)]
+                phigk = (np.sqrt(cluster_weights*segment_weights)@np.ones((1,mixModel.p+1)))*phi.XBeta #[(n*m)*(p+1)]
                 Xgk = np.sqrt(cluster_weights*segment_weights)*mixModel.XR
                 
                 # maximization w.r.t beta_gk: Weighted least squares
@@ -233,13 +240,13 @@ class MixParam:
                 if mixOptions.variance_type == enums.variance_types.common:
                     sk = sum((Xgk-np.array([phigk@beta_gk[:,k]]).T)**2)
                     s = s+sk;
-                    sigma_gk = s/sum((cluster_weights@np.ones((1,mixModel.K))*tauijk).sum(0))
+                    sigma_gk = s/sum(sum(cluster_weights@np.ones((1,mixModel.K))*tauijk))
                 else:
                     temp = phigk@np.array([beta_gk[:,k]]).T
                     sigma_gk[k]= sum((Xgk-temp)**2)/(sum(cluster_weights*segment_weights))
                     
             self.beta_g[g,:,:] = beta_gk
-            self.sigma_g[:,g] = list(sigma_gk)
+            self.sigma_g[g,:] = list(sigma_gk)
             
             """
             Maximization w.r.t W 
@@ -247,7 +254,7 @@ class MixParam:
             """
             Wg_init = self.Wg[g,:,:]
             
-            wk, piik, _, _, _ = utl.IRLS(tauijk, phi.phiW, Wg_init, cluster_weights)
+            wk, piik, _, _, _ = utl.IRLS(tauijk, phi.Xw, Wg_init, cluster_weights)
             
             self.Wg[g,:,:]=wk;             
             self.pi_jgk[g,:,:] = np.matlib.repmat(piik[0:mixModel.m,:],mixModel.n,1); 

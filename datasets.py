@@ -3,7 +3,7 @@
 """
 Created on Sun Oct 28 08:22:16 2018
 
-@author: bartcus
+@author: Faïcel Chamroukhi & Bartcus Marius
 """
 import numpy as np
 import utils as utl

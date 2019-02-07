@@ -3,12 +3,14 @@
 """
 Created on Tue Dec 18 08:31:28 2018
 
-@author: bartcus
+Design matrices for the polynomial regression and the logistic regression
+
+@author: Faïcel Chamroukhi & Bartcus Marius
 """
 import numpy as np
 import numpy.matlib
 
-class Phi():
+class RegressionDesigner():
     def __init__(self, x, p, q, n = 1):
         self.designmatrix_FRHLP(x, p, q)
         
@@ -20,10 +22,10 @@ class Phi():
         """
         requires:
             x - data
-            p - dimension de beta (ordre de reg polynomiale)
-            q (Optional) - dimension de w (ordre de reg logistique)
+            p - beta dimension (the polynomial regressions)
+            q (Optional) - w dimension (the logistic regression)
         ensures:
-            creates the parameters phiBeta and phiW
+            creates the parameters XBeta and Xw
         """
         if x.shape[0] == 1:
             x=x.T; # en vecteur
@@ -32,17 +34,17 @@ class Phi():
         if q!=None:
             order_max = max(p,q)
             
-        phi=np.NaN * np.empty([len(x), order_max+1])
+        X=np.NaN * np.empty([len(x), order_max+1])
         for ordr in range(order_max+1):
-            phi[:,ordr] = (x**ordr).transpose() # phi2w = [1 t t.^2 t.^3 t.^p;......;...]
+            X[:,ordr] = (x**ordr).transpose() # phi2w = [1 t t.^2 t.^3 t.^p;......;...]
         
-        self.phiBeta = phi[:,0:p+1]; # Matrice de regresseurs pour Beta
+        self.XBeta = X[:,0:p+1]; # design matrix for Beta (the polynomial regressions)
     
-        self.phiW =[];
+        self.Xw =[];
         if q!=None:
-            self.phiW = phi[:,0:q+1]; # matrice de regresseurs pour w
+            self.Xw = X[:,0:q+1]; # design matrix for w (the logistic regression)
             
             
     def setPhiN(self, n):
-        self.phiBeta = np.matlib.repmat(self.phiBeta, n, 1);
-        self.phiW = np.matlib.repmat(self.phiW, n, 1);
+        self.XBeta = np.matlib.repmat(self.XBeta, n, 1);
+        self.Xw = np.matlib.repmat(self.Xw, n, 1);

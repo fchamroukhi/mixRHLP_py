@@ -1,20 +1,19 @@
-# Introduction to source code for Python codes for functional data clustering and segmentation with mixture of regressions with hidden logistic processes (MixRHLP): 
+# Python codes for functional data clustering and segmentation with the mixture of regressions with hidden logistic processes (MixRHLP) model: 
 
-**Faicel Chamrouckhi & Bartcus Marius**
+<< Note that the codes are also provided in R and Matlab >>
+
+python codes written by
+
+**Faicel Chamrouckhi**
+&
+**Marius Bartcus**
 
 firstname.lastname@unicaen.fr
 
+For using this code we recomand you install anaconda (which contains the necessary packages to run our codes and a set of usefull data science python packages). 
+The needed packages to run our code are: NumPy, Scikit-Learn, and matplotlib.
 
-
-For using this code you need to install python.
-Also we recomand to install anaconda from: [https://www.anaconda.com/download/] that contains a set of usefull data science python packages.
-One of the important packages that we use in our code are:
-1) NumPy [http://www.numpy.org/]
-2) Scikit-Learn [http://scikit-learn.org/stable/]
-3) matplotlib [https://matplotlib.org/]
-
-When using the code 
-When using this code please cite the following papers : The two first ones concern the model and its use in clusterng and the two last ones concern the model and its use in discrimination.
+When using this code please cite the following papers : The two first ones concern the model and its use in clusterng and the last ones concern the model and its use in discrimination.
 
 
 ```
@@ -56,28 +55,31 @@ When using this code please cite the following papers : The two first ones conce
  	Title = {Model-based functional mixture discriminant analysis with hidden process regression for curve classification},
  	Volume = {112},
  	Year = {2013}
-     }    
+     }  
+@article{Chamroukhi-FDA-2018,
+ 	Journal = {Wiley Interdisciplinary Reviews: Data Mining and Knowledge Discovery},
+ 	Author = {Faicel Chamroukhi and Hien D. Nguyen},
+ 	Note = {DOI: 10.1002/widm.1298.},
+ 	Volume = {},
+ 	Title = {Model-Based Clustering and Classification of Functional Data},
+ 	Year = {2019},
+ 	Month = {to appear},
+ 	url =  {https://chamroukhi.com/papers/MBCC-FDA.pdf}
+    }
 ```
 
 
-### To obtain a detailed information on each of theese source code:
+### THE SHORT DESCRIPTION OF EACH PYTHON FILE. For more detailed description, please see the individual files
 
-```
-import file_name.py as f
-help(f)
-```
+1) main_MixFRHLP_EM _Main script to run the EM or CEM algorithm_
+2) ModelLearner.py _Contains the two functions of the EM and the CEM algorithm._
+3) datasets _Contains the object to load (mainly contains the dataset)_                        
+4) MixModel.py _The MixModel class containts the data object and the model settings (number of clusters, the number of regimes, the degree of polynomials, the order of the logistic regression)_
+4) MixParam.py _Initializes and updates (the M-step) the model parameters (parameters of the logistic process for each of the clusters, polynomial regression coefficients, and the variances for the regmies for each cluster)._
+5) MixStats.py _Calculates mainly the posterior memberships (E-step), the loglikelihood, the parition, different information criterias BIC, ICL, etc_
+6) ModelOptions.py _contains some options needed to set before learning the model (like the number of runs, threshold, type of initialization, etc)._
+8) enums.py _Used to enumerate the variance type (heteroskedastic or homoscedastic)_
+9) RegressionDesinger.py _Design matrices for the polynomial regression and the logistic regression_
+10) utils.py _Contains mainly the model_logit function that calculates the pobabilities according to the multinomial logistic model, and an efficient Iteratively Reweighted Least-Squares (IRLS) algorithm.
 
-these gives information on the selected source code with information on classes and functions
-each function and class has it's comments that will be given by "help(f)"
-
-
-### THE SHORT DESCRIPTION OF EACH PYTHON FILE
-1) script_EM_MixFRHLP _script to run the EM or CEM algorithm_
-1) constants.py	_settings to run the algorithm_                        
-2) datasets.py _The data sets setting names_
-4) data_utils.py _Generate artificial data sets_
-5) utils.py _routines python: file reading, writing files, matrix normalizations, etc_
-6) MixFRHLP_EM.py _The main MixFRHLP EM and CEM algorithm implementation_
-7) MixFRHLP_Parameters.py _The model pararameters initialization_
-8) Mix_IRLS.py _IRLS algorithm_
 
