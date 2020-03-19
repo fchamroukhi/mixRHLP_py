@@ -10,10 +10,10 @@ python codes written by
 
 firstname.lastname@unicaen.fr
 
-For using this code we recomand you install anaconda (which contains the necessary packages to run our codes and a set of usefull data science python packages). 
+For using this code we recommend you install anaconda (which contains the necessary packages to run our codes and a set of useful data science python packages). 
 The needed packages to run our code are: NumPy, Scikit-Learn, and matplotlib.
 
-When using this code please cite the following papers : The two first ones concern the model and its use in clusterng and the last ones concern the model and its use in discrimination.
+When using this code please cite the following papers : The two first ones concern the model and its use in clustering and the last ones concern the model and its use in discrimination.
 
 
 ```
@@ -69,7 +69,7 @@ When using this code please cite the following papers : The two first ones conce
 ```
 
 
-### THE SHORT DESCRIPTION OF EACH PYTHON FILE. For more detailed description, please see the individual files
+### SHORT DESCRIPTION OF EACH PYTHON FILE. For more detailed description, please see the individual files
 
 1) main_MixFRHLP_EM _Main script to run the EM or CEM algorithm_
 2) ModelLearner.py _Contains the two functions of the EM and the CEM algorithm._
