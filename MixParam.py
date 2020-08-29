@@ -69,7 +69,7 @@ class MixParam:
         if try_algo == 1:
             # Decoupage de l'echantillon (signal) en K segments
             zi = round(m/K) - 1
-            #todo ameliorate code for initialization of sigma and betak
+            #initialization of sigma and betak can be improved (todo)
             sigma=[]
             betak_list = []
             for k in range(1, K+1):
