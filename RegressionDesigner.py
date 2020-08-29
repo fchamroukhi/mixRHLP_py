@@ -28,7 +28,7 @@ class RegressionDesigner():
             creates the parameters XBeta and Xw
         """
         if x.shape[0] == 1:
-            x=x.T; # en vecteur
+            x=x.T; # in a column vector
         
         order_max = p    
         if q!=None:
