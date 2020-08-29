@@ -119,7 +119,7 @@ class MixStats():
         self.ICL = self.comp_loglik - nu*np.log(mixModel.n)/2 #n*m/2!
         
         self.klas = self.klas.reshape(mixModel.n)
-        
+     # Bayes allocation rule   
     def MAP(self):
         """
         % calculate a partition by applying the Maximum A Posteriori Bayes
@@ -153,7 +153,7 @@ class MixStats():
         for k in range(0,K):
             self.klas[self.c_ig[:,k]==1]=k
             
-        #
+        # assignement step
     
     def CStep(self, reg_irls):
         # cluster posterior probabilities p(c_i=g|X)
@@ -181,7 +181,7 @@ class MixStats():
                 if variance_type == enums.variance_types.common :
                     sgk = mixParam.sigma_g[g]
                 else:
-                    #todo: verify
+                    #?
                     sgk = mixParam.sigma_g[g,k]
                 
                 temp = phi.XBeta@beta_gk

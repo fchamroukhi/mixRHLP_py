@@ -34,7 +34,7 @@ class MyData():
         self.X = np.concatenate((y1,y2,y3))
         self.setDataProperties()
         
-        #write the data
+        #create the data object
         np.savetxt(outputGeneratedDataFileName, self.X)
             
         utl.globalTrace("End data generation\n")
@@ -46,6 +46,6 @@ class MyData():
         self.n, self.m = self.X.shape
         self.XR =  np.reshape(self.X, (self.n*self.m, 1))
         #construction des matrices de regression
-        self.t = np.linspace(0,1,self.m) # ou rentrer le vecteur de covariables des courbes
+        self.t = np.linspace(0,1,self.m) # or get the provided inputs vector
         self.t = np.reshape(self.t,(len(self.t),1))
         
