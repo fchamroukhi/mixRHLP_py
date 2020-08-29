@@ -228,7 +228,7 @@ class MixParam:
             beta_gk = np.NaN * np.empty([mixModel.p +1, mixModel.K])
             for k in range(0,mixModel.K):
                 segment_weights = np.array([tauijk[:,k]]).T #weight for kth segment of cluster g
-                # poids pour avoir K segments floues du gieme cluster flou 
+                # weights to get K smoothed segments  for the gth smoothed cluster 
                 phigk = (np.sqrt(cluster_weights*segment_weights)@np.ones((1,mixModel.p+1)))*phi.XBeta #[(n*m)*(p+1)]
                 Xgk = np.sqrt(cluster_weights*segment_weights)*mixModel.XR
                 

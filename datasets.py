@@ -26,9 +26,9 @@ class MyData():
         n2 = 10   
         n3 = 10
             
-        mean_1_flou = np.loadtxt(dataFileName)
+        mean_1_smooth = np.loadtxt(dataFileName)
             
-        y1 = np.ones((n1, 1)) * mean_1_flou.transpose() + np.random.normal(5,1,(len(mean_1_flou),n1)).transpose()+1;
+        y1 = np.ones((n1, 1)) * mean_1_smooth.transpose() + np.random.normal(5,1,(len(mean_1_smooth),n1)).transpose()+1;
         y3 = np.concatenate((np.random.normal(7,1,(80,n2)), np.random.normal(5,1,(130,n2)), np.random.normal(4,1,(140,n2)))).transpose()
         y2 = np.concatenate((np.random.normal(5,1,(120,n3)),np.random.normal(7,1,(70,n3)), np.random.normal(5,1,(160,n3)))).transpose()
         self.X = np.concatenate((y1,y2,y3))
