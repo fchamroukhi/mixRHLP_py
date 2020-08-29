@@ -12,6 +12,10 @@ import MixParam as pram
 import MixStats as stats
 from copy import deepcopy
 
+
+## The EM Algorithm
+
+
 def EM(mixModel, modelOptions):
     phi = regdes.RegressionDesigner(mixModel.t, mixModel.p, mixModel.q, mixModel.n)
     top = 0
@@ -56,11 +60,11 @@ def EM(mixModel, modelOptions):
             prev_loglik = mixStats.loglik
             mixStats.stored_loglik[iteration-1, try_EM-1] = mixStats.loglik
             
-        # FIN EM LOOP
+        # End of EM LOOP
         cpu_time = time.time()-start_time
         cpu_time_all.append(cpu_time)
         
-        # at this point we have computed param and mixStats that contains all the information
+        # at this point we have computed param and mixStats that contain all the information
         if (mixStats.loglik > best_loglik):
             mixStatsSolution = deepcopy(mixStats)
             mixParamSolution = deepcopy(mixParam)
@@ -75,7 +79,7 @@ def EM(mixModel, modelOptions):
     if modelOptions.n_tries > 1:
         print("max value: {0}".format(mixStatsSolution.loglik))
         
-    # FINISH computation of mixStatsSolution
+    # End of computation of mixStatsSolution
     mixStatsSolution.computeStats(mixModel, mixParamSolution, phi, cpu_time_all)
     
     return mixParamSolution, mixStatsSolution
@@ -83,7 +87,7 @@ def EM(mixModel, modelOptions):
 
 
 
-
+## The Classification EM Algorithm
 
 
 
@@ -135,7 +139,7 @@ def CEM(mixModel, modelOptions):
             prev_comp_loglik = mixStats.comp_loglik
             mixStats.stored_com_loglik[iteration-1, try_CEM-1] = mixStats.comp_loglik
             
-        # FIN EM LOOP
+        # End of CEM LOOP
         cpu_time = time.time()-start_time
         cpu_time_all.append(cpu_time)
         
@@ -154,7 +158,7 @@ def CEM(mixModel, modelOptions):
     if modelOptions.n_tries > 1:
         print("max value: {0}".format(mixStatsSolution.comp_loglik))
         
-    # FINISH computation of mixStatsSolution
+    # End of computation of mixStatsSolution
     mixStatsSolution.computeStats(mixModel, mixParamSolution, phi, cpu_time_all)
     
     return mixParamSolution, mixStatsSolution
