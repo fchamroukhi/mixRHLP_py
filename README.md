@@ -1,6 +1,6 @@
 # Python codes for functional data clustering and segmentation with the mixture of regressions with hidden logistic processes (MixRHLP) model: 
 
-<< Note that the codes are also provided in R and Matlab >>
+<< R and Matlab versions are aslo available on Github>>
 
 python codes written by
 
@@ -10,8 +10,23 @@ python codes written by
 
 firstname.lastname@unicaen.fr
 
-For using this code we recommend you install anaconda (which contains the necessary packages to run our codes and a set of useful data science python packages). 
-The needed packages to run our code are: NumPy, Scikit-Learn, and matplotlib.
+The needed packages to run our code are: NumPy and matplotlib.
+
+
+
+### SHORT DESCRIPTION OF EACH PYTHON FILE. For more detailed description, please see the individual files
+
+1) main_MixFRHLP_EM _Main script to run the EM or CEM algorithm_
+2) ModelLearner.py _Contains the two functions of the EM and the CEM algorithms._
+3) datasets _Contains the object to load (mainly the dataset)_                        
+4) MixModel.py _The MixModel class containts the data object and the model settings (number of clusters, the number of segments, the degree of polynomials, the order of the logistic regression)_
+4) MixParam.py _Initializes and updates (the M-step) the model parameters._
+5) MixStats.py _Calculates the conditional memberships (responsibilities) (E-step), the loglikelihood, the data partition, and information criterias BIC, ICL, etc_
+6) ModelOptions.py _contains algorithm settings (like the number of runs/iterations, convergence threshold, type of initialization, etc)._
+8) enums.py _Used to enumerate the variance type (heteroskedastic or homoscedastic)_
+9) RegressionDesinger.py _Design matrices for the polynomial regression and the logistic regression_
+10) utils.py _Contains mainly the model_logit function that calculates the multinomial logistic pobabilities, and an efficient Iteratively Reweighted Least-Squares (IRLS) algorithm.
+
 
 When using this code please cite the following papers : The two first ones concern the model and its use in clustering and the last ones concern the model and its use in discrimination.
 
@@ -67,19 +82,3 @@ When using this code please cite the following papers : The two first ones conce
  	url =  {https://chamroukhi.com/papers/MBCC-FDA.pdf}
     }
 ```
-
-
-### SHORT DESCRIPTION OF EACH PYTHON FILE. For more detailed description, please see the individual files
-
-1) main_MixFRHLP_EM _Main script to run the EM or CEM algorithm_
-2) ModelLearner.py _Contains the two functions of the EM and the CEM algorithm._
-3) datasets _Contains the object to load (mainly contains the dataset)_                        
-4) MixModel.py _The MixModel class containts the data object and the model settings (number of clusters, the number of regimes, the degree of polynomials, the order of the logistic regression)_
-4) MixParam.py _Initializes and updates (the M-step) the model parameters (parameters of the logistic process for each of the clusters, polynomial regression coefficients, and the variances for the regmies for each cluster)._
-5) MixStats.py _Calculates mainly the posterior memberships (E-step), the loglikelihood, the parition, different information criterias BIC, ICL, etc_
-6) ModelOptions.py _contains some options needed to set before learning the model (like the number of runs, threshold, type of initialization, etc)._
-8) enums.py _Used to enumerate the variance type (heteroskedastic or homoscedastic)_
-9) RegressionDesinger.py _Design matrices for the polynomial regression and the logistic regression_
-10) utils.py _Contains mainly the model_logit function that calculates the pobabilities according to the multinomial logistic model, and an efficient Iteratively Reweighted Least-Squares (IRLS) algorithm.
-
-

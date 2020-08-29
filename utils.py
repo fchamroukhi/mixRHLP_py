@@ -7,7 +7,7 @@ Created on Sat Oct 27 10:29:21 2018
 """
 import numpy as np
 import os
-from sklearn.preprocessing import normalize
+#from sklearn.preprocessing import normalize
 import matplotlib.pyplot as plt
 
 fileGlobalTrace=None
